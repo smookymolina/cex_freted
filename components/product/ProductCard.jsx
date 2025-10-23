@@ -2,10 +2,16 @@
 import Image from 'next/image';
 import Button from '../ui/Button';
 import styles from '../../styles/components/product-card.module.css';
+import { useCart } from '../../context/cart/CartContext';
 
 export default function ProductCard({ product }) {
+  const { addToCart } = useCart();
   // TODO: Implement logic to select grade and update price
   const selectedVariant = product.variants[0];
+
+  const handleAddToCart = () => {
+    addToCart(selectedVariant);
+  };
 
   const formatter = new Intl.NumberFormat('es-MX', {
     style: 'currency',
@@ -42,7 +48,10 @@ export default function ProductCard({ product }) {
         </div>
       </div>
       <footer className={styles.footer}>
-        <Button href={`/productos/${product.slug}`} fullWidth>
+        <Button onClick={handleAddToCart} fullWidth>
+          Añadir al carrito
+        </Button>
+        <Button href={`/productos/${product.slug}`} fullWidth variant="secondary">
           Ver detalles
         </Button>
       </footer>

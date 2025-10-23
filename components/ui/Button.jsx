@@ -5,6 +5,7 @@ const variantClassMap = {
   solid: styles.solid,
   outline: styles.outline,
   ghost: styles.ghost,
+  secondary: styles.secondary,
 };
 
 export default function Button({ children, href, variant = 'solid', ...props }) {

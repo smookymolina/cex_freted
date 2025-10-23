@@ -42,3 +42,15 @@
 .ghost:hover {
   color: #105c3c;
 }
+
+.secondary {
+  background: transparent;
+  color: var(--color-secondary);
+  border-color: rgba(16, 92, 60, 0.4);
+}
+
+.secondary:hover {
+  border-color: var(--color-secondary);
+  color: var(--color-secondary-dark);
+  transform: translateY(-2px);
+}

@@ -1,11 +1,14 @@
 import '../styles/globals.css';
 import Layout from '../components/layout/Layout';
+import { CartProvider } from '../context/cart/CartContext';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <CartProvider>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </CartProvider>
   );
 }
 
