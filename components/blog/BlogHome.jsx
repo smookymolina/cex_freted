@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import BlogPostCard from './BlogPostCard';
 import styles from '../../styles/components/Blog.module.css';
 
@@ -53,7 +54,7 @@ const BlogHome = () => {
           <span className={styles.featuredCategory}>{featuredPost.category}</span>
           <h2>{featuredPost.title}</h2>
           <p>{featuredPost.excerpt}</p>
-          <a href={`/blog/${featuredPost.slug}`} className={styles.readMoreButton}>Leer artículo completo</a>
+          <Link href={`/blog/${featuredPost.slug}`} className={styles.readMoreButton}>Leer artículo completo</Link>
         </div>
       </section>
 
