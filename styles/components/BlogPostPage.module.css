@@ -1,0 +1,62 @@
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.category {
+  font-weight: 600;
+  color: #007bff;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.meta {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.mainImage {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.content {
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.content h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem 0;
+}
+
+.content p {
+  margin-bottom: 1rem;
+}
+
+.content a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.content a:hover {
+  text-decoration: underline;
+}

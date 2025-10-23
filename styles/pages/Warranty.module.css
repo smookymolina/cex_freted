@@ -1,0 +1,162 @@
+.container {
+  width: 100%;
+}
+
+.hero {
+  background-color: #f8f9fa;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroIcon {
+  color: #007bff;
+  margin-bottom: 1rem;
+}
+
+.heroTitle {
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  font-size: 1.15rem;
+  color: #495057;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 3rem;
+}
+
+/* Coverage Section */
+.coverageSection {
+  padding: 4rem 2rem;
+}
+
+.coverageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.coverageItem {
+  text-align: center;
+  padding: 2rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+}
+
+.itemIcon {
+  color: #007bff;
+  margin-bottom: 1rem;
+  width: 48px;
+  height: 48px;
+}
+
+.itemTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.itemDescription {
+  color: #6c757d;
+}
+
+/* Process Section */
+.processSection {
+  padding: 4rem 2rem;
+  background-color: #f8f9fa;
+}
+
+.processSteps {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+.step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 25px;
+  right: -40px; /* Ajustar según el gap */
+  width: 80px; /* Ajustar según el gap */
+  height: 2px;
+  background-color: #007bff;
+  opacity: 0.5;
+}
+
+.stepNumber {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.stepTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.stepDescription {
+  color: #6c757d;
+}
+
+/* FAQ Section */
+.faqSection {
+  padding: 4rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.faqItem {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 1.5rem;
+}
+
+.faqItem h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.faqItem p {
+  color: #6c757d;
+}
+
+@media (max-width: 768px) {
+  .processSteps {
+    flex-direction: column;
+  }
+  .step:not(:last-child)::after {
+    display: none;
+  }
+}

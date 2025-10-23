@@ -1,0 +1,148 @@
+/* General Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+}
+
+.header p {
+  font-size: 1.1rem;
+  color: #6c757d;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 0.5rem;
+}
+
+/* Featured Post */
+.featuredSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 4rem;
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.featuredImage img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.featuredContent h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.featuredContent p {
+  color: #495057;
+  margin-bottom: 1.5rem;
+}
+
+.featuredCategory {
+  font-weight: 600;
+  color: #007bff;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.readMoreButton {
+  display: inline-block;
+  background-color: #007bff;
+  color: #fff;
+  padding: 0.7rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.readMoreButton:hover {
+  background-color: #0056b3;
+}
+
+/* Grid for recent posts */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Blog Post Card */
+.card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.cardImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.cardContent {
+  padding: 1.5rem;
+}
+
+.cardCategory {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #007bff;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.cardExcerpt {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #868e96;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .featuredSection {
+    grid-template-columns: 1fr;
+  }
+}

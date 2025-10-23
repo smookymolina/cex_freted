@@ -1,0 +1,161 @@
+.container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #6c757d;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.summaryAndForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.columnTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 0.5rem;
+}
+
+/* Columna Izquierda: Resumen */
+.summaryColumn {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.productCard {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  margin-bottom: 1.5rem;
+}
+
+.productImage {
+  width: 60px;
+  height: 60px;
+  margin-right: 1rem;
+}
+
+.productDetails {
+  flex-grow: 1;
+}
+
+.productName {
+  font-weight: 600;
+}
+
+.productGrade {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.productPrice {
+  text-align: right;
+}
+
+.priceLabel {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.priceValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #28a745;
+}
+
+.nextSteps h4 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.nextSteps ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+/* Columna Derecha: Formulario */
+.formColumn {}
+
+.userForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputGroup label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.inputGroup input {
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkboxGroup label a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.checkboxGroup label a:hover {
+  text-decoration: underline;
+}
+
+.submitButton {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s;
+}
+
+.submitButton:hover {
+  background-color: #218838;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .summaryAndForm {
+    grid-template-columns: 1fr;
+  }
+}

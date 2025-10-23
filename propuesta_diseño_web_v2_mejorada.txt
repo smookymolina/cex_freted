@@ -1,0 +1,123 @@
+# Propuesta de Diseño v3: Construyendo el Líder de Confianza en Recommerce Tecnológico
+
+Este documento se basa en el análisis de los líderes del mercado para proponer una estrategia de diseño y negocio centrada en el modelo de **Recommerce**. Este enfoque (comprar, reacondicionar y vender) es el que genera más **confianza** en el consumidor y justifica precios más altos, siendo la base para construir una marca sólida y líder.
+
+---
+
+## 1. Propuesta de Valor y Modelo de Negocio: Recommerce
+
+A diferencia de un marketplace C2C (como Wallapop), nos posicionamos como una tienda online de confianza.
+
+*   **Nuestro Modelo:** Compramos dispositivos directamente a los usuarios, los sometemos a un riguroso proceso de certificación y los vendemos con garantía.
+*   **Para el Comprador:** Ofrecemos la tranquilidad y seguridad de comprar un producto de calidad, verificado y con garantía, eliminando la incertidumbre de la segunda mano.
+*   **Para el Vendedor:** Ofrecemos un proceso increíblemente simple, rápido y justo para convertir sus dispositivos en dinero, sin tener que negociar con particulares.
+
+---
+
+## 2. Flujos de Usuario Fundamentales
+
+La simplicidad y la transparencia son clave en cada paso.
+
+### Flujo del Vendedor (Fricción Cero)
+
+El objetivo es que vender sea más fácil que en cualquier otra plataforma.
+
+1.  **Tasación Instantánea y Transparente:**
+    *   El usuario busca su producto (ej: "iPhone 13").
+    *   Se presenta un formulario interactivo donde el estado del dispositivo ajusta el precio en tiempo real: `[x] Caja original (+15€)`, `[x] Arañazo en pantalla (-40€)`.
+    *   Se muestra la guía de grados para que el usuario clasifique su producto de forma realista.
+2.  **Envío Gratuito y Guiado:**
+    *   Al aceptar la oferta, el usuario recibe una etiqueta de envío prepagada.
+    *   **Servicio Premium (Opcional):** Se ofrece un "Kit de Envío" con una caja protectora para asegurar que el producto llegue seguro.
+3.  **Verificación y Pago Rápido:**
+    *   Nuestro equipo técnico verifica el producto en 24-48h.
+    *   Se confirma el precio y se emite el pago.
+    *   **Opciones de Pago Flexibles:** Transferencia, PayPal o **Crédito en Tienda con un +5% de bonus** para incentivar la recompra.
+
+### Flujo del Comprador (Compra Segura)
+
+La experiencia debe ser tan buena o mejor que comprar un producto nuevo.
+
+1.  **Navegación y Descubrimiento:**
+    *   Búsqueda potente (potenciada por Algolia/MeiliSearch) con filtros claros por categoría, marca, modelo y **grado**.
+    *   Páginas de categoría y comparativas ("iPhone 14 vs 15") para atraer tráfico SEO.
+2.  **Página de Producto (Centro de Confianza):**
+    *   **Selector de Grado:** Elección clara entre Grado A, B, C con explicación emergente.
+    *   **Certificado de Revisión:** Un bloque destacado muestra los "30 puntos de control superados" y enlaza al certificado digital del producto.
+    *   **Garantía Visible:** "Incluye 12 meses de garantía ampliable".
+    *   **Fotos Reales (para grados B y C):** Mostrar fotos reales de las imperfecciones para gestionar expectativas.
+3.  **Checkout y Post-Venta:**
+    *   Múltiples opciones de pago y financiación (Klarna, etc.).
+    *   Tracking de pedido visual y proactivo (`Pedido recibido -> Preparando -> Enviado...`).
+    *   Gestión de garantía simplificada desde el perfil del usuario.
+
+---
+
+## 3. Pilares de Confianza: Nuestro Diferenciador Principal
+
+Estos no son solo features, son el núcleo de nuestra marca.
+
+*   **Sistema de Grados Ultra-Claro (Ampliación 1):**
+    *   Grados A+, A, B, C bien definidos con guías visuales y ejemplos fotográficos. La transparencia aquí es total.
+*   **Proceso de Certificación y Control de Calidad (Ampliación 8):**
+    *   Checklist público de +30 puntos de revisión.
+    *   Certificado digital con QR para cada producto, mostrando resultados del test y técnico responsable.
+    *   Sello "Revisado y Desinfectado".
+*   **Garantía y Soporte Post-Venta (Ampliación 4, 13):**
+    *   Garantía mínima de 12 meses en todos los productos.
+    *   Opción de garantía extendida.
+    *   Proceso de soporte y devolución fácil y accesible.
+
+---
+
+## 4. Fidelización y Comunidad (Construir la Marca)
+
+Una vez establecida la confianza, creamos una comunidad leal.
+
+*   **Gamificación y Recompensas (Ampliación 2):**
+    *   Niveles de usuario, insignias y un sistema de puntos canjeables por descuentos.
+*   **Sostenibilidad como Pilar (Ampliación 9):**
+    *   Comunicar el impacto positivo (CO2 ahorrado) en el perfil del usuario.
+    *   Packaging 100% sostenible.
+    *   Programa de reciclaje para dispositivos no aptos.
+*   **Contenido de Valor y SEO (Ampliación 5):**
+    *   Blog con guías, comparativas y consejos para atraer tráfico orgánico.
+*   **Programa de Referidos (Ampliación 14):**
+    *   Incentivo doble para el referidor y el referido.
+
+---
+
+## 5. Estrategias de Crecimiento y Expansión
+
+*   **App Móvil Nativa (Ampliación 11):** Funcionalidades exclusivas como el escaneo por IA para tasación.
+*   **Trade-In Program (Ampliación 18):** Flujo unificado para vender tu antiguo dispositivo y obtener un descuento instantáneo en uno nuevo.
+*   **Marketplace Multivendedor (Fase 2 - Ampliación 12):** Una vez consolidada la marca, abrir la plataforma a vendedores profesionales certificados para escalar el inventario.
+*   **Expansión Internacional (Ampliación 20):** Preparar la plataforma para múltiples idiomas y divisas.
+
+---
+
+## 6. Recomendaciones Técnicas Avanzadas (Ampliación 6)
+
+*   **Arquitectura Headless:** Frontend (Next.js/Nuxt.js) desacoplado del Backend (Node.js/Strapi/Shopify).
+*   **Motor de Búsqueda Dedicado:** Algolia o MeiliSearch para una experiencia de búsqueda instantánea.
+*   **Infraestructura Cloud Moderna:** Vercel/Netlify para el frontend, Supabase/Render/AWS para el backend.
+
+---
+
+## 7. Roadmap Estratégico Sugerido
+
+El enfoque es lanzar un producto robusto y de confianza, y luego escalar.
+
+*   **Fase 1 (MVP de Confianza - Meses 0-5):**
+    *   **Core:** Implementar los flujos completos de compra y venta del modelo Recommerce.
+    *   **Confianza:** Sistema de Grados (Ampliación 1), Proceso de Certificación Básico (Ampliación 8), Garantías (Ampliación 4).
+    *   **Tecnología:** Arquitectura Headless y Motor de Búsqueda (Ampliación 6).
+*   **Fase 2 (Fidelización y Crecimiento - Meses 6-12):**
+    *   **Engagement:** Gamificación (Ampliación 2), Sostenibilidad (Ampliación 9), Contenido SEO (Ampliación 5).
+    *   **Crecimiento:** Programa de Referidos (Ampliación 14), Trade-In Program (Ampliación 18).
+    *   **Móvil:** Lanzamiento de la App Nativa (Ampliación 11).
+*   **Fase 3 (Escala y Dominio - Meses 13+):**
+    *   **Expansión:** Marketplace para Vendedores Pro (Ampliación 12), Expansión Internacional (Ampliación 20).
+    *   **Innovación:** Trazabilidad con Blockchain (Ampliación 19).
+
+Este roadmap prioriza la construcción de una base sólida de confianza y una experiencia de usuario impecable, que son los cimientos para un crecimiento sostenible y el liderazgo en el mercado.

@@ -1,0 +1,125 @@
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.productHeader {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.productImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 1.5rem;
+}
+
+.productName {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.productSubtitle {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.gradeSelector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.gradeOption {
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.gradeOption:hover {
+  border-color: #007bff;
+  transform: translateY(-2px);
+}
+
+.gradeOption.selected {
+  border-color: #007bff;
+  background-color: #e7f3ff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.gradeName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.gradeDescription {
+  font-size: 0.9rem;
+  color: #495057;
+  min-height: 60px;
+}
+
+.gradeAdjustment {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #007bff;
+}
+
+.priceSummary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.priceBox {
+  text-align: left;
+}
+
+.priceLabel {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+}
+
+.priceValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #28a745; /* Verde éxito */
+}
+
+.priceDisclaimer {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.submitButton {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submitButton:hover {
+  background-color: #218838;
+}
