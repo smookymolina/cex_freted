@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Button from '../ui/Button';
 import { useCart } from '../../context/cart/CartContext';
 import { ShoppingCart } from 'lucide-react';
+import { LanguageLink } from '../language/LanguageSwitcher';
 import styles from '../../styles/components/primary-nav.module.css';
 
 const primaryLinks = [
@@ -27,7 +28,7 @@ export default function PrimaryNav() {
         <div className={styles.utilityLinks}>
           <Link href="/soporte/faq">FAQ</Link>
           <Link href="/soporte/chat">Chat 24/7</Link>
-          <Link href="/idioma">ES/EN</Link>
+          <LanguageLink />
         </div>
       </div>
       <div className={styles.bar}>
