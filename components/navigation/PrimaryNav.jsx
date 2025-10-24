@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import Button from '../ui/Button';
+import { useCart } from '../../context/cart/CartContext';
+import { ShoppingCart } from 'lucide-react';
 import styles from '../../styles/components/primary-nav.module.css';
 
 const primaryLinks = [
@@ -14,6 +16,8 @@ const primaryLinks = [
 ];
 
 export default function PrimaryNav() {
+  const { cartCount } = useCart();
+
   return (
     <header className={styles.wrapper}>
       <div className={styles.topBar}>
@@ -23,7 +27,6 @@ export default function PrimaryNav() {
         <div className={styles.utilityLinks}>
           <Link href="/soporte/faq">FAQ</Link>
           <Link href="/soporte/chat">Chat 24/7</Link>
-          <Link href="/checkout">Carrito</Link>
           <Link href="/idioma">ES/EN</Link>
         </div>
       </div>
@@ -44,6 +47,37 @@ export default function PrimaryNav() {
             Tasar dispositivo
           </Button>
           <Button href="/comprar">Ver catalogo</Button>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <Button href="/checkout/carrito">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ShoppingCart style={{ width: '18px', height: '18px' }} />
+                <span style={{ display: 'none' }} className="lg:inline">Carrito</span>
+              </div>
+            </Button>
+            {cartCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: '-8px',
+                right: '-8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: '20px',
+                height: '20px',
+                padding: '0 6px',
+                borderRadius: '9999px',
+                background: 'linear-gradient(to right, #ef4444, #dc2626)',
+                color: 'white',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                border: '2px solid white',
+                zIndex: 10
+              }}>
+                {cartCount > 99 ? '99+' : cartCount}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </header>
