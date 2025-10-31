@@ -13,7 +13,31 @@ export default function ProductCard({ product }) {
   const { cart, addToCart } = useCart();
   const [justAdded, setJustAdded] = useState(false);
 
-  const selectedVariant = product?.variants?.[0];
+  const variants = Array.isArray(product?.variants) ? product.variants : [];
+  const [selectedIndex, setSelectedIndex] = useState(() => {
+    if (!variants.length) return 0;
+    const firstAvailable = variants.findIndex(
+      (variant) => variant?.stock === undefined || variant.stock > 0
+    );
+    return firstAvailable >= 0 ? firstAvailable : 0;
+  });
+
+  useEffect(() => {
+    if (!variants.length) return;
+    const firstAvailable = variants.findIndex(
+      (variant) => variant?.stock === undefined || variant.stock > 0
+    );
+    setSelectedIndex((current) => {
+      if (variants[current]) return current;
+      return firstAvailable >= 0 ? firstAvailable : 0;
+    });
+  }, [product?.slug]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const selectedVariant = variants[selectedIndex] ?? variants[0] ?? null;
+  const imageSrc =
+    product?.image && product.image.trim().length > 0
+      ? product.image
+      : '/assets/images/placeholder-device.png';
 
   const cartItemId = useMemo(() => {
     if (!product?.slug || !selectedVariant?.grade) return null;
@@ -43,7 +67,7 @@ export default function ProductCard({ product }) {
       id: cartItemId,
       name: product.name,
       slug: product.slug,
-      image: product.image,
+      image: imageSrc,
       grade: selectedVariant.grade,
       category: product.category,
       price: selectedVariant.price,
@@ -72,7 +96,7 @@ export default function ProductCard({ product }) {
         <div className={styles.badge}>{selectedVariant.grade}</div>
         <div className={styles.imageWrapper}>
           <Image
-            src={product.image}
+            src={imageSrc}
             alt={product.name}
             width={200}
             height={200}
@@ -91,6 +115,47 @@ export default function ProductCard({ product }) {
             </span>
           )}
         </div>
+        {variants.length > 1 && (
+          <div className={styles.variantSelector} role="radiogroup" aria-label="Seleccionar grado">
+            {variants.map((variant, index) => {
+              const isSelected = index === selectedIndex;
+              const variantOutOfStock =
+                variant?.stock !== undefined && variant.stock < 1;
+
+              return (
+                <button
+                  key={`${product.slug}-${variant.grade}`}
+                  type="button"
+                  role="radio"
+                  aria-checked={isSelected}
+                  disabled={variantOutOfStock}
+                  className={[
+                    styles.variantOption,
+                    isSelected ? styles.variantOptionSelected : '',
+                    variantOutOfStock ? styles.variantOptionDisabled : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={() => setSelectedIndex(index)}
+                >
+                  <span className={styles.variantLabel}>Grade {variant.grade}</span>
+                  <span className={styles.variantPrice}>
+                    {CURRENCY_FORMATTER.format(variant.price)}
+                  </span>
+                  {variantOutOfStock ? (
+                    <span className={styles.variantStock}>Sin stock</span>
+                  ) : (
+                    <span className={styles.variantStock}>
+                      {variant.stock !== null && variant.stock !== undefined
+                        ? `${variant.stock} en inventario`
+                        : 'Stock disponible'}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
         <div className={styles.tags}>
           <span>Garantia 12 meses</span>
           <span>Envio gratis</span>

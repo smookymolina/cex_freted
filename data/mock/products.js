@@ -2,7 +2,8 @@ export const products = [
   {
     name: 'iPhone 14 Pro',
     slug: 'iphone-14-pro',
-    image: '/assets/images/iphone-14-pro.png',
+    image: '/assets/images/products/iphone-14-pro/primary.png',
+    thumbnail: '/assets/images/products/iphone-14-pro/thumbnail.png',
     category: 'Smartphones',
     variants: [
       {
@@ -28,7 +29,8 @@ export const products = [
   {
     name: 'iPhone 14',
     slug: 'iphone-14',
-    image: '/assets/images/iphone-14.png',
+    image: '/assets/images/products/iphone-14/primary.png',
+    thumbnail: '/assets/images/products/iphone-14/thumbnail.png',
     category: 'Smartphones',
     variants: [
       {
@@ -54,7 +56,8 @@ export const products = [
   {
     name: 'Samsung Galaxy S23',
     slug: 'samsung-galaxy-s23',
-    image: '/assets/images/samsung-s23.png',
+    image: '/assets/images/products/samsung-galaxy-s23/primary.png',
+    thumbnail: '/assets/images/products/samsung-galaxy-s23/thumbnail.png',
     category: 'Smartphones',
     variants: [
       {
@@ -74,7 +77,8 @@ export const products = [
   {
     name: 'Google Pixel 7 Pro',
     slug: 'google-pixel-7-pro',
-    image: '/assets/images/pixel-7-pro.png',
+    image: '/assets/images/products/google-pixel-7-pro/primary.png',
+    thumbnail: '/assets/images/products/google-pixel-7-pro/thumbnail.png',
     category: 'Smartphones',
     variants: [
       {
@@ -94,7 +98,8 @@ export const products = [
   {
     name: 'MacBook Air M2',
     slug: 'macbook-air-m2',
-    image: '/assets/images/macbook-air-m2.png',
+    image: '/assets/images/products/macbook-air-m2/primary.png',
+    thumbnail: '/assets/images/products/macbook-air-m2/thumbnail.png',
     category: 'Laptops',
     variants: [
       {
@@ -114,7 +119,8 @@ export const products = [
   {
     name: 'iPad Pro 11-inch',
     slug: 'ipad-pro-11-inch',
-    image: '/assets/images/ipad-pro.png',
+    image: '/assets/images/products/ipad-pro-11-inch/primary.png',
+    thumbnail: '/assets/images/products/ipad-pro-11-inch/thumbnail.png',
     category: 'Tablets',
     variants: [
       {
@@ -128,7 +134,8 @@ export const products = [
   {
     name: 'PlayStation 5',
     slug: 'playstation-5',
-    image: '/assets/images/ps5.png',
+    image: '/assets/images/products/playstation-5/primary.png',
+    thumbnail: '/assets/images/products/playstation-5/thumbnail.png',
     category: 'Consoles',
     variants: [
       {
@@ -148,7 +155,8 @@ export const products = [
   {
     name: 'Xbox Series X',
     slug: 'xbox-series-x',
-    image: '/assets/images/xbox-series-x.png',
+    image: '/assets/images/products/xbox-series-x/primary.png',
+    thumbnail: '/assets/images/products/xbox-series-x/thumbnail.png',
     category: 'Consoles',
     variants: [
       {
@@ -162,7 +170,8 @@ export const products = [
   {
     name: 'Nintendo Switch OLED',
     slug: 'nintendo-switch-oled',
-    image: '/assets/images/nintendo-switch.png',
+    image: '/assets/images/products/nintendo-switch-oled/primary.png',
+    thumbnail: '/assets/images/products/nintendo-switch-oled/thumbnail.png',
     category: 'Consoles',
     variants: [
       {
@@ -176,7 +185,8 @@ export const products = [
   {
     name: 'Sony WH-1000XM5 Headphones',
     slug: 'sony-wh-1000xm5',
-    image: '/assets/images/sony-headphones.png',
+    image: '/assets/images/products/sony-wh-1000xm5/primary.png',
+    thumbnail: '/assets/images/products/sony-wh-1000xm5/thumbnail.png',
     category: 'Accessories',
     variants: [
       {
@@ -190,7 +200,8 @@ export const products = [
   {
     name: 'Apple Watch Series 8',
     slug: 'apple-watch-series-8',
-    image: '/assets/images/apple-watch-8.png',
+    image: '/assets/images/products/apple-watch-series-8/primary.png',
+    thumbnail: '/assets/images/products/apple-watch-series-8/thumbnail.png',
     category: 'Wearables',
     variants: [
       {
@@ -204,7 +215,8 @@ export const products = [
   {
     name: 'Dell UltraSharp U2723QE Monitor',
     slug: 'dell-ultrasharp-u2723qe',
-    image: '/assets/images/dell-monitor.png',
+    image: '/assets/images/products/dell-ultrasharp-u2723qe/primary.png',
+    thumbnail: '/assets/images/products/dell-ultrasharp-u2723qe/thumbnail.png',
     category: 'Monitors',
     variants: [
       {

@@ -1,89 +1,110 @@
 import React, { useState, useEffect } from 'react';
 import { Globe } from 'lucide-react';
 
-const LANGUAGES = [
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'en', name: 'English', flag: '🇺🇸' }
+const STORAGE_KEY = 'cex_freted_language';
+const LANGUAGE_OPTIONS = [
+  { code: 'es', label: 'Espa\u00f1ol', flag: '\uD83C\uDDEA\uD83C\uDDF8' },
+  { code: 'en', label: 'English', flag: '\uD83C\uDDFA\uD83C\uDDF8' },
 ];
+
+const isBrowser = () => typeof window !== 'undefined';
+
+const persistLanguage = (langCode) => {
+  if (!isBrowser()) return;
+  window.localStorage.setItem(STORAGE_KEY, langCode);
+  document.documentElement.lang = langCode;
+};
+
+const getLanguage = (code) =>
+  LANGUAGE_OPTIONS.find((option) => option.code === code) ?? LANGUAGE_OPTIONS[0];
 
 export default function LanguageSwitcher({ className = '' }) {
   const [currentLang, setCurrentLang] = useState('es');
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Cargar idioma guardado del localStorage
-    const savedLang = localStorage.getItem('cex_freted_language');
-    if (savedLang && ['es', 'en'].includes(savedLang)) {
-      setCurrentLang(savedLang);
+    if (!isBrowser()) return;
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored && LANGUAGE_OPTIONS.some((option) => option.code === stored)) {
+      setCurrentLang(stored);
+      document.documentElement.lang = stored;
     }
   }, []);
 
   const handleLanguageChange = (langCode) => {
     setCurrentLang(langCode);
-    localStorage.setItem('cex_freted_language', langCode);
+    persistLanguage(langCode);
     setIsOpen(false);
 
-    // Aquí puedes agregar lógica adicional como:
-    // - Cambiar el idioma de la aplicación usando i18n
-    // - Recargar contenido traducido
-    // - Actualizar el atributo lang del HTML
-    document.documentElement.lang = langCode;
-
-    // Mostrar notificación (opcional)
-    console.log(`Idioma cambiado a: ${langCode === 'es' ? 'Español' : 'English'}`);
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.info(
+        `Idioma cambiado a: ${langCode === 'es' ? 'Espa\u00f1ol' : 'English'}`
+      );
+    }
   };
 
-  const getCurrentLanguage = () => {
-    return LANGUAGES.find(lang => lang.code === currentLang) || LANGUAGES[0];
-  };
+  const activeLanguage = getLanguage(currentLang);
 
   return (
     <div className={`relative ${className}`}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen((open) => !open)}
         className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 font-medium text-sm"
         aria-label="Seleccionar idioma"
+        type="button"
       >
         <Globe className="w-4 h-4" />
-        <span>{getCurrentLanguage().code.toUpperCase()}</span>
+        <span>{activeLanguage.code.toUpperCase()}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
+          aria-hidden="true"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
-      {/* Dropdown */}
       {isOpen && (
         <>
-          {/* Overlay para cerrar al hacer clic fuera */}
           <div
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
+            role="presentation"
           ></div>
 
-          {/* Menu */}
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
-            {LANGUAGES.map(lang => (
-              <button
-                key={lang.code}
-                onClick={() => handleLanguageChange(lang.code)}
-                className={`w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors flex items-center gap-3 ${
-                  currentLang === lang.code ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
-                }`}
-              >
-                <span className="text-2xl">{lang.flag}</span>
-                <span className="font-medium">{lang.name}</span>
-                {currentLang === lang.code && (
-                  <svg className="w-5 h-5 ml-auto text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </button>
-            ))}
+            {LANGUAGE_OPTIONS.map((option) => {
+              const isActive = option.code === currentLang;
+              return (
+                <button
+                  key={option.code}
+                  type="button"
+                  onClick={() => handleLanguageChange(option.code)}
+                  className={`w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors flex items-center gap-3 ${
+                    isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                  }`}
+                  role="menuitemradio"
+                  aria-checked={isActive}
+                >
+                  <span className="text-2xl" aria-hidden="true">
+                    {option.flag}
+                  </span>
+                  <span className="font-medium">{option.label}</span>
+                  {isActive && (
+                    <svg className="w-5 h-5 ml-auto text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </>
       )}
@@ -91,20 +112,22 @@ export default function LanguageSwitcher({ className = '' }) {
   );
 }
 
-// Componente simple para usar en el link directo
 export function LanguageLink({ className = '' }) {
   const [currentLang, setCurrentLang] = useState('es');
 
   useEffect(() => {
-    const savedLang = localStorage.getItem('cex_freted_language') || 'es';
-    setCurrentLang(savedLang);
+    if (!isBrowser()) return;
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored && LANGUAGE_OPTIONS.some((option) => option.code === stored)) {
+      setCurrentLang(stored);
+      document.documentElement.lang = stored;
+    }
   }, []);
 
   const toggleLanguage = () => {
-    const newLang = currentLang === 'es' ? 'en' : 'es';
-    setCurrentLang(newLang);
-    localStorage.setItem('cex_freted_language', newLang);
-    document.documentElement.lang = newLang;
+    const nextLang = currentLang === 'es' ? 'en' : 'es';
+    setCurrentLang(nextLang);
+    persistLanguage(nextLang);
   };
 
   return (
@@ -112,6 +135,7 @@ export function LanguageLink({ className = '' }) {
       onClick={toggleLanguage}
       className={`inline-flex items-center gap-1 hover:text-blue-600 transition-colors ${className}`}
       title="Cambiar idioma"
+      type="button"
     >
       <Globe className="w-4 h-4" />
       <span className="font-medium">{currentLang.toUpperCase()}</span>

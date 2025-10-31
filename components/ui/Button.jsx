@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import Link from 'next/link';
 import styles from '../../styles/components/button.module.css';
 
@@ -8,20 +9,46 @@ const variantClassMap = {
   secondary: styles.secondary,
 };
 
-export default function Button({ children, href, variant = 'solid', ...props }) {
-  const className = `${styles.button} ${variantClassMap[variant] ?? styles.solid}`;
+const Button = forwardRef(function Button(
+  {
+    children,
+    href,
+    variant = 'solid',
+    className = '',
+    fullWidth = false,
+    ...rest
+  },
+  ref
+) {
+  const { type, ...props } = rest;
+
+  const composedClassName = [
+    styles.button,
+    variantClassMap[variant] ?? styles.solid,
+    fullWidth ? styles.fullWidth : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   if (href) {
     return (
-      <Link href={href} className={className} {...props}>
+      <Link ref={ref} href={href} className={composedClassName} {...props}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button className={className} type="button" {...props}>
+    <button
+      ref={ref}
+      className={composedClassName}
+      type={type ?? 'button'}
+      {...props}
+    >
       {children}
     </button>
   );
-}
+});
+
+export default Button;

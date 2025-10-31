@@ -16,6 +16,10 @@ export default function CartItemRow({ item }) {
   const itemTotal = item.price * item.quantity;
   const hasStock = item.stock === null || item.stock >= item.quantity;
   const maxQuantity = item.stock ?? 99;
+  const imageSrc =
+    item?.image && item.image.trim().length > 0
+      ? item.image
+      : '/assets/images/placeholder-device.png';
 
   const handleIncrease = () => {
     if (item.quantity < maxQuantity) {
@@ -48,9 +52,9 @@ export default function CartItemRow({ item }) {
           <div className="flex gap-4">
             {/* Imagen */}
             <div className="relative w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-              {item.image ? (
+              {imageSrc ? (
                 <Image
-                  src={item.image}
+                  src={imageSrc}
                   alt={item.name}
                   fill
                   className="object-cover"
