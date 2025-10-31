@@ -1,0 +1,36 @@
+export const LANGUAGES = [
+  {
+    code: 'es',
+    name: 'Español',
+    nativeName: 'Español',
+    flag: '🇪🇸',
+    region: 'España / América Latina',
+    available: true,
+  },
+  {
+    code: 'en',
+    name: 'English',
+    nativeName: 'English',
+    flag: '🇺🇸',
+    region: 'United States / International',
+    available: true,
+  },
+  {
+    code: 'pt',
+    name: 'Português',
+    nativeName: 'Português',
+    flag: '🇧🇷',
+    region: 'Brasil / Portugal',
+    available: false,
+    comingSoon: true,
+  },
+  {
+    code: 'fr',
+    name: 'Français',
+    nativeName: 'Français',
+    flag: '🇫🇷',
+    region: 'France / Canada',
+    available: false,
+    comingSoon: true,
+  },
+];

@@ -14,3 +14,5 @@ dist/
 Thumbs.db
 .claude/
 nul
+
+/lib/generated/prisma

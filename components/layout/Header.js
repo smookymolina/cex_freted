@@ -1,7 +1,9 @@
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 import CartIcon from '../cart/CartIcon';
 
 const Header = () => {
+  const { data: session, status } = useSession();
 
   return (
     <header className="bg-white shadow-md">
@@ -16,7 +18,18 @@ const Header = () => {
           <Link href="/garantias" className="text-gray-600 hover:text-blue-600">Garantías</Link>
         </div>
         <div className="hidden md:flex items-center space-x-4">
-          <Link href="/mi-cuenta" className="text-gray-600">Mi Cuenta</Link>
+          {status === 'loading' && (
+            <div className="text-gray-500">Cargando...</div>
+          )}
+          {status === 'unauthenticated' && (
+            <Link href="/mi-cuenta/login" className="text-gray-600 hover:text-blue-600">Iniciar Sesión</Link>
+          )}
+          {status === 'authenticated' && (
+            <>
+              <Link href="/mi-cuenta" className="text-gray-600 hover:text-blue-600">Hola, {session.user.name}</Link>
+              <button onClick={() => signOut({ callbackUrl: '/' })} className="text-gray-600 hover:text-blue-600">Cerrar Sesión</button>
+            </>
+          )}
           <CartIcon showLabel={false} />
         </div>
         <div className="md:hidden">

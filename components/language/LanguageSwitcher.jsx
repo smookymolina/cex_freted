@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Globe } from 'lucide-react';
+import { LANGUAGES } from '../../data/constants/languages';
 
 const STORAGE_KEY = 'cex_freted_language';
-const LANGUAGE_OPTIONS = [
-  { code: 'es', label: 'Espa\u00f1ol', flag: '\uD83C\uDDEA\uD83C\uDDF8' },
-  { code: 'en', label: 'English', flag: '\uD83C\uDDFA\uD83C\uDDF8' },
-];
+
+const LANGUAGE_OPTIONS = LANGUAGES.filter((language) => language.available).map((language) => ({
+  code: language.code,
+  label: language.nativeName,
+  flag: language.flag,
+}));
 
 const isBrowser = () => typeof window !== 'undefined';
 
@@ -44,7 +47,7 @@ export default function LanguageSwitcher({ className = '' }) {
     }
   };
 
-  const activeLanguage = getLanguage(currentLang);
+  const activeLanguage = useMemo(() => getLanguage(currentLang), [currentLang]);
 
   return (
     <div className={`relative ${className}`}>
@@ -125,9 +128,11 @@ export function LanguageLink({ className = '' }) {
   }, []);
 
   const toggleLanguage = () => {
-    const nextLang = currentLang === 'es' ? 'en' : 'es';
-    setCurrentLang(nextLang);
-    persistLanguage(nextLang);
+    const currentIndex = LANGUAGE_OPTIONS.findIndex((option) => option.code === currentLang);
+    const nextIndex = (currentIndex + 1) % LANGUAGE_OPTIONS.length;
+    const nextLanguage = LANGUAGE_OPTIONS[nextIndex];
+    setCurrentLang(nextLanguage.code);
+    persistLanguage(nextLanguage.code);
   };
 
   return (
