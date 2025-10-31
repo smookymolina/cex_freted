@@ -1,96 +1,89 @@
-import React from 'react';
-import { useCart } from '../../context/cart/CartContext';
-import CartItemRow from '../../components/cart/CartItemRow';
-import CartSummary from '../../components/cart/CartSummary';
-import Link from 'next/link';
-import { ShoppingBag, ArrowLeft } from 'lucide-react';
+﻿import React from "react";
+import Link from "next/link";
+import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { useCart } from "../../context/cart/CartContext";
+import CartItemRow from "../../components/cart/CartItemRow";
+import CartSummary from "../../components/cart/CartSummary";
+import commonStyles from "../../styles/components/common.module.css";
+import styles from "../../styles/pages/cart.module.css";
 
 export default function CarritoPage() {
   const { cart, cartCount, clearCart } = useCart();
 
+  const cartDescription =
+    cartCount === 0
+      ? "Todavia no has agregado productos. Empieza seleccionando el dispositivo ideal para ti."
+      : `Tienes ${cartCount} ${cartCount === 1 ? "articulo" : "articulos"} listos para revisar antes del pago.`;
+
+  const handleClearCart = () => {
+    if (typeof window === "undefined") return;
+    const confirmed = window.confirm("Seguro que quieres vaciar el carrito?");
+    if (confirmed) {
+      clearCart();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Link
-            href="/comprar"
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Continuar comprando</span>
-          </Link>
-
-          <h1 className="text-3xl font-bold text-gray-900">
-            Tu Carrito de Compras
-          </h1>
-          <p className="text-gray-600 mt-1">
-            {cartCount === 0
-              ? 'Tu carrito está vacío'
-              : `${cartCount} ${cartCount === 1 ? 'artículo' : 'artículos'} en tu carrito`}
-          </p>
-        </div>
-
-        {/* Contenido */}
-        {cart.length === 0 ? (
-          /* Carrito vacío */
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <ShoppingBag className="w-20 h-20 mx-auto text-gray-300 mb-4" />
-            <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-              Tu carrito está vacío
-            </h2>
-            <p className="text-gray-500 mb-6">
-              Agrega productos a tu carrito para continuar
-            </p>
-            <Link
-              href="/comprar"
-              className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-            >
-              Ver Productos
+    <div className={commonStyles.pageContainer}>
+      <div className={commonStyles.pageInner}>
+        <header className={styles.pageHeader}>
+          <div className={styles.headerTop}>
+            <Link href="/comprar" className={styles.backLink}>
+              <ArrowLeft aria-hidden="true" />
+              <span>Seguir explorando productos</span>
             </Link>
           </div>
+
+          <div className={styles.headline}>
+            <div className={styles.headlineIcon}>
+              <ShoppingBag aria-hidden="true" />
+            </div>
+            <div>
+              <h1>Tu carrito certificado</h1>
+              <p>{cartDescription}</p>
+            </div>
+          </div>
+        </header>
+
+        {cart.length === 0 ? (
+          <section className={styles.emptyState} aria-labelledby="empty-cart-title">
+            <div className={styles.emptyIcon}>
+              <ShoppingBag aria-hidden="true" />
+            </div>
+            <h2 id="empty-cart-title">Tu carrito esta vacio</h2>
+            <p>Guarda tus dispositivos favoritos y finaliza tu compra cuando estes listo.</p>
+            <Link href="/comprar">Descubrir productos certificados</Link>
+            <p className={styles.emptySecondary}>
+              Cada dispositivo esta verificado y listo para enviarse en 24 horas.
+            </p>
+          </section>
         ) : (
-          /* Carrito con productos */
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Lista de productos */}
-            <div className="lg:col-span-2 space-y-4">
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                {/* Header de tabla */}
-                <div className="hidden md:grid md:grid-cols-12 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700">
-                  <div className="col-span-6">Producto</div>
-                  <div className="col-span-2 text-center">Precio</div>
-                  <div className="col-span-2 text-center">Cantidad</div>
-                  <div className="col-span-2 text-right">Total</div>
+          <section className={styles.cartLayout} aria-label="Productos en tu carrito">
+            <div className={styles.itemsPanel}>
+              <div className={styles.listCard}>
+                <div className={styles.listHeader} role="presentation">
+                  <span>Producto</span>
+                  <span>Precio</span>
+                  <span>Cantidad</span>
+                  <span>Total</span>
                 </div>
 
-                {/* Productos */}
-                <div className="divide-y divide-gray-200">
+                <div className={styles.itemsList}>
                   {cart.map((item) => (
                     <CartItemRow key={item.id} item={item} />
                   ))}
                 </div>
               </div>
 
-              {/* Botón limpiar carrito */}
-              <div className="flex justify-end">
-                <button
-                  onClick={() => {
-                    if (window.confirm('¿Estás seguro de vaciar el carrito?')) {
-                      clearCart();
-                    }
-                  }}
-                  className="text-sm text-red-600 hover:text-red-700 font-medium hover:underline"
-                >
-                  Vaciar carrito
-                </button>
-              </div>
+              <button type="button" onClick={handleClearCart} className={styles.clearButton}>
+                Vaciar carrito
+              </button>
             </div>
 
-            {/* Resumen del carrito */}
-            <div className="lg:col-span-1">
+            <aside className={styles.summaryPanel}>
               <CartSummary />
-            </div>
-          </div>
+            </aside>
+          </section>
         )}
       </div>
     </div>

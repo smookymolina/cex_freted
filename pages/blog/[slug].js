@@ -6,7 +6,7 @@ const mockPosts = [
   {
     slug: 'guia-comprar-iphone-reacondicionado',
     title: 'Guía Definitiva para Comprar un iPhone Reacondicionado en 2025',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/guia-comprar-iphone-reacondicionado.jpg',
     category: 'Guías de Compra',
     author: 'Ana García',
     date: '22 de Octubre, 2025',
@@ -24,7 +24,7 @@ const mockPosts = [
   {
     slug: 'sostenibilidad-tecnologica',
     title: 'El Impacto Oculto de tu Smartphone: Sostenibilidad y Tecnología',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/sostenibilidad-tecnologica.jpg',
     category: 'Sostenibilidad',
     author: 'Carlos Pérez',
     date: '15 de Octubre, 2025',
@@ -43,7 +43,7 @@ const mockPosts = [
   {
     slug: 'macbook-air-vs-pro',
     title: 'MacBook Air vs. Pro: ¿Cuál es el Ideal para Estudiantes?',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/macbook-air-vs-pro.jpg',
     category: 'Comparativas',
     author: 'Laura Martínez',
     date: '10 de Octubre, 2025',
@@ -63,7 +63,7 @@ const mockPosts = [
   {
     slug: 'como-vender-iphone-usado',
     title: 'Cómo Vender tu iPhone Usado: Guía Completa para Obtener el Mejor Precio',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/como-vender-iphone-usado.jpg',
     category: 'Guías de Venta',
     author: 'Roberto Sánchez',
     date: '5 de Octubre, 2025',
@@ -84,7 +84,7 @@ const mockPosts = [
   {
     slug: 'tablets-estudiantes-2025',
     title: 'Las Mejores Tablets para Estudiantes en 2025: iPad vs Samsung Galaxy Tab',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/tablets-estudiantes-2025.jpg',
     category: 'Comparativas',
     author: 'Ana García',
     date: '28 de Septiembre, 2025',
@@ -105,7 +105,7 @@ const mockPosts = [
   {
     slug: 'garantia-dispositivos-reacondicionados',
     title: 'Todo sobre las Garantías en Dispositivos Reacondicionados: Tu Protección al Comprar',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/garantia-dispositivos-reacondicionados.jpg',
     category: 'Guías de Compra',
     author: 'Carlos Pérez',
     date: '20 de Septiembre, 2025',
@@ -127,7 +127,7 @@ const mockPosts = [
   {
     slug: 'android-vs-iphone-cual-elegir',
     title: 'Android vs iPhone en 2025: ¿Cuál es Mejor para Ti?',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/android-vs-iphone-cual-elegir.jpg',
     category: 'Comparativas',
     author: 'Laura Martínez',
     date: '12 de Septiembre, 2025',
@@ -151,7 +151,7 @@ const mockPosts = [
   {
     slug: 'consolas-gaming-ps5-xbox-switch',
     title: 'Guía de Consolas 2025: PS5 vs Xbox Series X vs Nintendo Switch - ¿Cuál Comprar?',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/consolas-gaming-ps5-xbox-switch.jpg',
     category: 'Gaming',
     author: 'Roberto Sánchez',
     date: '3 de Septiembre, 2025',
@@ -174,7 +174,7 @@ const mockPosts = [
   {
     slug: 'auriculares-inalambricos-airpods-vs-competencia',
     title: 'AirPods vs la Competencia: Mejor Calidad-Precio en Auriculares Inalámbricos 2025',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/auriculares-inalambricos-airpods-vs-competencia.jpg',
     category: 'Comparativas',
     author: 'Ana García',
     date: '25 de Agosto, 2025',
@@ -197,7 +197,7 @@ const mockPosts = [
   {
     slug: 'apple-watch-cual-comprar-2025',
     title: 'Apple Watch: ¿Qué Generación Comprar en 2025? Guía Completa',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/apple-watch-cual-comprar-2025.jpg',
     category: 'Guías de Compra',
     author: 'Laura Martínez',
     date: '18 de Agosto, 2025',
@@ -220,7 +220,7 @@ const mockPosts = [
   {
     slug: 'laptops-gaming-reacondicionadas-vale-la-pena',
     title: 'Laptops Gaming Reacondicionadas: ¿Vale la Pena en 2025?',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/laptops-gaming-reacondicionadas-vale-la-pena.jpg',
     category: 'Gaming',
     author: 'Roberto Sánchez',
     date: '10 de Agosto, 2025',
@@ -241,7 +241,7 @@ const mockPosts = [
   {
     slug: 'camaras-digitales-vs-smartphones-2025',
     title: '¿Aún Necesitas una Cámara Digital en 2025? Cámaras vs Smartphones',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/camaras-digitales-vs-smartphones-2025.jpg',
     category: 'Comparativas',
     author: 'Ana García',
     date: '2 de Agosto, 2025',
@@ -262,7 +262,7 @@ const mockPosts = [
   {
     slug: 'smart-home-dispositivos-esenciales-2025',
     title: 'Smart Home para Principiantes: Dispositivos Esenciales en 2025',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/smart-home-dispositivos-esenciales-2025.jpg',
     category: 'Guías de Compra',
     author: 'Carlos Pérez',
     date: '25 de Julio, 2025',
@@ -285,7 +285,7 @@ const mockPosts = [
   {
     slug: 'monitores-trabajo-remoto-home-office',
     title: 'Mejores Monitores para Trabajo Remoto y Home Office 2025',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/monitores-trabajo-remoto-home-office.jpg',
     category: 'Guías de Compra',
     author: 'Laura Martínez',
     date: '15 de Julio, 2025',
@@ -308,7 +308,7 @@ const mockPosts = [
   {
     slug: 'teclados-mecanicos-guia-switches-2025',
     title: 'Teclados Mecánicos: Guía Completa de Switches y Cómo Elegir en 2025',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/teclados-mecanicos-guia-switches-2025.jpg',
     category: 'Guías de Compra',
     author: 'Roberto Sánchez',
     date: '5 de Julio, 2025',
@@ -331,7 +331,7 @@ const mockPosts = [
   {
     slug: 'preparar-android-para-vender',
     title: 'Cómo Preparar tu Android para Vender: Checklist Completo 2025',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/preparar-android-para-vender.jpg',
     category: 'Guías de Venta',
     author: 'Carlos Pérez',
     date: '28 de Junio, 2025',
@@ -356,7 +356,7 @@ const mockPosts = [
   {
     slug: 'evitar-estafas-comprar-tecnologia-usada',
     title: 'Cómo Evitar Estafas al Comprar Tecnología Usada: Señales de Alerta',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/evitar-estafas-comprar-tecnologia-usada.jpg',
     category: 'Guías de Compra',
     author: 'Ana García',
     date: '18 de Junio, 2025',
@@ -381,7 +381,7 @@ const mockPosts = [
   {
     slug: 'ssd-vs-hdd-cual-elegir-2025',
     title: 'SSD vs HDD en 2025: ¿Cuál Elegir para tu Computadora?',
-    image: 'https://via.placeholder.com/800x400',
+    image: '/assets/images/blog/ssd-vs-hdd-cual-elegir-2025.jpg',
     category: 'Guías de Compra',
     author: 'Roberto Sánchez',
     date: '8 de Junio, 2025',

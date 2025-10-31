@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Button from '../ui/Button';
 import styles from '../../styles/components/product-card.module.css';
@@ -37,7 +37,7 @@ export default function ProductCard({ product }) {
   const imageSrc =
     product?.image && product.image.trim().length > 0
       ? product.image
-      : '/assets/images/placeholder-device.png';
+      : '/assets/images/placeholder-base.png';
 
   const cartItemId = useMemo(() => {
     if (!product?.slug || !selectedVariant?.grade) return null;

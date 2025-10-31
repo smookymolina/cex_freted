@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { useCart } from '../../context/cart/CartContext';
+﻿import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Trash2, Plus, Minus, AlertCircle, ShoppingBag } from 'lucide-react';
+import { useCart } from '../../context/cart/CartContext';
+import styles from '../../styles/components/cart-item.module.css';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
   style: 'currency',
@@ -19,7 +20,7 @@ export default function CartItemRow({ item }) {
   const imageSrc =
     item?.image && item.image.trim().length > 0
       ? item.image
-      : '/assets/images/placeholder-device.png';
+      : '/assets/images/placeholder-base.png';
 
   const handleIncrease = () => {
     if (item.quantity < maxQuantity) {
@@ -40,140 +41,117 @@ export default function CartItemRow({ item }) {
     }, 200);
   };
 
+  const isLowStock =
+    typeof item.stock === 'number' && item.stock > 0 && item.stock <= 5;
+
   return (
-    <div
-      className={`p-6 transition-all duration-200 ${
-        isRemoving ? 'opacity-0 transform scale-95' : 'opacity-100'
-      }`}
+    <article
+      className={`${styles.itemRow} ${isRemoving ? styles.removing : ''}`}
+      aria-label={`Producto ${item.name}`}
     >
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-        {/* Imagen y detalles del producto */}
-        <div className="col-span-1 md:col-span-6">
-          <div className="flex gap-4">
-            {/* Imagen */}
-            <div className="relative w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-              {imageSrc ? (
-                <Image
-                  src={imageSrc}
-                  alt={item.name}
-                  fill
-                  className="object-cover"
-                  sizes="96px"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  <ShoppingBag className="w-8 h-8" />
-                </div>
-              )}
+      <div className={styles.productColumn}>
+        <div className={styles.media}>
+          {imageSrc ? (
+            <Image
+              src={imageSrc}
+              alt={item.name}
+              fill
+              sizes="(min-width: 900px) 108px, (min-width: 600px) 96px, 88px"
+              className={styles.image}
+            />
+          ) : (
+            <div className={styles.placeholder}>
+              <ShoppingBag aria-hidden="true" />
             </div>
-
-            {/* Información del producto */}
-            <div className="flex-1 min-w-0">
-              <Link
-                href={`/productos/${item.slug}`}
-                className="font-semibold text-gray-900 hover:text-blue-600 transition-colors line-clamp-2"
-              >
-                {item.name}
-              </Link>
-
-              {/* Grade y categoría */}
-              <div className="flex flex-wrap gap-2 mt-2">
-                {item.grade && (
-                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                    Grade {item.grade}
-                  </span>
-                )}
-                {item.category && (
-                  <span className="text-xs text-gray-500">{item.category}</span>
-                )}
-              </div>
-
-              {/* Advertencia de stock bajo */}
-              {!hasStock && (
-                <div className="flex items-center gap-1 mt-2 text-xs text-red-600">
-                  <AlertCircle className="w-3 h-3" />
-                  <span>Stock insuficiente (disponible: {item.stock})</span>
-                </div>
-              )}
-            </div>
-          </div>
+          )}
         </div>
 
-        {/* Precio unitario */}
-        <div className="col-span-1 md:col-span-2">
-          <div className="md:text-center">
-            <span className="md:hidden text-sm text-gray-600 mr-2">Precio:</span>
-            <span className="font-semibold text-gray-900">
-              {CURRENCY_FORMATTER.format(item.price)}
-            </span>
-            {item.originalPrice && item.originalPrice > item.price && (
-              <div className="text-xs text-gray-500 line-through">
-                {CURRENCY_FORMATTER.format(item.originalPrice)}
-              </div>
+        <div className={styles.info}>
+          <Link href={`/productos/${item.slug}`} className={styles.name}>
+            {item.name}
+          </Link>
+
+          <div className={styles.meta}>
+            {item.grade && (
+              <span className={styles.gradeBadge}>Grade {item.grade}</span>
+            )}
+            {item.category && (
+              <span className={styles.category}>{item.category}</span>
             )}
           </div>
-        </div>
 
-        {/* Controles de cantidad */}
-        <div className="col-span-1 md:col-span-2">
-          <div className="flex items-center justify-center gap-2">
-            <span className="md:hidden text-sm text-gray-600 mr-2">Cantidad:</span>
-            <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white">
-              {/* Botón decrementar */}
-              <button
-                onClick={handleDecrease}
-                disabled={item.quantity <= 1}
-                className="p-2 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                aria-label="Disminuir cantidad"
-              >
-                <Minus className="w-4 h-4 text-gray-600" />
-              </button>
-
-              {/* Cantidad actual */}
-              <input
-                type="text"
-                value={item.quantity}
-                readOnly
-                className="w-12 text-center font-semibold text-gray-900 bg-white border-x border-gray-300"
-                aria-label="Cantidad"
-              />
-
-              {/* Botón incrementar */}
-              <button
-                onClick={handleIncrease}
-                disabled={item.quantity >= maxQuantity}
-                className="p-2 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                aria-label="Aumentar cantidad"
-              >
-                <Plus className="w-4 h-4 text-gray-600" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Total y botón eliminar */}
-        <div className="col-span-1 md:col-span-2">
-          <div className="flex md:flex-col items-center md:items-end gap-3">
-            {/* Total */}
-            <div className="flex-1 md:flex-none">
-              <span className="md:hidden text-sm text-gray-600 mr-2">Total:</span>
-              <span className="font-bold text-lg text-gray-900">
-                {CURRENCY_FORMATTER.format(itemTotal)}
-              </span>
-            </div>
-
-            {/* Botón eliminar */}
-            <button
-              onClick={handleRemove}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
-              aria-label="Eliminar producto"
-              title="Eliminar del carrito"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
-          </div>
+          {!hasStock && (
+            <span className={styles.stockWarning}>
+              <AlertCircle aria-hidden="true" />
+              Stock insuficiente (disponible: {item.stock})
+            </span>
+          )}
         </div>
       </div>
-    </div>
+
+      <div className={styles.priceColumn}>
+        <span className={styles.columnLabel}>Precio unitario</span>
+        <span className={styles.priceValue}>
+          {CURRENCY_FORMATTER.format(item.price)}
+        </span>
+        {item.originalPrice && item.originalPrice > item.price && (
+          <span className={styles.originalPrice}>
+            {CURRENCY_FORMATTER.format(item.originalPrice)}
+          </span>
+        )}
+      </div>
+
+      <div className={styles.quantityColumn}>
+        <span className={styles.columnLabel}>Cantidad</span>
+        <div
+          className={styles.quantityControl}
+          role="group"
+          aria-label={`Modificar cantidad de ${item.name}`}
+        >
+          <button
+            type="button"
+            onClick={handleDecrease}
+            disabled={item.quantity <= 1}
+            className={styles.quantityButton}
+            aria-label="Reducir cantidad"
+          >
+            <Minus aria-hidden="true" />
+          </button>
+          <span className={styles.quantityValue} aria-live="polite">
+            {item.quantity}
+          </span>
+          <button
+            type="button"
+            onClick={handleIncrease}
+            disabled={item.quantity >= maxQuantity}
+            className={styles.quantityButton}
+            aria-label="Aumentar cantidad"
+          >
+            <Plus aria-hidden="true" />
+          </button>
+        </div>
+        {isLowStock && hasStock && (
+          <span className={styles.stockHint}>
+            Ultimas {item.stock} piezas!
+          </span>
+        )}
+      </div>
+
+      <div className={styles.totalColumn}>
+        <span className={styles.columnLabel}>Total</span>
+        <span className={styles.totalValue}>
+          {CURRENCY_FORMATTER.format(itemTotal)}
+        </span>
+        <button
+          type="button"
+          onClick={handleRemove}
+          className={styles.removeButton}
+          aria-label={`Eliminar ${item.name} del carrito`}
+        >
+          <Trash2 aria-hidden="true" />
+          <span>Eliminar</span>
+        </button>
+      </div>
+    </article>
   );
 }
