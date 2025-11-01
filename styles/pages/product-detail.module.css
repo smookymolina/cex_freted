@@ -1,0 +1,518 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.breadcrumbs {
+  margin-bottom: 2rem;
+}
+
+.notFound {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.notFound h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+}
+
+.notFound p {
+  color: var(--color-text-secondary);
+  margin-bottom: 2rem;
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .productGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.imageSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mainImage {
+  background: var(--color-background-secondary);
+  border-radius: 12px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.badge {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.thumbnailStrip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 0.75rem;
+}
+
+.thumbnailButton {
+  background: var(--color-background-secondary);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.thumbnailButton:hover,
+.thumbnailButton:focus-visible {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15);
+}
+
+.thumbnailButtonActive {
+  border-color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.thumbnailImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+}
+
+.category {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.tagline {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.priceSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.priceMain {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.currentPrice {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.originalPrice {
+  font-size: 1.25rem;
+  color: var(--color-text-secondary);
+  text-decoration: line-through;
+}
+
+.savings {
+  font-size: 0.875rem;
+  color: var(--color-success);
+}
+
+.variantSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.variantList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.variantCard {
+  background: var(--color-background-secondary);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.variantCard:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.variantCardSelected {
+  border-color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.05);
+}
+
+.variantCardDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.variantHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.variantGrade {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text-primary);
+}
+
+.outOfStock {
+  color: var(--color-error);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.variantPrice {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+
+.variantStock {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.description h3,
+.specifications h3,
+.inspection h3,
+.included h3,
+.highlights h3,
+.gradeNotes h3,
+.logistics h3,
+.support h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+}
+
+.descriptionLead {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.descriptionParagraph {
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.specsList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.specItem {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: var(--color-background-secondary);
+  border-radius: 6px;
+}
+
+.specItem dt {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.specItem dd {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.highlights {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.highlightGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.highlightCard {
+  background: var(--color-background-secondary);
+  border-radius: 10px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.highlightCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.highlightCard h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: var(--color-text-primary);
+}
+
+.highlightCard p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.detailGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.inspectionList,
+.includedList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.inspectionList li,
+.includedList li {
+  background: var(--color-background-secondary);
+  border-radius: 8px;
+  padding: 0.85rem 1rem 0.85rem 2.25rem;
+  color: var(--color-text-secondary);
+  position: relative;
+  line-height: 1.6;
+}
+
+.inspectionList li::before,
+.includedList li::before {
+  content: '✓';
+  position: absolute;
+  left: 0.95rem;
+  top: 0.85rem;
+  font-weight: 700;
+  color: var(--color-success);
+}
+
+.gradeNotes {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.gradeGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.gradeCard {
+  background: var(--color-background-secondary);
+  border-radius: 10px;
+  padding: 1.25rem;
+  border: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.gradeCard:hover {
+  border-color: rgba(var(--color-primary-rgb), 0.35);
+}
+
+.gradeBadge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.1);
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+}
+
+.gradeCard h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-text-primary);
+}
+
+.gradeCard p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.logistics {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.logisticsGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.logisticsCard {
+  background: var(--color-background-secondary);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.logisticsCard h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-primary);
+}
+
+.logisticsCard p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.support {
+  display: grid;
+  gap: 1rem;
+}
+
+.supportCard {
+  background: linear-gradient(
+    135deg,
+    rgba(var(--color-primary-rgb), 0.12),
+    rgba(var(--color-primary-rgb), 0.05)
+  );
+  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.supportContent h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-text-primary);
+}
+
+.supportContent p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.supportCard a {
+  align-self: flex-start;
+}
+
+@media (min-width: 640px) {
+  .highlightGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .detailGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gradeGrid,
+  .logisticsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .supportCard {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 1024px) {
+  .highlightGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .gradeGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .logisticsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

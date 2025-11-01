@@ -1,15 +1,57 @@
-import styles from '../../styles/pages/placeholder.module.css';
+import Link from 'next/link';
+import styles from '../../styles/pages/soporte.module.css';
 
 const canales = [
-  'Base de conocimiento con articulos y videos explicativos.',
-  'Chat asistido por bot con opcion de escalado a agente humano.',
-  'Linea telefonica prioritaria para casos de garantia y envios.',
+  'Base de conocimiento con artículos y videos explicativos.',
+  'Chat asistido por bot con opción de escalado a agente humano.',
+  'Línea telefónica prioritaria para casos de garantía y envíos.',
 ];
 
 const sla = [
   'Respuestas por chat en menos de 5 minutos.',
-  'Resolucion de tickets garantizada en 24 horas habiles.',
+  'Resolución de tickets garantizada en 24 horas hábiles.',
   'Seguimiento en tiempo real desde el panel de usuario.',
+];
+
+const contactInfo = [
+  {
+    icon: '📞',
+    title: 'Atención telefónica',
+    description: 'Lunes a Viernes: 9:00 AM - 7:00 PM | Sábados: 9:00 AM - 2:00 PM',
+    contacts: [
+      { label: 'Ciudad de México', value: '(55) 1234-5678' },
+      { label: 'Guadalajara', value: '(33) 8765-4321' },
+      { label: 'Monterrey', value: '(81) 9876-5432' },
+      { label: 'Sin costo', value: '800-123-4567' },
+    ],
+  },
+  {
+    icon: '✉️',
+    title: 'Correo electrónico',
+    description: 'Respuesta en menos de 24 horas',
+    contacts: [
+      { label: 'Soporte general', value: 'soporte@cexfreted.com' },
+      { label: 'Garantías', value: 'garantias@cexfreted.com' },
+      { label: 'Ventas', value: 'ventas@cexfreted.com' },
+      { label: 'Devoluciones', value: 'devoluciones@cexfreted.com' },
+    ],
+  },
+  {
+    icon: '💬',
+    title: 'Chat en vivo',
+    description: 'Disponible de 9:00 AM a 9:00 PM todos los días',
+    contacts: [
+      { label: 'Acceso directo', value: 'Haz clic en el botón inferior derecho', link: '/soporte/chat' },
+    ],
+  },
+  {
+    icon: '📱',
+    title: 'WhatsApp Business',
+    description: 'Respuestas rápidas en horario laboral',
+    contacts: [
+      { label: 'WhatsApp', value: '+52 55 1234-5678', link: 'https://wa.me/5215512345678' },
+    ],
+  },
 ];
 
 export default function SoportePage() {
@@ -18,12 +60,36 @@ export default function SoportePage() {
       <div className={styles.pageInner}>
         <header className={styles.pageHeading}>
           <span>Centro de soporte</span>
-          <h1>Atencion omnicanal con SLA visibles</h1>
+          <h1>¿Cómo podemos ayudarte?</h1>
           <p>
-            Unificaremos recursos de ayuda y soporte para compradores y vendedores. Este layout sirve
-            de mapa para integrar herramientas externas.
+            Estamos aquí para resolver tus dudas. Elige el canal que prefieras y nuestro equipo
+            te atenderá lo antes posible.
           </p>
         </header>
+
+        <section className={styles.contactGrid}>
+          {contactInfo.map((channel) => (
+            <article key={channel.title} className={styles.contactCard}>
+              <div className={styles.cardIcon}>{channel.icon}</div>
+              <h2>{channel.title}</h2>
+              <p className={styles.cardDescription}>{channel.description}</p>
+              <ul className={styles.contactList}>
+                {channel.contacts.map((contact) => (
+                  <li key={contact.label}>
+                    <strong>{contact.label}:</strong>{' '}
+                    {contact.link ? (
+                      <Link href={contact.link} className={styles.contactLink}>
+                        {contact.value}
+                      </Link>
+                    ) : (
+                      <span className={styles.contactValue}>{contact.value}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </section>
 
         <section className={styles.sectionGrid}>
           <article className={styles.sectionCard}>
@@ -44,13 +110,31 @@ export default function SoportePage() {
           </article>
         </section>
 
-        <aside className={styles.infoBanner}>
-          <strong>Integraciones pendientes</strong>
-          <p>
-            Conectar chat, formularios y seguimiento con la plataforma de CRM elegida (Zendesk,
-            Freshdesk o similar) y medir NPS por canal.
-          </p>
-        </aside>
+        <section className={styles.quickLinks}>
+          <h2>Accesos rápidos</h2>
+          <div className={styles.linksGrid}>
+            <Link href="/soporte/faq" className={styles.quickLinkCard}>
+              <span className={styles.quickLinkIcon}>❓</span>
+              <strong>Preguntas Frecuentes</strong>
+              <p>Encuentra respuestas rápidas</p>
+            </Link>
+            <Link href="/garantias" className={styles.quickLinkCard}>
+              <span className={styles.quickLinkIcon}>🛡️</span>
+              <strong>Garantías</strong>
+              <p>Información sobre coberturas</p>
+            </Link>
+            <Link href="/soporte/contacto" className={styles.quickLinkCard}>
+              <span className={styles.quickLinkIcon}>📧</span>
+              <strong>Contacto</strong>
+              <p>Envía un mensaje</p>
+            </Link>
+            <Link href="/mi-cuenta/pedidos" className={styles.quickLinkCard}>
+              <span className={styles.quickLinkIcon}>📦</span>
+              <strong>Seguimiento</strong>
+              <p>Rastrea tu pedido</p>
+            </Link>
+          </div>
+        </section>
       </div>
     </div>
   );
