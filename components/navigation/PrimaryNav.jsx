@@ -4,6 +4,7 @@ import { useCart } from '../../context/cart/CartContext';
 import { ShoppingCart } from 'lucide-react';
 import { LanguageLink } from '../language/LanguageSwitcher';
 import styles from '../../styles/components/primary-nav.module.css';
+import { useSession } from 'next-auth/react';
 
 const primaryLinks = [
   { label: 'Comprar', href: '/comprar' },
@@ -13,11 +14,17 @@ const primaryLinks = [
   { label: 'Blog', href: '/blog' },
   { label: 'Comunidad', href: '/comunidad' },
   { label: 'Soporte', href: '/soporte' },
-  { label: 'Mi Cuenta', href: '/mi-cuenta' },
 ];
 
 export default function PrimaryNav() {
   const { cartCount } = useCart();
+  const { data: session, status } = useSession();
+
+  const accountLink = status === 'authenticated' 
+    ? { label: 'Mi Perfil', href: '/mi-cuenta/perfil' }
+    : { label: 'Iniciar Sesión', href: '/mi-cuenta/login' };
+
+  const allLinks = [...primaryLinks, accountLink];
 
   return (
     <header className={styles.wrapper}>
@@ -37,7 +44,7 @@ export default function PrimaryNav() {
           <span>Recommerce premium certificado</span>
         </Link>
         <nav className={styles.navLinks}>
-          {primaryLinks.map((link) => (
+          {allLinks.map((link) => (
             <Link key={link.href} href={link.href} className={styles.navLink}>
               {link.label}
             </Link>

@@ -38,14 +38,29 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  accounts      Account[]
-  sessions      Session[]
+  id                    String    @id @default(cuid())
+  name                  String?
+  email                 String?   @unique
+  emailVerified         DateTime?
+  image                 String?
+  password              String?
+  phone                 String?
+  refreshToken          String?
+  resetPasswordToken    String?
+  resetPasswordExpires  DateTime?
+  // Configuraciones de notificaciones
+  notifyEmail           Boolean   @default(true)
+  notifyPush            Boolean   @default(false)
+  notifySms             Boolean   @default(false)
+  notifyMarketing       Boolean   @default(true)
+  // Configuraciones de privacidad
+  profilePublic         Boolean   @default(false)
+  showPurchases         Boolean   @default(false)
+  allowMessages         Boolean   @default(true)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @default(now()) @updatedAt
+  accounts              Account[]
+  sessions              Session[]
 }
 
 model VerificationToken {

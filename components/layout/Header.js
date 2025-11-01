@@ -26,7 +26,7 @@ const Header = () => {
           )}
           {status === 'authenticated' && (
             <>
-              <Link href="/mi-cuenta" className="text-gray-600 hover:text-blue-600">Hola, {session.user.name}</Link>
+              <Link href="/mi-cuenta/perfil" className="text-gray-600 hover:text-blue-600">Mi Perfil</Link>
               <button onClick={() => signOut({ callbackUrl: '/' })} className="text-gray-600 hover:text-blue-600">Cerrar Sesión</button>
             </>
           )}
