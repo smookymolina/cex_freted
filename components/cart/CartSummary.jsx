@@ -1,5 +1,7 @@
-﻿import React, { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { Lock, Tag, Truck, ShieldCheck, BadgeCheck, RefreshCcw } from 'lucide-react';
 import { useCart } from '../../context/cart/CartContext';
 import styles from '../../styles/components/cart-summary.module.css';
@@ -11,6 +13,8 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
 
 export default function CartSummary() {
   const { cart, cartCount } = useCart();
+  const router = useRouter();
+  const { status } = useSession();
 
   const calculations = useMemo(() => {
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -37,10 +41,21 @@ export default function CartSummary() {
     };
   }, [cart]);
 
-  const shippingShortfall = Math.max(
-    calculations.shippingThreshold - calculations.subtotal,
-    0,
-  );
+  const shippingShortfall = Math.max(calculations.shippingThreshold - calculations.subtotal, 0);
+  const isSessionLoading = status === 'loading';
+  const isAuthenticated = status === 'authenticated';
+
+  const handleCheckout = () => {
+    if (isSessionLoading || cartCount === 0) return;
+
+    if (!isAuthenticated) {
+      const callback = encodeURIComponent('/checkout');
+      router.push(`/mi-cuenta/login?callbackUrl=${callback}`);
+      return;
+    }
+
+    router.push('/checkout');
+  };
 
   return (
     <aside className={styles.summaryCard}>
@@ -73,9 +88,7 @@ export default function CartSummary() {
           <span>
             <Truck aria-hidden="true" />
             Envio
-            {calculations.freeShipping && (
-              <span className={styles.shippingFree}> (gratis)</span>
-            )}
+            {calculations.freeShipping && <span className={styles.shippingFree}> (gratis)</span>}
           </span>
           <span>
             {calculations.freeShipping
@@ -93,14 +106,23 @@ export default function CartSummary() {
 
       <div className={styles.totalBlock}>
         <span className={styles.totalLabel}>Total estimado</span>
-        <span className={styles.totalValue}>
-          {CURRENCY_FORMATTER.format(calculations.total)}
-        </span>
+        <span className={styles.totalValue}>{CURRENCY_FORMATTER.format(calculations.total)}</span>
       </div>
 
-      <Link href="/checkout" className={styles.checkoutButton}>
+      <button
+        type="button"
+        onClick={handleCheckout}
+        className={styles.checkoutButton}
+        disabled={cartCount === 0 || isSessionLoading}
+      >
         Finalizar compra segura
-      </Link>
+      </button>
+
+      {status === 'unauthenticated' && (
+        <p className={styles.authReminder}>
+          Debes iniciar sesión para completar tu compra. Tus productos se guardan automáticamente al acceder.
+        </p>
+      )}
 
       <div className={styles.subtext}>
         <Lock aria-hidden="true" />

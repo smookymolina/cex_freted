@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import styles from '../../styles/pages/Login.module.css';
+
+const isSafeRedirect = (value) => typeof value === 'string' && value.startsWith('/');
 
 const LoginForm = () => {
   const router = useRouter();
@@ -11,53 +12,86 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Mostrar mensaje si se restableció la contraseña exitosamente
     if (router.query.reset === 'success') {
       setSuccess('Contraseña restablecida exitosamente. Ya puedes iniciar sesión.');
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setSuccess('');
         router.replace('/mi-cuenta/login', undefined, { shallow: true });
       }, 5000);
-    }
-  }, [router.query]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+      return () => clearTimeout(timeoutId);
+    }
+    return undefined;
+  }, [router]);
+
+  useEffect(() => {
+    if (isSafeRedirect(router.query.callbackUrl)) {
+      setInfo('Inicia sesión para continuar con tu compra.');
+    } else {
+      setInfo('');
+    }
+  }, [router.query.callbackUrl]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setError('');
     setSuccess('');
+    setInfo('');
     setLoading(true);
+
+    const callbackUrl = isSafeRedirect(router.query.callbackUrl)
+      ? router.query.callbackUrl
+      : '/mi-cuenta/perfil';
 
     const result = await signIn('credentials', {
       redirect: false,
       email,
       password,
+      callbackUrl,
     });
 
-    if (result.error) {
+    if (result?.error) {
       setError(result.error);
       setLoading(false);
-    } else {
-      router.push('/mi-cuenta/perfil');
+      return;
     }
+
+    router.push(callbackUrl);
   };
 
   return (
     <div className={styles.formWrapper}>
-      <h1 className={styles.title}>Iniciar Sesión</h1>
+      <h1 className={styles.title}>Iniciar sesión</h1>
       <p className={styles.subtitle}>Bienvenido de nuevo</p>
       <form onSubmit={handleSubmit}>
+        {info && <p className={styles.info}>{info}</p>}
         {error && <p className={styles.error}>{error}</p>}
         {success && <p className={styles.success}>{success}</p>}
         <div className={styles.formGroup}>
-          <label htmlFor="email">Correo Electrónico</label>
-          <input type="email" id="email" name="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label htmlFor="email">Correo electrónico</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="password">Contraseña</label>
-          <input type="password" id="password" name="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
         </div>
         <div className={styles.forgotPassword}>
           <Link href="/mi-cuenta/forgot-password" className={styles.forgotLink}>
@@ -65,7 +99,7 @@ const LoginForm = () => {
           </Link>
         </div>
         <button type="submit" className={styles.button} disabled={loading}>
-          {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+          {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
         </button>
       </form>
       <Link href="/mi-cuenta/registro" className={styles.link}>

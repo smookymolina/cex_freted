@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -13,63 +12,96 @@ const RegisterForm = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError('Las contraseñas no coinciden.');
       return;
     }
 
     setLoading(true);
 
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password }),
-    });
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-    if (res.ok) {
-      router.push('/mi-cuenta/login');
-    } else {
-      const data = await res.json();
-      setError(data.message || 'Algo salió mal durante el registro');
+      if (response.ok) {
+        router.push('/mi-cuenta/login');
+        return;
+      }
+
+      const data = await response.json();
+      setError(data.message || 'No fue posible completar el registro.');
+    } catch (err) {
+      setError('Ocurrió un problema de conexión. Inténtalo de nuevo.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className={styles.formWrapper}>
-      <h1 className={styles.title}>Crear Cuenta</h1>
+      <h1 className={styles.title}>Crear cuenta</h1>
       <p className={styles.subtitle}>Únete a nuestra comunidad</p>
       <form onSubmit={handleSubmit}>
         {error && <p className={styles.error}>{error}</p>}
         <div className={styles.formGroup}>
-          <label htmlFor="name">Nombre Completo</label>
-          <input type="text" id="name" name="name" required value={name} onChange={(e) => setName(e.target.value)} />
+          <label htmlFor="name">Nombre completo</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+          />
         </div>
         <div className={styles.formGroup}>
-          <label htmlFor="email">Correo Electrónico</label>
-          <input type="email" id="email" name="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label htmlFor="email">Correo electrónico</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="password">Contraseña</label>
-          <input type="password" id="password" name="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
         </div>
         <div className={styles.formGroup}>
-          <label htmlFor="confirmPassword">Confirmar Contraseña</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          <label htmlFor="confirmPassword">Confirmar contraseña</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            required
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+          />
         </div>
         <button type="submit" className={styles.button} disabled={loading}>
-          {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
+          {loading ? 'Creando cuenta...' : 'Crear cuenta'}
         </button>
       </form>
       <Link href="/mi-cuenta/login" className={styles.link}>
-        ¿Ya tienes una cuenta? Inicia Sesión
+        ¿Ya tienes una cuenta? Inicia sesión
       </Link>
     </div>
   );
