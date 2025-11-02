@@ -62,6 +62,7 @@ model User {
   updatedAt             DateTime  @default(now()) @updatedAt
   accounts              Account[]
   sessions              Session[]
+  orders                Order[]
 }
 
 model VerificationToken {
@@ -70,4 +71,101 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// Modelo de pedidos/ordenes
+model Order {
+  id                String          @id @default(cuid())
+  orderNumber       String          @unique
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Información del cliente
+  customerName      String
+  customerEmail     String
+  customerPhone     String
+
+  // Información de envío
+  shippingAddress   String
+  shippingCity      String
+  shippingState     String
+  shippingPostalCode String
+  shippingReferences String?
+
+  // Totales
+  subtotal          Float
+  shippingCost      Float
+  total             Float
+
+  // Items del pedido (guardado como JSON)
+  items             Json
+
+  // Estado del pedido
+  status            OrderStatus     @default(PENDING)
+
+  // Relaciones
+  payments          Payment[]
+
+  // Timestamps
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+// Modelo de pagos
+model Payment {
+  id                String          @id @default(cuid())
+  orderId           String
+  order             Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // Detalles del pago
+  amount            Float
+  paymentMethod     PaymentMethod
+  status            PaymentStatus   @default(PENDING)
+
+  // Información de la transacción
+  transactionId     String?         @unique
+  referenceNumber   String          @unique
+
+  // Metadatos específicos del método de pago
+  paymentMetadata   Json?
+
+  // Información de procesamiento
+  processedAt       DateTime?
+  processedBy       String?         // Usuario que procesó el pago (admin)
+
+  // Notas adicionales
+  notes             String?
+
+  // Timestamps
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+// Estados del pedido
+enum OrderStatus {
+  PENDING           // Esperando pago
+  PAYMENT_CONFIRMED // Pago confirmado
+  PROCESSING        // En proceso
+  SHIPPED           // Enviado
+  DELIVERED         // Entregado
+  CANCELLED         // Cancelado
+  REFUNDED          // Reembolsado
+}
+
+// Métodos de pago disponibles
+enum PaymentMethod {
+  BANK_TRANSFER     // Transferencia bancaria
+  CASH_DEPOSIT      // Depósito en efectivo
+  PHONE_PAYMENT     // Pago telefónico
+  STORE_PAYMENT     // Pago en tienda
+}
+
+// Estados del pago
+enum PaymentStatus {
+  PENDING           // Pendiente
+  PROCESSING        // En proceso de verificación
+  COMPLETED         // Completado
+  FAILED            // Fallido
+  REFUNDED          // Reembolsado
+  CANCELLED         // Cancelado
 }

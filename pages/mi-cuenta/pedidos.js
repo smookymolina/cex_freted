@@ -1,95 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getSession } from 'next-auth/react';
 import AccountLayout from '../../components/mi-cuenta/AccountLayout';
-import { Package, Truck, CheckCircle, XCircle, Clock, ChevronRight, Download } from 'lucide-react';
-
-// Datos de ejemplo (en producción vendrían de una API)
-const mockOrders = [
-  {
-    id: 'ORD-2024-001',
-    date: '2024-10-28',
-    status: 'delivered',
-    total: 17980,
-    items: [
-      {
-        name: 'iPhone 14 Pro 128GB',
-        grade: 'A+',
-        price: 17980,
-        quantity: 1,
-        image: '/assets/images/products/iphone-14-pro.png',
-      },
-    ],
-    tracking: 'TRK123456789',
-    deliveryDate: '2024-10-30',
-  },
-  {
-    id: 'ORD-2024-002',
-    date: '2024-10-25',
-    status: 'shipped',
-    total: 8500,
-    items: [
-      {
-        name: 'MacBook Air M1',
-        grade: 'A',
-        price: 8500,
-        quantity: 1,
-        image: '/assets/images/products/macbook-air.png',
-      },
-    ],
-    tracking: 'TRK987654321',
-    estimatedDelivery: '2024-10-29',
-  },
-  {
-    id: 'ORD-2024-003',
-    date: '2024-10-20',
-    status: 'processing',
-    total: 3200,
-    items: [
-      {
-        name: 'AirPods Pro',
-        grade: 'A+',
-        price: 3200,
-        quantity: 1,
-        image: '/assets/images/products/airpods-pro.png',
-      },
-    ],
-  },
-];
-
-const statusConfig = {
-  processing: {
-    label: 'En proceso',
-    tone: '#f97316',
-    background: 'rgba(249, 115, 22, 0.12)',
-    icon: Clock,
-  },
-  shipped: {
-    label: 'Enviado',
-    tone: '#0ea5e9',
-    background: 'rgba(14, 165, 233, 0.15)',
-    icon: Truck,
-  },
-  delivered: {
-    label: 'Entregado',
-    tone: '#22c55e',
-    background: 'rgba(34, 197, 94, 0.16)',
-    icon: CheckCircle,
-  },
-  cancelled: {
-    label: 'Cancelado',
-    tone: '#f87171',
-    background: 'rgba(248, 113, 113, 0.16)',
-    icon: XCircle,
-  },
-};
-
-const filters = [
-  { id: 'all', label: 'Todos' },
-  { id: 'processing', label: 'En proceso' },
-  { id: 'shipped', label: 'Enviados' },
-  { id: 'delivered', label: 'Entregados' },
-  { id: 'cancelled', label: 'Cancelados' },
-];
+import { Package, Truck, CheckCircle, XCircle, Clock, ChevronRight, Download, Loader, RefreshCw } from 'lucide-react';
+import { formatOrderStatus, formatPaymentMethod } from '../../utils/checkoutHelper';
 
 const formatDate = (dateString) =>
   new Date(dateString).toLocaleDateString('es-ES', {
@@ -104,17 +17,75 @@ const formatCurrency = (amount) =>
     currency: 'MXN',
   }).format(amount);
 
+const statusIcons = {
+  PENDING: Clock,
+  PAYMENT_CONFIRMED: CheckCircle,
+  PROCESSING: Package,
+  SHIPPED: Truck,
+  DELIVERED: CheckCircle,
+  CANCELLED: XCircle,
+  REFUNDED: RefreshCw,
+};
+
+const filters = [
+  { id: 'all', label: 'Todos' },
+  { id: 'PENDING', label: 'Pendientes' },
+  { id: 'PAYMENT_CONFIRMED', label: 'Confirmados' },
+  { id: 'PROCESSING', label: 'En proceso' },
+  { id: 'SHIPPED', label: 'Enviados' },
+  { id: 'DELIVERED', label: 'Entregados' },
+];
+
 const PedidosPage = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch('/api/payments/my-orders');
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setOrders(data.orders);
+      } else {
+        setError(data.error || 'Error al cargar los pedidos');
+      }
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      setError('Error de conexión. Por favor intenta nuevamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredOrders =
-    selectedFilter === 'all' ? mockOrders : mockOrders.filter((order) => order.status === selectedFilter);
+    selectedFilter === 'all' ? orders : orders.filter((order) => order.status === selectedFilter);
 
   return (
     <AccountLayout title="Mis Pedidos">
       <div className="orders-container">
         <section className="filters-card">
-          <h3 className="filters-title">Filtrar pedidos</h3>
+          <div className="filters-header">
+            <h3 className="filters-title">Filtrar pedidos</h3>
+            <button
+              type="button"
+              onClick={fetchOrders}
+              className="refresh-button"
+              disabled={loading}
+              title="Actualizar"
+            >
+              <RefreshCw size={16} className={loading ? 'spinning' : ''} />
+            </button>
+          </div>
           <div className="filters-group">
             {filters.map((filter) => (
               <button
@@ -129,85 +100,138 @@ const PedidosPage = () => {
           </div>
         </section>
 
-        <div className="orders-list">
-          {filteredOrders.length === 0 ? (
-            <div className="empty-state">
-              <Package size={32} />
-              <h4>No hay pedidos en esta categoría</h4>
-              <p>Explora tus compras o filtra por otro estado para ver tus órdenes recientes.</p>
-              <a href="/comprar" className="empty-action">
-                Ir a comprar
-              </a>
-            </div>
-          ) : (
-            filteredOrders.map((order) => {
-              const status = statusConfig[order.status] || statusConfig.processing;
-              const StatusIcon = status.icon;
+        {loading && (
+          <div className="loading-state">
+            <Loader className="spinner" size={40} />
+            <p>Cargando tus pedidos...</p>
+          </div>
+        )}
 
-              return (
-                <article key={order.id} className="order-card">
-                  <header className="order-header">
-                    <div className="order-meta">
-                      <span className="order-id">{order.id}</span>
-                      <span className="order-date">{formatDate(order.date)}</span>
-                    </div>
-                    <span className="order-status" style={{ color: status.tone, backgroundColor: status.background }}>
-                      <StatusIcon size={16} aria-hidden="true" />
-                      {status.label}
-                    </span>
-                  </header>
+        {error && (
+          <div className="error-state">
+            <XCircle size={32} />
+            <h4>Error al cargar pedidos</h4>
+            <p>{error}</p>
+            <button type="button" onClick={fetchOrders} className="retry-button">
+              Reintentar
+            </button>
+          </div>
+        )}
 
-                  <div className="order-body">
-                    {order.items.map((item, index) => (
-                      <div key={`${order.id}-${index}`} className="order-item">
-                        <div className="item-thumbnail">
-                          <img src={item.image} alt={item.name} />
-                        </div>
-                        <div className="item-details">
-                          <p className="item-name">{item.name}</p>
-                          <span className="item-grade">Condición: {item.grade}</span>
-                          <span className="item-quantity">Cantidad: {item.quantity}</span>
-                        </div>
-                        <div className="item-price">{formatCurrency(item.price)}</div>
+        {!loading && !error && (
+          <div className="orders-list">
+            {filteredOrders.length === 0 ? (
+              <div className="empty-state">
+                <Package size={32} />
+                <h4>
+                  {selectedFilter === 'all'
+                    ? 'No tienes pedidos aún'
+                    : 'No hay pedidos en esta categoría'}
+                </h4>
+                <p>
+                  {selectedFilter === 'all'
+                    ? 'Comienza a comprar productos certificados y haz tu primer pedido.'
+                    : 'Filtra por otro estado para ver tus órdenes recientes.'}
+                </p>
+                <a href="/comprar" className="empty-action">
+                  Ir a comprar
+                </a>
+              </div>
+            ) : (
+              filteredOrders.map((order) => {
+                const statusInfo = formatOrderStatus(order.status);
+                const StatusIcon = statusIcons[order.status] || Package;
+                const items = Array.isArray(order.items) ? order.items : [];
+
+                return (
+                  <article key={order.id} className="order-card">
+                    <header className="order-header">
+                      <div className="order-meta">
+                        <span className="order-id">{order.orderNumber}</span>
+                        <span className="order-date">{formatDate(order.createdAt)}</span>
                       </div>
-                    ))}
-                  </div>
+                      <span
+                        className="order-status"
+                        style={{ color: statusInfo.color, backgroundColor: `${statusInfo.color}20` }}
+                      >
+                        <StatusIcon size={16} aria-hidden="true" />
+                        {statusInfo.label}
+                      </span>
+                    </header>
 
-                  <footer className="order-footer">
-                    <div className="order-summary">
-                      <span>Total</span>
-                      <strong>{formatCurrency(order.total)}</strong>
+                    <div className="order-body">
+                      {items.length > 0 ? (
+                        items.map((item, index) => (
+                          <div key={`${order.id}-${index}`} className="order-item">
+                            <div className="item-thumbnail">
+                              {item.image ? (
+                                <img src={item.image} alt={item.name} />
+                              ) : (
+                                <Package size={32} />
+                              )}
+                            </div>
+                            <div className="item-details">
+                              <p className="item-name">{item.name || item.slug}</p>
+                              {item.grade && <span className="item-grade">Condición: {item.grade}</span>}
+                              <span className="item-quantity">Cantidad: {item.quantity}</span>
+                            </div>
+                            <div className="item-price">{formatCurrency(item.price)}</div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="no-items">
+                          <p>Sin items disponibles</p>
+                        </div>
+                      )}
                     </div>
 
-                    {(order.tracking || order.deliveryDate || order.estimatedDelivery) && (
-                      <div className="order-tracking">
-                        <span className="tracking-label">Seguimiento</span>
-                        {order.tracking && <span className="tracking-code">{order.tracking}</span>}
-                        {order.deliveryDate && (
-                          <span className="tracking-info">Entregado el {formatDate(order.deliveryDate)}</span>
-                        )}
-                        {order.estimatedDelivery && (
-                          <span className="tracking-info">Entrega estimada: {formatDate(order.estimatedDelivery)}</span>
+                    <footer className="order-footer">
+                      <div className="order-info-grid">
+                        <div className="info-item">
+                          <span className="info-label">Total</span>
+                          <strong className="info-value">{formatCurrency(order.total)}</strong>
+                        </div>
+                        <div className="info-item">
+                          <span className="info-label">Método de pago</span>
+                          <span className="info-value">
+                            {order.payments[0]
+                              ? formatPaymentMethod(order.payments[0].paymentMethod)
+                              : 'No especificado'}
+                          </span>
+                        </div>
+                        {order.payments[0]?.referenceNumber && (
+                          <div className="info-item">
+                            <span className="info-label">Referencia</span>
+                            <span className="info-value info-value--code">
+                              {order.payments[0].referenceNumber}
+                            </span>
+                          </div>
                         )}
                       </div>
-                    )}
 
-                    <div className="order-actions">
-                      <button type="button" className="order-action order-action--primary">
-                        Ver detalle
-                        <ChevronRight size={16} aria-hidden="true" />
-                      </button>
-                      <button type="button" className="order-action">
-                        <Download size={16} aria-hidden="true" />
-                        Descargar factura
-                      </button>
-                    </div>
-                  </footer>
-                </article>
-              );
-            })
-          )}
-        </div>
+                      {order.shippingAddress && (
+                        <div className="shipping-info">
+                          <span className="info-label">Dirección de envío:</span>
+                          <p>
+                            {order.shippingAddress}, {order.shippingCity}, {order.shippingState} - CP{' '}
+                            {order.shippingPostalCode}
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="order-actions">
+                        <button type="button" className="order-action order-action--primary">
+                          Ver detalle
+                          <ChevronRight size={16} aria-hidden="true" />
+                        </button>
+                      </div>
+                    </footer>
+                  </article>
+                );
+              })
+            )}
+          </div>
+        )}
       </div>
 
       <style jsx>{`
@@ -228,11 +252,52 @@ const PedidosPage = () => {
           gap: 18px;
         }
 
+        .filters-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
         .filters-title {
           font-size: 18px;
           font-weight: 700;
           color: #0f172a;
           margin: 0;
+        }
+
+        .refresh-button {
+          padding: 8px;
+          border: none;
+          background: rgba(37, 99, 235, 0.1);
+          color: #2563eb;
+          border-radius: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s;
+        }
+
+        .refresh-button:hover:not(:disabled) {
+          background: rgba(37, 99, 235, 0.2);
+        }
+
+        .refresh-button:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .spinning {
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
         }
 
         .filters-group {
@@ -263,6 +328,44 @@ const PedidosPage = () => {
           border-color: transparent;
           color: white;
           box-shadow: 0 12px 22px rgba(37, 99, 235, 0.24);
+        }
+
+        .loading-state,
+        .error-state {
+          background: white;
+          border-radius: 18px;
+          padding: 48px 32px;
+          border: 1px solid rgba(148, 163, 184, 0.16);
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          align-items: center;
+          color: rgba(15, 23, 42, 0.7);
+          box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        .spinner {
+          animation: spin 1s linear infinite;
+          color: #2563eb;
+        }
+
+        .error-state h4 {
+          font-size: 18px;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0;
+        }
+
+        .retry-button {
+          margin-top: 8px;
+          padding: 12px 20px;
+          border-radius: 999px;
+          background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+          color: white;
+          border: none;
+          font-weight: 600;
+          cursor: pointer;
         }
 
         .orders-list {
@@ -339,6 +442,10 @@ const PedidosPage = () => {
           border-radius: 12px;
           overflow: hidden;
           background: linear-gradient(135deg, rgba(148, 163, 184, 0.2) 0%, rgba(226, 232, 240, 0.45) 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: rgba(15, 23, 42, 0.4);
         }
 
         .item-thumbnail img {
@@ -372,53 +479,63 @@ const PedidosPage = () => {
           color: #1d4ed8;
         }
 
+        .no-items {
+          text-align: center;
+          padding: 20px;
+          color: rgba(15, 23, 42, 0.5);
+        }
+
         .order-footer {
           display: flex;
           flex-direction: column;
           gap: 16px;
         }
 
-        .order-summary {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+        .order-info-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 16px;
           padding: 16px 18px;
           border-radius: 16px;
           background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(14, 165, 233, 0.1) 100%);
-          font-size: 14px;
+        }
+
+        .info-item {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .info-label {
+          font-size: 12px;
           font-weight: 600;
+          color: rgba(15, 23, 42, 0.6);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .info-value {
+          font-size: 14px;
           color: #0f172a;
         }
 
-        .order-summary strong {
-          font-size: 18px;
-          color: #1d4ed8;
+        .info-value--code {
+          font-family: 'Courier New', monospace;
+          font-size: 13px;
+          font-weight: 600;
         }
 
-        .order-tracking {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(160px, auto));
-          gap: 12px;
-          align-items: center;
+        .shipping-info {
           padding: 14px 16px;
           border: 1px dashed rgba(59, 130, 246, 0.35);
           border-radius: 14px;
-          background-color: rgba(59, 130, 246, 0.08);
+          background-color: rgba(59, 130, 246, 0.05);
           font-size: 13px;
-          color: rgba(15, 23, 42, 0.7);
         }
 
-        .tracking-label {
-          font-weight: 700;
-          color: #1d4ed8;
-        }
-
-        .tracking-code {
-          font-family: 'Fira Code', 'Courier New', monospace;
-        }
-
-        .tracking-info {
-          font-style: italic;
+        .shipping-info p {
+          margin: 4px 0 0;
+          color: rgba(15, 23, 42, 0.8);
         }
 
         .order-actions {
