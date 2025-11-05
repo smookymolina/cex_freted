@@ -1,6 +1,7 @@
 
 import prisma from '../../../lib/prisma';
 import bcrypt from 'bcryptjs';
+import { sendWelcomeEmail } from '../../../lib/email/mailer';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -31,6 +32,12 @@ export default async function handler(req, res) {
         password: hashedPassword,
       },
     });
+
+    // Enviar email de bienvenida (no bloquear la respuesta)
+    sendWelcomeEmail(email, name).catch((error) => {
+      console.error('Error enviando email de bienvenida:', error);
+    });
+
     res.status(201).json({ message: 'Usuario creado con éxito', userId: user.id });
   } catch (error) {
     res.status(500).json({ message: 'Error al crear el usuario', error: error.message });

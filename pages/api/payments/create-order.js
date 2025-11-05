@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]';
 import PaymentService from '../../../services/paymentService';
+import { sendOrderConfirmationEmail } from '../../../lib/email/mailer';
 
 /**
  * API endpoint para crear una orden con pago pendiente
@@ -83,6 +84,20 @@ export default async function handler(req, res) {
         error: result.error || 'Error al crear la orden',
       });
     }
+
+    // Enviar email de confirmación (no bloquear la respuesta)
+    sendOrderConfirmationEmail(customer.email, {
+      orderId: result.orderNumber,
+      total: result.order.total,
+      items: items.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price * item.quantity
+      })),
+      deliveryMethod: shipping.deliveryMethod
+    }).catch((error) => {
+      console.error('Error enviando email de confirmación:', error);
+    });
 
     // Retornar la información de la orden creada
     return res.status(201).json({

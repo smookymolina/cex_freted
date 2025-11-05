@@ -1,0 +1,144 @@
+.errorPage {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.errorContainer {
+  max-width: 600px;
+  text-align: center;
+  background-color: white;
+  padding: 3rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.errorCode {
+  font-size: 6rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.errorTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 1rem 0;
+}
+
+.errorMessage {
+  font-size: 1.125rem;
+  color: #666;
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+}
+
+.errorActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.errorSuggestions {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid #f3f4f6;
+  text-align: left;
+}
+
+.errorSuggestions h2 {
+  font-size: 1.25rem;
+  color: #1a1a1a;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.errorSuggestions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.errorSuggestions li {
+  padding: 0;
+}
+
+.errorSuggestions a {
+  display: block;
+  padding: 0.75rem 1rem;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  color: #3b82f6;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.errorSuggestions a:hover {
+  background-color: #e0f2fe;
+  transform: translateX(4px);
+}
+
+.errorDetails {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f3f4f6;
+  font-size: 0.9375rem;
+  color: #666;
+}
+
+.errorDetails a {
+  color: #3b82f6;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.errorDetails a:hover {
+  color: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .errorPage {
+    padding: 1rem;
+  }
+
+  .errorContainer {
+    padding: 2rem 1.5rem;
+  }
+
+  .errorCode {
+    font-size: 4rem;
+  }
+
+  .errorTitle {
+    font-size: 1.5rem;
+  }
+
+  .errorMessage {
+    font-size: 1rem;
+  }
+
+  .errorActions {
+    flex-direction: column;
+  }
+
+  .errorActions > * {
+    width: 100%;
+  }
+
+  .errorSuggestions {
+    text-align: left;
+  }
+}
