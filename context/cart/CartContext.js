@@ -45,6 +45,21 @@ const normalizeItems = (items = []) => {
   return items.map(sanitizeItem).filter(Boolean);
 };
 
+const deduplicateItems = (items = []) => {
+  const itemMap = new Map();
+
+  items.forEach((item) => {
+    if (!item?.id) return;
+
+    if (!itemMap.has(item.id)) {
+      // Solo agrega si NO existe - mantiene el primero, ignora duplicados
+      itemMap.set(item.id, { ...item });
+    }
+  });
+
+  return Array.from(itemMap.values());
+};
+
 const mergeCartItems = (primary = [], secondary = []) => {
   const mergedMap = new Map();
   normalizeItems(primary).forEach((item) => {
@@ -141,12 +156,34 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    // Protección contra múltiples ejecuciones
+    if (isHydrated.current) return;
 
     try {
       const storedItems = window.localStorage.getItem(CART_STORAGE_KEY);
       if (storedItems) {
         const parsedItems = JSON.parse(storedItems);
-        dispatch({ type: 'SET_CART', payload: parsedItems });
+
+        // Verificar si hay duplicados por ID
+        const idCounts = new Map();
+        parsedItems.forEach((item) => {
+          if (item?.id) {
+            idCounts.set(item.id, (idCounts.get(item.id) || 0) + 1);
+          }
+        });
+
+        const hasDuplicateIds = Array.from(idCounts.values()).some(count => count > 1);
+
+        if (hasDuplicateIds) {
+          console.warn('⚠️ Se detectaron IDs duplicados en localStorage. Esto es un error. Limpiando...');
+          // Si hay duplicados, tomar solo el primer item de cada ID
+          const cleanedItems = deduplicateItems(normalizeItems(parsedItems));
+          window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cleanedItems));
+          dispatch({ type: 'SET_CART', payload: cleanedItems });
+        } else {
+          // No hay duplicados, cargar normalmente
+          dispatch({ type: 'SET_CART', payload: parsedItems });
+        }
       }
     } catch (error) {
       console.error('No se pudo leer el carrito almacenado', error);
