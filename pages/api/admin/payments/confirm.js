@@ -19,10 +19,10 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'No autorizado' });
     }
 
-    // TODO: Verificar que el usuario es administrador
-    // if (session.user.role !== 'ADMIN') {
-    //   return res.status(403).json({ error: 'Acceso denegado' });
-    // }
+    // Verificar que el usuario tiene rol de soporte
+    if (session.user.role !== 'SOPORTE') {
+      return res.status(403).json({ error: 'Acceso denegado' });
+    }
 
     const { paymentId, transactionId, metadata, notes } = req.body;
 

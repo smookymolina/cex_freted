@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import AdminLayout from '../../components/layout/AdminLayout';
 import {
   DollarSign,
   CheckCircle,
@@ -29,6 +31,8 @@ const formatCurrency = (amount) =>
   }).format(amount);
 
 const AdminPagosPage = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [pendingPayments, setPendingPayments] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,8 +41,17 @@ const AdminPagosPage = () => {
   const [processing, setProcessing] = useState({});
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (status === 'loading') return;
+    if (!session || session.user.role !== 'SOPORTE') {
+      router.push('/soporte/login');
+    }
+  }, [session, status, router]);
+
+  useEffect(() => {
+    if (session && session.user.role === 'SOPORTE') {
+      fetchData();
+    }
+  }, [session]);
 
   const fetchData = async () => {
     try {
@@ -134,8 +147,23 @@ const AdminPagosPage = () => {
     }
   };
 
+  if (status === 'loading' || loading) {
+    return (
+      <AdminLayout>
+        <div className="loading-state">
+          <Loader className="spinner" size={48} />
+          <p>Cargando datos...</p>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (!session || session.user.role !== 'SOPORTE') {
+    return null;
+  }
+
   return (
-    <div className="admin-page">
+    <AdminLayout>
       <div className="admin-container">
         <header className="page-header">
           <div>
@@ -351,15 +379,7 @@ const AdminPagosPage = () => {
       </div>
 
       <style jsx>{`
-        .admin-page {
-          min-height: 100vh;
-          background: #f8fafc;
-          padding: 40px 20px;
-        }
-
         .admin-container {
-          max-width: 1200px;
-          margin: 0 auto;
           display: flex;
           flex-direction: column;
           gap: 28px;
@@ -730,7 +750,7 @@ const AdminPagosPage = () => {
           }
         }
       `}</style>
-    </div>
+    </AdminLayout>
   );
 };
 
@@ -740,21 +760,21 @@ export async function getServerSideProps(context) {
   if (!session) {
     return {
       redirect: {
-        destination: '/mi-cuenta/login',
+        destination: '/soporte/login',
         permanent: false,
       },
     };
   }
 
-  // TODO: Agregar verificación de rol de administrador
-  // if (session.user.role !== 'ADMIN') {
-  //   return {
-  //     redirect: {
-  //       destination: '/',
-  //       permanent: false,
-  //     },
-  //   };
-  // }
+  // Verificar que el usuario tenga rol SOPORTE
+  if (session.user.role !== 'SOPORTE') {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {},

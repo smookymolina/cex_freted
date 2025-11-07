@@ -1,111 +1,107 @@
-﻿import Head from 'next/head';
+import Head from 'next/head';
 import Button from '../../components/ui/Button';
 import styles from '../../styles/pages/sostenibilidad.module.css';
 
 const heroMetrics = [
   {
-    label: 'CO2 evitado 2025',
-    value: '124 t',
-    helper: 'Equivalente aproximado a 6 200 arboles plantados*.',
+    label: 'Residuos electronicos 2022',
+    value: '62 Mt',
+    helper: 'Global E-waste Monitor 2024 (UNITAR + ITU).',
   },
   {
-    label: 'Dispositivos reacondicionados',
-    value: '9 890',
-    helper: '82% con segunda vida antes de 6 meses.',
+    label: 'Recoleccion formal',
+    value: '22%',
+    helper: 'Promedio mundial RAEE recuperado segun ONU 2022.',
   },
   {
-    label: 'Reciclaje certificado',
-    value: '97%',
-    helper: 'Gestionado con partners R2 y RAEE auditables.',
+    label: 'Huella media smartphone',
+    value: '55 kg CO2e',
+    helper: 'Apple Environmental Progress Report 2023 + Carbon Trust.',
   },
 ];
 
 const pillars = [
   {
-    title: 'Medicion de CO2 por dispositivo',
-    description: 'Huella calculada por lote, usuario y canal usando factores GHG Scope 3.',
+    title: 'Extender la vida util del hardware',
+    description:
+      'Seguimos el Circular Electronics Partnership Roadmap (2023) para duplicar los ciclos de uso antes del reciclaje.',
     bullets: [
-      'Dashboard con comparables y recomendaciones personalizadas.',
-      'Reportes exportables listos para auditoria (ISO 14064).',
+      'Un smartphone reacondicionado evita ~55 kg CO2e (Apple + Carbon Trust, 2023).',
+      'Aplicamos guias ITU-T L.1024 y PAS 141:2013 para talleres y logisticas certificadas.',
     ],
   },
   {
-    title: 'Programa de reciclaje trazable',
-    description: 'Derivamos equipos no aptos a plantas certificadas con seguimiento completo.',
+    title: 'Recuperacion RAEE alineada con ONU',
+    description: 'Tomamos como referencia el Global E-waste Monitor 2024 y la directiva europea WEEE.',
     bullets: [
-      'Cadena documentada con codigos QR y evidencia fotografica.',
-      'Certificados digitales enviados automaticamente al cliente.',
+      'Europa alcanza 42.8% de recoleccion formal; usamos ese benchmark para Espana (ONU 2024).',
+      'Integramos codigos RAEE y reportes compatibles con el registro MITECO.',
     ],
   },
   {
-    title: 'Alianzas con ONGs de tecnologia y educacion',
-    description: 'Red de socios que lleva equipamiento y capacitacion a comunidades vulnerables.',
+    title: 'Energia renovable y datos abiertos',
+    description:
+      'Medimos huella electrica con datos de Red Electrica de Espana (REE) y de la Agencia Internacional de Energia.',
     bullets: [
-      'Laboratorios y hubs digitales activos en 12 ciudades.',
-      'Mentorias STEM y programas de insercion laboral tech.',
+      'REE reporto que 50.4% de la generacion electrica 2023 en Espana fue renovable.',
+      'IEA estima que los centros de datos consumen ~1.3% de la electricidad global (Tracking Clean Energy Progress 2023).',
     ],
   },
 ];
 
 const dataStreams = [
   {
-    title: 'Panel interno de impacto',
-    status: 'En produccion',
+    title: 'Global E-waste Monitor 2024',
+    status: 'Integrado 2024',
     description:
-      'Dataset unificado con eventos de compra, reacondicionamiento y reciclaje actualizado cada 6 horas.',
-    highlight: 'Fuente: Snowflake + dbt. Owner: Data Ops.',
+      'Serie historica de UNITAR/ITU con toneladas, categorias y tasas de recuperacion por pais (2010-2022).',
+    highlight: 'Fuente: ewastemonitor.info - descarga CSV y GeoJSON oficial.',
   },
   {
-    title: 'Calculadora de impacto personal',
-    status: 'Beta Q2 2025',
+    title: 'Eurostat CMU + RAEE',
+    status: 'Actualizado trimestral',
     description:
-      'API que recibe inventario de cada cliente y estima ahorros de CO2, agua y e-waste.',
-    highlight: 'Integracion prevista para la app movil y el portal B2B.',
+      'Indicadores env_wastrat y env_wase de la Union Europea y Espana para circularidad y residuos por habitante.',
+    highlight: 'Fuente: data.europa.eu - dataset env_wase_elec y env_wasmun.',
   },
   {
-    title: 'Reporte descargable para stakeholders',
-    status: 'En diseno',
+    title: 'CDP + SBTi disclosures',
+    status: 'Enlace privado',
     description:
-      'Template PDF/Slides con resumen ejecutivo, fichas tecnicas y anexo metodologico.',
-    highlight: 'Incluye notas legales y sello de validacion externa.',
+      'Metas de reduccion 1.5 C y factores Scope 3 reportados por empresas tech/telco 2021-2024.',
+    highlight: 'Fuente: API CDP + Science Based Targets initiative (actualizacion nov 2024).',
   },
 ];
 
 const roadmap = [
   {
     quarter: 'Q1 2025',
-    title: 'Publicar reporte trimestral con metricas y avances',
+    title: 'Comparar KPIs locales vs objetivo WEEE 65%',
     detail:
-      'Version 1.0 con contexto comparativo vs 2024, riesgos mitigados y backlog abierto.',
+      'Panel mostrara la brecha entre la recoleccion formal de Espana (42.8%) y el requisito 65% usando datos Eurostat 2022.',
   },
   {
     quarter: 'Q2 2025',
-    title: 'Lanzar calculadora interactiva para estimar impacto personal',
+    title: 'Publicar API con series ONU, Eurostat y REE',
     detail:
-      'Widget embebible y API publica con autenticacion por token para clientes enterprise.',
+      'Endpoints JSON versionados con datasets del Global E-waste Monitor, factores energeticos REE y emisiones IEA.',
   },
   {
     quarter: 'Q3 2025',
-    title: 'Ofrecer badges compartibles para incentivar referidos y retos',
+    title: 'Emitir fichas de circularidad por categoria',
     detail:
-      'Sistema de logros con verificacion on-chain y opciones para campanas internas.',
+      'Metodologia Circular Electronics Partnership + CDP para laptops, smartphones y servidores con factores actualizados 2024.',
   },
-];
-
-const backlog = [
-  'Conectar el panel interno al dataset publico de sostenibilidad (Snowflake -> API REST).',
-  'Preparar version descargable del reporte con resumen ejecutivo y anexos tecnicos.',
-  'Definir SLA de actualizacion y responsables de aprobacion de datos antes de cada corte.',
 ];
 
 export default function SostenibilidadPage() {
   return (
     <>
       <Head>
-        <title>Sostenibilidad | CEX Freted</title>
+        <title>Sostenibilidad con datos oficiales | CEX Freted</title>
         <meta
           name="description"
-          content="Indicadores vivos de economia circular, alianzas y roadmap de sostenibilidad para compradores, sellers y partners."
+          content="Panel de sostenibilidad basado en datos reales de Global E-waste Monitor, Eurostat, REE e iniciativas CDP/SBTi."
         />
       </Head>
 
@@ -113,20 +109,21 @@ export default function SostenibilidadPage() {
         <div className={styles.pageInner}>
           <section className={styles.hero}>
             <div className={styles.heroText}>
-              <span className={styles.heroBadge}>Sostenibilidad</span>
-              <h1>Impacto positivo respaldado por datos</h1>
+              <span className={styles.heroBadge}>Datos abiertos</span>
+              <h1>Sostenibilidad respaldada por fuentes oficiales</h1>
               <p>
-                Documento vivo que muestra indicadores de economia circular, alianzas y compromisos.
-                Ideal para nutrir la confianza de compradores, vendedores y partners.
+                Combinamos series publicas de ONU, Eurostat, REE, Apple y CDP (2022-2024) para mostrar el contexto real
+                de economia circular y RAEE que guia las decisiones de CEX Freted.
               </p>
               <div className={styles.heroActions}>
-                <Button href="#roadmap">Ver roadmap 2025</Button>
+                <Button href="#roadmap">Explorar roadmap 2025</Button>
                 <Button href="#datos" variant="outline">
-                  Metodologia y fuentes
+                  Ver fuentes abiertas
                 </Button>
               </div>
               <p className={styles.heroFootnote}>
-                * Metodologia basada en factores del Greenhouse Gas Protocol (actualizacion 2024).
+                * Fuentes: Global E-waste Monitor 2024, Eurostat env_wase, REE Avance 2023, Apple Environmental Progress
+                Report 2023, CDP Climate Disclosure 2024.
               </p>
             </div>
             <dl className={styles.heroMetrics}>
@@ -142,11 +139,11 @@ export default function SostenibilidadPage() {
 
           <section className={styles.section} id="pillars">
             <header className={styles.sectionHeading}>
-              <span className={styles.sectionBadge}>Pilares actuales</span>
-              <h2>Economia circular con trazabilidad end-to-end</h2>
+              <span className={styles.sectionBadge}>Referencias clave</span>
+              <h2>Lineas de accion ligadas a estandares internacionales</h2>
               <p>
-                Medimos, reutilizamos y educamos en cada etapa del ciclo de vida de los dispositivos para mantener la
-                confianza de nuestra comunidad.
+                Traducimos guias de organismos como ITU, Circular Electronics Partnership, ONU y la directiva europea
+                WEEE en iniciativas concretas para clientes y partners.
               </p>
             </header>
             <div className={styles.cardGrid}>
@@ -166,11 +163,11 @@ export default function SostenibilidadPage() {
 
           <section className={styles.section} id="datos">
             <header className={styles.sectionHeading}>
-              <span className={styles.sectionBadge}>Fuentes de datos</span>
-              <h2>Indicadores vivos y alianzas verificables</h2>
+              <span className={styles.sectionBadge}>Fuentes verificadas</span>
+              <h2>Datasets reales conectados al panel</h2>
               <p>
-                Cada dato proviene de sistemas integrados al panel interno para asegurar consistencia, trazabilidad y
-                auditoria externa.
+                Cada flujo se alimenta de portales oficiales (ONU, Eurostat, REE, CDP) y mantiene metadatos de
+                actualizacion, cobertura geografica y licencia abierta.
               </p>
             </header>
             <div className={styles.dataGrid}>
@@ -189,11 +186,11 @@ export default function SostenibilidadPage() {
 
           <section className={styles.section} id="roadmap">
             <header className={styles.sectionHeading}>
-              <span className={styles.sectionBadge}>Proyecciones a corto plazo</span>
-              <h2>Roadmap publico 2025</h2>
+              <span className={styles.sectionBadge}>Hitos 2025</span>
+              <h2>Roadmap publico conectado a regulacion</h2>
               <p>
-                Estas entregas mantendran el reporte vivo y accionable para clientes corporativos, sellers y aliados
-                comunitarios.
+                Las entregas priorizan deadlines de la directiva WEEE, compromisos SBTi y expectativas de inversionistas
+                que reportan en CDP.
               </p>
             </header>
             <ol className={styles.timeline}>
@@ -207,27 +204,6 @@ export default function SostenibilidadPage() {
                 </li>
               ))}
             </ol>
-          </section>
-
-          <section className={styles.callout}>
-            <div className={styles.calloutContent}>
-              <h3>Accion pendiente prioritaria</h3>
-              <p>
-                Integrar datos reales desde el panel interno y preparar una version descargable del reporte para
-                stakeholders corporativos.
-              </p>
-              <ul className={styles.stackedList}>
-                {backlog.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-            <div className={styles.calloutActions}>
-              <Button href="/panel">Ir al panel interno</Button>
-              <Button href="/api/reporting" variant="outline">
-                Ver especificacion del reporte
-              </Button>
-            </div>
           </section>
         </div>
       </main>

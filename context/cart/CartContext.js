@@ -133,7 +133,7 @@ const cartReducer = (state, action) => {
     case 'SET_CART': {
       return {
         ...state,
-        items: normalizeItems(action.payload),
+        items: deduplicateItems(normalizeItems(action.payload)),
       };
     }
     default:
@@ -163,27 +163,8 @@ export const CartProvider = ({ children }) => {
       const storedItems = window.localStorage.getItem(CART_STORAGE_KEY);
       if (storedItems) {
         const parsedItems = JSON.parse(storedItems);
-
-        // Verificar si hay duplicados por ID
-        const idCounts = new Map();
-        parsedItems.forEach((item) => {
-          if (item?.id) {
-            idCounts.set(item.id, (idCounts.get(item.id) || 0) + 1);
-          }
-        });
-
-        const hasDuplicateIds = Array.from(idCounts.values()).some(count => count > 1);
-
-        if (hasDuplicateIds) {
-          console.warn('⚠️ Se detectaron IDs duplicados en localStorage. Esto es un error. Limpiando...');
-          // Si hay duplicados, tomar solo el primer item de cada ID
-          const cleanedItems = deduplicateItems(normalizeItems(parsedItems));
-          window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cleanedItems));
-          dispatch({ type: 'SET_CART', payload: cleanedItems });
-        } else {
-          // No hay duplicados, cargar normalmente
-          dispatch({ type: 'SET_CART', payload: parsedItems });
-        }
+        // Siempre normalizar y deduplicar al cargar (el reducer se encarga de deduplicar)
+        dispatch({ type: 'SET_CART', payload: parsedItems });
       }
     } catch (error) {
       console.error('No se pudo leer el carrito almacenado', error);

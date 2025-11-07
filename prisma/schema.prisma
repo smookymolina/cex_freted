@@ -48,6 +48,7 @@ model User {
   refreshToken          String?
   resetPasswordToken    String?
   resetPasswordExpires  DateTime?
+  role                  Role      @default(COMPRADOR)
   // Configuraciones de notificaciones
   notifyEmail           Boolean   @default(true)
   notifyPush            Boolean   @default(false)
@@ -168,4 +169,10 @@ enum PaymentStatus {
   FAILED            // Fallido
   REFUNDED          // Reembolsado
   CANCELLED         // Cancelado
+}
+
+// Roles de usuario
+enum Role {
+  COMPRADOR         // Usuario que compra
+  SOPORTE           // Usuario de soporte/atención al cliente
 }

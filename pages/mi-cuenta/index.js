@@ -8,11 +8,18 @@ const MiCuentaPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Si el usuario está autenticado, redirigir al perfil
-    if (status === 'authenticated') {
-      router.replace('/mi-cuenta/perfil');
+    // Si el usuario está autenticado, redirigir según su rol
+    if (status === 'authenticated' && session?.user) {
+      // PASO 2: Redirección condicional según el rol del usuario
+      if (session.user.role === 'SOPORTE') {
+        // Si es soporte técnico, redirigir al panel de administración de órdenes
+        router.replace('/admin/ordenes');
+      } else {
+        // Si es comprador u otro rol, redirigir al dashboard de comprador
+        router.replace('/mi-cuenta/dashboard');
+      }
     }
-  }, [status, router]);
+  }, [status, session, router]);
 
   if (status === 'loading') {
     return (

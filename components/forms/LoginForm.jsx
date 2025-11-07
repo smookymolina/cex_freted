@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import styles from '../../styles/pages/Login.module.css';
 
@@ -60,7 +60,13 @@ const LoginForm = () => {
       return;
     }
 
-    router.push(callbackUrl);
+    // Role-based redirect
+    const session = await getSession();
+    if (session?.user?.role === 'SOPORTE') {
+      router.push('/admin/ordenes');
+    } else {
+      router.push(callbackUrl);
+    }
   };
 
   return (

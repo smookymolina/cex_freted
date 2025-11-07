@@ -57,6 +57,18 @@ const CheckoutStepper = () => {
     console.log('Session data:', session);
   }, [session, status]);
 
+  // Pre-fill customer data from session
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      setCustomerData((prev) => ({
+        ...prev,
+        fullName: session.user.name || prev.fullName || '',
+        email: session.user.email || prev.email || '',
+        phone: session.user.phone || prev.phone || '', // Assuming 'phone' is available in the session
+      }));
+    }
+  }, [session, status]);
+
   const subtotal = useMemo(
     () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [cart],
@@ -267,6 +279,7 @@ const CheckoutStepper = () => {
       case 3:
         return (
           <PaymentStep
+            customerData={customerData}
             selectedPaymentMethod={selectedPaymentMethod}
             setSelectedPaymentMethod={setSelectedPaymentMethod}
             subtotal={subtotal}
