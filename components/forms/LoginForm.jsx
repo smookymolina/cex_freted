@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import styles from '../../styles/pages/Login.module.css';
+import { getPostLoginRoute } from '../../utils/roleHome';
 
 const isSafeRedirect = (value) => typeof value === 'string' && value.startsWith('/');
 
@@ -60,13 +61,13 @@ const LoginForm = () => {
       return;
     }
 
-    // Role-based redirect
+    // Role-based redirect centralizado
     const session = await getSession();
-    if (session?.user?.role === 'SOPORTE') {
-      router.push('/admin/ordenes');
-    } else {
-      router.push(callbackUrl);
-    }
+    const nextRoute = getPostLoginRoute({
+      callbackUrl,
+      user: session?.user,
+    });
+    router.push(nextRoute);
   };
 
   return (

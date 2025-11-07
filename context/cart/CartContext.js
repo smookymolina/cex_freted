@@ -206,6 +206,12 @@ export const CartProvider = ({ children }) => {
       return;
     }
 
+    // No sincronizar carrito para usuarios SOPORTE
+    if (session?.user?.role === 'SOPORTE') {
+      hasSyncedServer.current = true; // Marcar como sincronizado para evitar intentos
+      return;
+    }
+
     if (hasSyncedServer.current) return;
 
     const syncCart = async () => {
@@ -231,12 +237,15 @@ export const CartProvider = ({ children }) => {
     };
 
     syncCart();
-  }, [status, session?.user?.id]);
+  }, [status, session?.user?.id, session?.user?.role]);
 
   useEffect(() => {
     if (!isHydrated.current) return;
     if (status !== 'authenticated' || !session?.user?.id) return;
     if (!hasSyncedServer.current) return;
+
+    // No persistir carrito para usuarios SOPORTE
+    if (session?.user?.role === 'SOPORTE') return;
 
     if (skipNextServerSync.current) {
       skipNextServerSync.current = false;
@@ -244,9 +253,15 @@ export const CartProvider = ({ children }) => {
     }
 
     persistCartToServer(state.items);
-  }, [state.items, status, session?.user?.id]);
+  }, [state.items, status, session?.user?.id, session?.user?.role]);
 
   const addToCart = (product, quantity = 1) => {
+    // Bloquear carrito para usuarios con rol SOPORTE
+    if (session?.user?.role === 'SOPORTE') {
+      console.warn('Los usuarios de soporte no pueden agregar productos al carrito');
+      return;
+    }
+
     dispatch({
       type: 'ADD_TO_CART',
       payload: { product, quantity },
@@ -254,14 +269,23 @@ export const CartProvider = ({ children }) => {
   };
 
   const decreaseQuantity = (productId) => {
+    // Bloquear para usuarios SOPORTE
+    if (session?.user?.role === 'SOPORTE') return;
+
     dispatch({ type: 'DECREASE_QUANTITY', payload: { productId } });
   };
 
   const removeFromCart = (productId) => {
+    // Bloquear para usuarios SOPORTE
+    if (session?.user?.role === 'SOPORTE') return;
+
     dispatch({ type: 'REMOVE_FROM_CART', payload: { productId } });
   };
 
   const clearCart = () => {
+    // Bloquear para usuarios SOPORTE
+    if (session?.user?.role === 'SOPORTE') return;
+
     dispatch({ type: 'CLEAR_CART' });
   };
 

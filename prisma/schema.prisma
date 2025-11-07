@@ -103,6 +103,7 @@ model Order {
 
   // Estado del pedido
   status            OrderStatus     @default(PENDING)
+  supportNotes      String?         // Notas internas del equipo de soporte
 
   // Relaciones
   payments          Payment[]

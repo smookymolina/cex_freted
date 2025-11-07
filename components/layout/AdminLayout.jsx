@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { Package, DollarSign, LogOut, User, Menu, X } from 'lucide-react';
+import Head from 'next/head';
+import { Package, DollarSign, LogOut, User, Menu, X, Shield } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
   const { data: session, status } = useSession();
@@ -12,7 +13,7 @@ const AdminLayout = ({ children }) => {
   useEffect(() => {
     if (status === 'loading') return;
 
-    // Proteger las rutas admin
+    // Proteger las rutas admin - Solo rol SOPORTE puede acceder
     if (!session || session.user.role !== 'SOPORTE') {
       router.push('/soporte/login');
     }
@@ -24,15 +25,20 @@ const AdminLayout = ({ children }) => {
 
   if (status === 'loading') {
     return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#f8fafc'
-      }}>
-        <p>Cargando...</p>
-      </div>
+      <>
+        <Head>
+          <title>Cargando - Panel de Soporte</title>
+        </Head>
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#f8fafc'
+        }}>
+          <p>Cargando...</p>
+        </div>
+      </>
     );
   }
 
@@ -55,6 +61,10 @@ const AdminLayout = ({ children }) => {
 
   return (
     <>
+      <Head>
+        <title>Panel de Soporte - CEX Freted</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
       <div className="admin-layout">
         {/* Sidebar Desktop */}
         <aside className="sidebar">

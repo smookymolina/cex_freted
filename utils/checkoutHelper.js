@@ -19,6 +19,9 @@ export async function processCheckout(checkoutData) {
       price: item.price,
       quantity: item.quantity,
       total: item.price * item.quantity,
+      image: item.image ?? null,
+      grade: item.grade ?? null,
+      category: item.category ?? null,
     }));
 
     // Crear la orden mediante la API

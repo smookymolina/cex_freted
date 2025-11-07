@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import AccountIntro from '../../components/mi-cuenta/AccountIntro';
+import { resolveRoleHomeRoute } from '../../utils/roleHome';
 
 const MiCuentaPage = () => {
   const { data: session, status } = useSession();
@@ -11,13 +12,8 @@ const MiCuentaPage = () => {
     // Si el usuario está autenticado, redirigir según su rol
     if (status === 'authenticated' && session?.user) {
       // PASO 2: Redirección condicional según el rol del usuario
-      if (session.user.role === 'SOPORTE') {
-        // Si es soporte técnico, redirigir al panel de administración de órdenes
-        router.replace('/admin/ordenes');
-      } else {
-        // Si es comprador u otro rol, redirigir al dashboard de comprador
-        router.replace('/mi-cuenta/dashboard');
-      }
+      const destination = resolveRoleHomeRoute(session.user);
+      router.replace(destination);
     }
   }, [status, session, router]);
 

@@ -59,19 +59,33 @@ const AdminPagosPage = () => {
       setError(null);
 
       const [paymentsRes, statsRes] = await Promise.all([
-        fetch('/api/admin/payments/pending'),
-        fetch('/api/admin/payments/stats'),
+        fetch('/api/admin/payments/pending', { credentials: 'include' }),
+        fetch('/api/admin/payments/stats', { credentials: 'include' }),
       ]);
+
+      if (
+        paymentsRes.status === 401 ||
+        paymentsRes.status === 403 ||
+        statsRes.status === 401 ||
+        statsRes.status === 403
+      ) {
+        router.push('/soporte/login');
+        return;
+      }
 
       const paymentsData = await paymentsRes.json();
       const statsData = await statsRes.json();
 
       if (paymentsRes.ok && paymentsData.success) {
         setPendingPayments(paymentsData.payments);
+      } else if (!paymentsRes.ok) {
+        throw new Error(paymentsData.error || 'No se pudieron obtener los pagos pendientes');
       }
 
       if (statsRes.ok && statsData.success) {
         setStats(statsData.stats);
+      } else if (!statsRes.ok) {
+        throw new Error(statsData.error || 'No se pudieron obtener las estadísticas');
       }
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -91,6 +105,7 @@ const AdminPagosPage = () => {
 
       const response = await fetch('/api/admin/payments/confirm', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           paymentId,
@@ -98,6 +113,12 @@ const AdminPagosPage = () => {
           notes: 'Pago confirmado manualmente por administrador',
         }),
       });
+
+      if (response.status === 401 || response.status === 403) {
+        alert('Tu sesión expiró. Vuelve a iniciar sesión de soporte.');
+        router.push('/soporte/login');
+        return;
+      }
 
       const data = await response.json();
 
@@ -124,12 +145,19 @@ const AdminPagosPage = () => {
     try {
       const response = await fetch('/api/admin/payments/cancel', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           paymentId,
           reason,
         }),
       });
+
+      if (response.status === 401 || response.status === 403) {
+        alert('Tu sesión expiró. Vuelve a iniciar sesión de soporte.');
+        router.push('/soporte/login');
+        return;
+      }
 
       const data = await response.json();
 

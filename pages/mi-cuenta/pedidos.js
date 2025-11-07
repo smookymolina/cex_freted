@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getSession } from 'next-auth/react';
 import AccountLayout from '../../components/mi-cuenta/AccountLayout';
-import { Package, Truck, CheckCircle, XCircle, Clock, ChevronRight, Download, Loader, RefreshCw } from 'lucide-react';
+import { productDetailsBySlug } from '../../data/product-details';
+import { Package, Truck, CheckCircle, XCircle, Clock, ChevronRight, Loader, RefreshCw } from 'lucide-react';
 import { formatOrderStatus, formatPaymentMethod } from '../../utils/checkoutHelper';
 
 const formatDate = (dateString) =>
@@ -27,6 +28,8 @@ const statusIcons = {
   REFUNDED: RefreshCw,
 };
 
+const PLACEHOLDER_IMAGE = '/assets/images/placeholder-base.png';
+
 const filters = [
   { id: 'all', label: 'Todos' },
   { id: 'PENDING', label: 'Pendientes' },
@@ -35,6 +38,30 @@ const filters = [
   { id: 'SHIPPED', label: 'Enviados' },
   { id: 'DELIVERED', label: 'Entregados' },
 ];
+
+const resolveItemPreview = (item = {}) => {
+  if (item?.image) {
+    return {
+      src: item.image,
+      alt: item.name || item.slug || 'Producto CEX Freted',
+    };
+  }
+
+  if (item?.slug && productDetailsBySlug[item.slug]) {
+    const galleryEntry = productDetailsBySlug[item.slug]?.gallery?.[0];
+    if (galleryEntry?.src) {
+      return {
+        src: galleryEntry.src,
+        alt: galleryEntry.alt || item.name || item.slug || 'Producto CEX Freted',
+      };
+    }
+  }
+
+  return {
+    src: PLACEHOLDER_IMAGE,
+    alt: item.name || 'Producto CEX Freted',
+  };
+};
 
 const PedidosPage = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -161,14 +188,12 @@ const PedidosPage = () => {
 
                     <div className="order-body">
                       {items.length > 0 ? (
-                        items.map((item, index) => (
-                          <div key={`${order.id}-${index}`} className="order-item">
-                            <div className="item-thumbnail">
-                              {item.image ? (
-                                <img src={item.image} alt={item.name} />
-                              ) : (
-                                <Package size={32} />
-                              )}
+                        items.map((item, index) => {
+                          const preview = resolveItemPreview(item);
+                          return (
+                            <div key={`${order.id}-${index}`} className="order-item">
+                              <div className="item-thumbnail">
+                              <img src={preview.src} alt={preview.alt} loading="lazy" />
                             </div>
                             <div className="item-details">
                               <p className="item-name">{item.name || item.slug}</p>
@@ -177,7 +202,8 @@ const PedidosPage = () => {
                             </div>
                             <div className="item-price">{formatCurrency(item.price)}</div>
                           </div>
-                        ))
+                        );
+                      })
                       ) : (
                         <div className="no-items">
                           <p>Sin items disponibles</p>

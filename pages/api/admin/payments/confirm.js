@@ -1,5 +1,6 @@
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
 import PaymentService from '../../../../services/paymentService';
+import { authOptions } from '../../auth/[...nextauth]';
 
 /**
  * API endpoint administrativo para confirmar un pago
@@ -14,7 +15,7 @@ export default async function handler(req, res) {
 
   try {
     // Verificar sesión del usuario
-    const session = await getSession({ req });
+    const session = await getServerSession(req, res, authOptions);
     if (!session || !session.user) {
       return res.status(401).json({ error: 'No autorizado' });
     }

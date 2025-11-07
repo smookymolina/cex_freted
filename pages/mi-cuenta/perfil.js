@@ -2,13 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import AccountLayout from '../../components/mi-cuenta/AccountLayout';
+import prisma from '../../lib/prisma';
 import { Edit2, Mail, Phone, Calendar, CheckCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
 
-const ProfilePage = ({ user }) => {
+const defaultStats = {
+  totalOrders: 0,
+  pendingOrders: 0,
+  deliveredOrders: 0,
+  totalSpent: 0,
+};
+
+const formatCurrency = (value = 0) =>
+  new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+  }).format(value || 0);
+
+const ProfilePage = ({ user, stats = defaultStats }) => {
   const router = useRouter();
   const [verifying, setVerifying] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const metrics = stats || defaultStats;
 
   useEffect(() => {
     if (router.query.verified === 'true') {
@@ -160,19 +175,19 @@ const ProfilePage = ({ user }) => {
           <h3 className="section-title">Mis estadísticas</h3>
           <div className="stats-grid">
             <div className="stat-card">
-              <div className="stat-number">0</div>
+              <div className="stat-number">{metrics.totalOrders}</div>
               <div className="stat-label">Pedidos realizados</div>
             </div>
             <div className="stat-card">
-              <div className="stat-number">0</div>
-              <div className="stat-label">Productos favoritos</div>
+              <div className="stat-number">{metrics.pendingOrders}</div>
+              <div className="stat-label">Pedidos en proceso</div>
             </div>
             <div className="stat-card">
-              <div className="stat-number">0</div>
-              <div className="stat-label">Reviews escritas</div>
+              <div className="stat-number">{metrics.deliveredOrders}</div>
+              <div className="stat-label">Pedidos entregados</div>
             </div>
             <div className="stat-card">
-              <div className="stat-number">$0</div>
+              <div className="stat-number">{formatCurrency(metrics.totalSpent)}</div>
               <div className="stat-label">Total gastado</div>
             </div>
           </div>
@@ -535,8 +550,63 @@ export async function getServerSideProps(context) {
     };
   }
 
+  const [userRecord, orders] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        createdAt: true,
+        emailVerified: true,
+      },
+    }),
+    prisma.order.findMany({
+      where: { userId: session.user.id },
+      select: {
+        id: true,
+        status: true,
+        total: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    }),
+  ]);
+
+  if (!userRecord) {
+    return {
+      redirect: {
+        destination: '/mi-cuenta/login',
+        permanent: false,
+      },
+    };
+  }
+
+  const pendingStatuses = new Set(['PENDING', 'PAYMENT_CONFIRMED', 'PROCESSING', 'SHIPPED']);
+
+  const stats = {
+    totalOrders: orders.length,
+    pendingOrders: orders.filter((order) => pendingStatuses.has(order.status)).length,
+    deliveredOrders: orders.filter((order) => order.status === 'DELIVERED').length,
+    totalSpent: orders.reduce((sum, order) => sum + (order.total || 0), 0),
+  };
+
+  const user = {
+    id: userRecord.id,
+    name: userRecord.name || '',
+    email: userRecord.email || '',
+    phone: userRecord.phone || '',
+    createdAt: userRecord.createdAt ? userRecord.createdAt.toISOString() : null,
+    emailVerified: Boolean(userRecord.emailVerified),
+  };
+
   return {
-    props: { user: session.user },
+    props: {
+      user,
+      stats,
+    },
   };
 }
 
