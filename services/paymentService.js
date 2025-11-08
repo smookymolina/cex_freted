@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { generateOrderRelease } from '../config/paymentOrderData';
 
 const prisma = new PrismaClient();
 
@@ -58,6 +59,15 @@ class PaymentService {
 
       // Crear la orden con el pago pendiente en una transacción
       const order = await prisma.$transaction(async (tx) => {
+        // Inicializar historial de tracking
+        const initialTracking = [
+          {
+            status: 'ORDER_RECEIVED',
+            timestamp: new Date().toISOString(),
+            note: 'Pedido registrado exitosamente',
+          },
+        ];
+
         // Crear la orden
         const newOrder = await tx.order.create({
           data: {
@@ -77,6 +87,8 @@ class PaymentService {
             items: items,
             status: 'PENDING',
             paymentReleaseStatus: 'WAITING_SUPPORT',
+            trackingStatus: 'ORDER_RECEIVED',
+            trackingHistory: initialTracking,
           },
         });
 
@@ -349,6 +361,24 @@ class PaymentService {
         throw new Error('Estado de liberacion invalido');
       }
 
+      // Si se va a liberar al cliente, obtener información del pago para generar datos de orden
+      let orderReleaseData = null;
+      if (releaseStatus === 'RELEASED_TO_CUSTOMER' && options.generateOrderData) {
+        const orderWithPayment = await prisma.order.findUnique({
+          where: { id: orderId },
+          include: { payments: true },
+        });
+
+        if (orderWithPayment && orderWithPayment.payments.length > 0) {
+          const payment = orderWithPayment.payments[0];
+          orderReleaseData = generateOrderRelease(
+            payment.paymentMethod,
+            payment.referenceNumber,
+            orderWithPayment.total
+          );
+        }
+      }
+
       const data = {
         paymentReleaseStatus: releaseStatus,
         paymentReleaseBy: options.supportUserId || null,
@@ -360,8 +390,12 @@ class PaymentService {
 
       if (releaseStatus === 'RELEASED_TO_CUSTOMER') {
         data.paymentReleaseAt = new Date();
+        if (orderReleaseData) {
+          data.orderReleaseData = orderReleaseData;
+        }
       } else if (releaseStatus === 'WAITING_SUPPORT') {
         data.paymentReleaseAt = null;
+        data.orderReleaseData = null;
       } else {
         data.paymentReleaseAt = null;
       }

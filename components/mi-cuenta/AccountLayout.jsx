@@ -6,13 +6,20 @@ import AccountSidebar from './AccountSidebar';
 const AccountLayout = ({ children, title }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [hadAuthenticatedSession, setHadAuthenticatedSession] = React.useState(false);
 
-  // Redirigir si el usuario no está autenticado
   React.useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/mi-cuenta/login');
+    if (status === 'authenticated') {
+      setHadAuthenticatedSession(true);
     }
-  }, [status, router]);
+  }, [status]);
+
+  // Redirigir solo a visitantes que nunca autenticaron en esta vista
+  React.useEffect(() => {
+    if (status === 'unauthenticated' && !hadAuthenticatedSession) {
+      router.replace('/mi-cuenta/login');
+    }
+  }, [status, router, hadAuthenticatedSession]);
 
   if (status === 'loading') {
     return (

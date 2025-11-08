@@ -69,48 +69,56 @@ model VerificationToken {
 }
 
 model Order {
-  id                 String      @id @default(cuid())
-  orderNumber        String      @unique
-  userId             String
-  customerName       String
-  customerEmail      String
-  customerPhone      String
-  shippingAddress    String
-  shippingCity       String
-  shippingState      String
-  shippingPostalCode String
-  shippingReferences String?
-  subtotal           Float
-  shippingCost       Float
-  total              Float
-  items              Json
-  status             OrderStatus @default(PENDING)
+  id                   String               @id @default(cuid())
+  orderNumber          String               @unique
+  userId               String
+  customerName         String
+  customerEmail        String
+  customerPhone        String
+  shippingAddress      String
+  shippingCity         String
+  shippingState        String
+  shippingPostalCode   String
+  shippingReferences   String?
+  subtotal             Float
+  shippingCost         Float
+  total                Float
+  items                Json
+  status               OrderStatus          @default(PENDING)
   paymentReleaseStatus PaymentReleaseStatus @default(WAITING_SUPPORT)
   paymentReleaseNotes  String?
   paymentReleaseBy     String?
   paymentReleaseAt     DateTime?
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
-  supportNotes       String?
-  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  payments           Payment[]
+  orderReleaseData     Json?
+  trackingStatus       TrackingStatus       @default(ORDER_RECEIVED)
+  trackingHistory      Json?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  supportNotes         String?
+  user                 User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments             Payment[]
 }
 
 model Payment {
-  id              String        @id @default(cuid())
-  orderId         String
-  amount          Float
-  paymentMethod   PaymentMethod
-  status          PaymentStatus @default(PENDING)
-  transactionId   String?       @unique
-  referenceNumber String        @unique
-  paymentMetadata Json?
-  processedAt     DateTime?
-  processedBy     String?
-  notes           String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  order           Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id                    String        @id @default(cuid())
+  orderId               String
+  amount                Float
+  paymentMethod         PaymentMethod
+  status                PaymentStatus @default(PENDING)
+  transactionId         String?       @unique
+  referenceNumber       String        @unique
+  paymentMetadata       Json?
+  paymentProof          String?
+  paymentProofUploadedAt DateTime?
+  paymentProofVerified  Boolean       @default(false)
+  paymentProofVerifiedAt DateTime?
+  paymentProofVerifiedBy String?
+  processedAt           DateTime?
+  processedBy           String?
+  notes                 String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  order                 Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 enum OrderStatus {
@@ -150,4 +158,12 @@ enum PaymentReleaseStatus {
 enum Role {
   COMPRADOR
   SOPORTE
+}
+
+enum TrackingStatus {
+  ORDER_RECEIVED
+  PAYMENT_VERIFICATION
+  PREPARING_ORDER
+  IN_TRANSIT
+  DELIVERED
 }

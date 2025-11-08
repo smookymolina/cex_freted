@@ -1,6 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { getSession } from 'next-auth/react';
 import AccountLayout from '../../components/mi-cuenta/AccountLayout';
+import OrderRelease from '../../components/mi-cuenta/OrderRelease';
+import PaymentProofUploader from '../../components/mi-cuenta/PaymentProofUploader';
+import PizzaTracker from '../../components/mi-cuenta/PizzaTracker';
 import { productDetailsBySlug } from '../../data/product-details';
 import { Package, Truck, CheckCircle, XCircle, Clock, ChevronRight, Loader, RefreshCw } from 'lucide-react';
 import { formatOrderStatus, formatPaymentMethod, formatReleaseStatus } from '../../utils/checkoutHelper';
@@ -88,7 +91,7 @@ const PedidosPage = () => {
       }
     } catch (err) {
       console.error('Error fetching orders:', err);
-      setError('Error de conexiÃ³n. Por favor intenta nuevamente.');
+      setError('Error de conexión. Por favor intenta nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -152,13 +155,13 @@ const PedidosPage = () => {
                 <Package size={32} />
                 <h4>
                   {selectedFilter === 'all'
-                    ? 'No tienes pedidos aÃºn'
-                    : 'No hay pedidos en esta categorÃ­a'}
+                    ? 'No tienes pedidos aún'
+                    : 'No hay pedidos en esta categoría'}
                 </h4>
                 <p>
                   {selectedFilter === 'all'
                     ? 'Comienza a comprar productos certificados y haz tu primer pedido.'
-                    : 'Filtra por otro estado para ver tus Ã³rdenes recientes.'}
+                    : 'Filtra por otro estado para ver tus órdenes recientes.'}
                 </p>
                 <a href="/comprar" className="empty-action">
                   Ir a comprar
@@ -207,7 +210,7 @@ const PedidosPage = () => {
                             </div>
                             <div className="item-details">
                               <p className="item-name">{item.name || item.slug}</p>
-                              {item.grade && <span className="item-grade">CondiciÃ³n: {item.grade}</span>}
+                              {item.grade && <span className="item-grade">Condición: {item.grade}</span>}
                               <span className="item-quantity">Cantidad: {item.quantity}</span>
                             </div>
                             <div className="item-price">{formatCurrency(item.price)}</div>
@@ -228,7 +231,7 @@ const PedidosPage = () => {
                           <strong className="info-value">{formatCurrency(order.total)}</strong>
                         </div>
                         <div className="info-item">
-                          <span className="info-label">MÃ©todo de pago</span>
+                          <span className="info-label">Método de pago</span>
                           <span className="info-value">
                             {order.payments[0]
                               ? formatPaymentMethod(order.payments[0].paymentMethod)
@@ -245,20 +248,72 @@ const PedidosPage = () => {
                         )}
                       </div>
 
-                      <div className="release-card">
-                        <div className="release-card-head">
-                          <span className="release-card-label">Orden de pago</span>
-                          {releaseTimestamp && <span className="release-card-time">{releaseTimestamp}</span>}
-                        </div>
-                        <p className="release-card-description">{releaseInfo.description}</p>
-                        {order.paymentReleaseNotes && (
-                          <p className="release-card-note">Nota de soporte: {order.paymentReleaseNotes}</p>
-                        )}
+                      {/* Pizza Tracker - Seguimiento del pedido */}
+                      <div className="tracker-section">
+                        <h4 className="section-title">Seguimiento del Pedido</h4>
+                        <PizzaTracker
+                          trackingStatus={order.trackingStatus}
+                          trackingHistory={order.trackingHistory}
+                          createdAt={order.createdAt}
+                        />
                       </div>
+
+                      {/* Vendedor */}
+                      <div className="vendor-card">
+                        <div className="vendor-header">
+                          <Package size={18} />
+                          <span className="vendor-label">Vendedor</span>
+                        </div>
+                        <p className="vendor-name">CEX Freted - Sociedad Tecnológica Integral</p>
+                        <p className="vendor-description">
+                          Distribuidor certificado de tecnología reacondicionada
+                        </p>
+                      </div>
+
+                      {/* Orden de Compra Liberada */}
+                      {order.paymentReleaseStatus === 'RELEASED_TO_CUSTOMER' && order.orderReleaseData && (
+                        <div className="order-release-section">
+                          <h4 className="section-title">Orden de Compra</h4>
+                          <OrderRelease
+                            orderReleaseData={order.orderReleaseData}
+                            paymentMethod={order.payments[0]?.paymentMethod}
+                            orderNumber={order.orderNumber}
+                          />
+                        </div>
+                      )}
+
+                      {/* Subida de Comprobante */}
+                      {order.paymentReleaseStatus === 'RELEASED_TO_CUSTOMER' &&
+                        order.payments[0] &&
+                        !order.payments[0].paymentProofVerified && (
+                          <div className="proof-uploader-section">
+                            <h4 className="section-title">Comprobante de Pago</h4>
+                            <PaymentProofUploader
+                              payment={order.payments[0]}
+                              onUploadSuccess={() => {
+                                fetchOrders();
+                              }}
+                            />
+                          </div>
+                        )}
+
+                      {/* Estado de Liberación (solo si NO está liberada) */}
+                      {order.paymentReleaseStatus !== 'RELEASED_TO_CUSTOMER' && (
+                        <div className="release-card">
+                          <div className="release-card-head">
+                            <span className="release-card-label">Estado de Orden</span>
+                            {releaseTimestamp && <span className="release-card-time">{releaseTimestamp}</span>}
+                          </div>
+                          <p className="release-card-description">{releaseInfo.description}</p>
+                          {order.paymentReleaseNotes && (
+                            <p className="release-card-note">Nota de soporte: {order.paymentReleaseNotes}</p>
+                          )}
+                        </div>
+                      )}
 
                       {order.shippingAddress && (
                         <div className="shipping-info">
-                          <span className="info-label">DirecciÃ³n de envÃ­o:</span>
+                          <span className="info-label">Dirección de envío:</span>
                           <p>
                             {order.shippingAddress}, {order.shippingCity}, {order.shippingState} - CP{' '}
                             {order.shippingPostalCode}
@@ -590,14 +645,14 @@ const PedidosPage = () => {
         }
 
         .release-card {
-          margin-top: 18px;
-          padding: 16px 18px;
+          margin-top: 20px;
+          padding: 20px;
           border-radius: 16px;
           border: 1px solid rgba(37, 99, 235, 0.2);
-          background: rgba(37, 99, 235, 0.05);
+          background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(14, 165, 233, 0.08) 100%);
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 10px;
         }
 
         .release-card-head {
@@ -629,12 +684,76 @@ const PedidosPage = () => {
           color: #475569;
         }
 
+        .section-title {
+          font-size: 16px;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0 0 16px 0;
+          padding-bottom: 12px;
+          border-bottom: 2px solid rgba(37, 99, 235, 0.15);
+        }
+
+        .tracker-section {
+          margin-top: 20px;
+          padding: 20px;
+          background: #f8fbff;
+          border-radius: 16px;
+          border: 1px solid rgba(37, 99, 235, 0.12);
+        }
+
+        .vendor-card {
+          padding: 18px 20px;
+          border-radius: 16px;
+          background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+          border: 1px solid rgba(14, 165, 233, 0.2);
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-top: 16px;
+        }
+
+        .vendor-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #0369a1;
+        }
+
+        .vendor-label {
+          font-size: 13px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .vendor-name {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 700;
+          color: #0f172a;
+        }
+
+        .vendor-description {
+          margin: 0;
+          font-size: 13px;
+          color: #475569;
+        }
+
+        .order-release-section {
+          margin-top: 20px;
+        }
+
+        .proof-uploader-section {
+          margin-top: 20px;
+        }
+
         .shipping-info {
-          padding: 14px 16px;
+          margin-top: 16px;
+          padding: 16px 20px;
           border: 1px dashed rgba(59, 130, 246, 0.35);
           border-radius: 14px;
           background-color: rgba(59, 130, 246, 0.05);
-          font-size: 13px;
+          font-size: 14px;
         }
 
         .shipping-info p {
@@ -646,6 +765,7 @@ const PedidosPage = () => {
           display: flex;
           flex-wrap: wrap;
           gap: 12px;
+          margin-top: 20px;
         }
 
         .order-action {
@@ -715,6 +835,7 @@ const PedidosPage = () => {
 
           .order-card {
             padding: 20px;
+            gap: 18px;
           }
 
           .order-item {
@@ -740,6 +861,23 @@ const PedidosPage = () => {
           .release-card-head {
             flex-direction: column;
             align-items: flex-start;
+          }
+
+          .tracker-section {
+            padding: 16px;
+            margin-top: 16px;
+          }
+
+          .section-title {
+            font-size: 15px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+          }
+
+          .vendor-card,
+          .order-release-section,
+          .proof-uploader-section {
+            margin-top: 16px;
           }
         }
 

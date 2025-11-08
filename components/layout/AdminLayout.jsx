@@ -9,15 +9,22 @@ const AdminLayout = ({ children }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hadAdminSession, setHadAdminSession] = useState(false);
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.role === 'SOPORTE') {
+      setHadAdminSession(true);
+    }
+  }, [status, session?.user?.role]);
 
   useEffect(() => {
     if (status === 'loading') return;
 
     // Proteger las rutas admin - Solo rol SOPORTE puede acceder
-    if (!session || session.user.role !== 'SOPORTE') {
-      router.push('/soporte/login');
+    if ((!session || session.user.role !== 'SOPORTE') && !hadAdminSession) {
+      router.replace('/soporte/login');
     }
-  }, [session, status, router]);
+  }, [session, status, router, hadAdminSession]);
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: '/soporte/login' });

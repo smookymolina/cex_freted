@@ -1,4 +1,5 @@
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../../auth/[...nextauth]';
 import prisma from '../../../../lib/prisma';
 import { apiResponse } from '../../../../lib/utils/apiResponse';
 
@@ -30,7 +31,7 @@ export default async function handler(req, res) {
   }
 
   // Verificar autenticación y rol
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session || session.user.role !== 'SOPORTE') {
     return res.status(403).json(apiResponse(null, 'Forbidden - Acceso denegado'));

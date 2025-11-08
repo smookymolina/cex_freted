@@ -91,27 +91,55 @@ const ConfirmationStep = ({
         </div>
       </div>
 
-      <div className="confirmation-grid">
-        <div className="grid-main">
-          <div className="section-card section-card--instructions">
-            <div className="section-heading">
-              <p className="section-eyebrow">Instrucciones de pago</p>
-              <h2>Completa tu pago ahora</h2>
-              <p className="section-description">
-                Espera la llamada de soporte para recibir los datos oficiales del vendedor y realiza el pago solo con
-                la informacion que te compartamos por nuestros canales verificados.
-              </p>
-            </div>
-            <div className="instructions-shell">
-              <PaymentInstructions
-                paymentMethod={selectedPaymentMethod}
-                orderNumber={orderInfo?.orderNumber}
-                paymentReference={orderInfo?.paymentReference}
-                total={orderInfo?.total || 0}
-              />
+      <div className={`confirmation-grid ${selectedPaymentMethod === 'PHONE_PAYMENT' ? 'confirmation-grid--phone' : ''}`}>
+        {selectedPaymentMethod !== 'PHONE_PAYMENT' && (
+          <div className="grid-main">
+            <div className="section-card section-card--instructions">
+              <div className="section-heading">
+                <p className="section-eyebrow">Instrucciones de pago</p>
+                <h2>Completa tu pago ahora</h2>
+                <p className="section-description">
+                  Espera la llamada de soporte para recibir los datos oficiales del vendedor y realiza el pago solo con
+                  la informacion que te compartamos por nuestros canales verificados.
+                </p>
+              </div>
+              <div className="instructions-shell">
+                <PaymentInstructions
+                  paymentMethod={selectedPaymentMethod}
+                  orderNumber={orderInfo?.orderNumber}
+                  paymentReference={orderInfo?.paymentReference}
+                  total={orderInfo?.total || 0}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {selectedPaymentMethod === 'PHONE_PAYMENT' && (
+          <div className="grid-main">
+            <div className="section-card section-card--phone-simple">
+              <div className="phone-message">
+                <div className="phone-icon">
+                  <Clock size={48} />
+                </div>
+                <h2>Nuestro equipo te contactará pronto</h2>
+                <p>
+                  Un asesor de soporte se comunicará contigo {phoneTargetText} en los próximos minutos para:
+                </p>
+                <ul className="phone-steps">
+                  <li>Confirmar los detalles de tu pedido</li>
+                  <li>Proporcionarte los datos oficiales de pago</li>
+                  <li>Resolver cualquier duda que tengas</li>
+                  <li>Guiarte durante todo el proceso</li>
+                </ul>
+                <div className="phone-alert">
+                  <ShieldCheck size={20} />
+                  <span>Por tu seguridad, proporcionamos los datos de pago solo mediante llamada telefónica oficial.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <aside className="grid-side">
           <div className="section-card summary-card">
@@ -172,23 +200,25 @@ const ConfirmationStep = ({
         </aside>
       </div>
 
-      <div className="section-card steps-card">
-        <div className="section-heading">
-          <p className="section-eyebrow">3 pasos para completar tu pago</p>
-          <h2>Pago directo con vendedores verificados</h2>
-        </div>
-        <div className="steps-grid">
-          {nextSteps.map((step, index) => (
-            <div className="step-card" key={step.title}>
-              <span className="step-index">{index + 1}</span>
-              <div>
-                <strong>{step.title}</strong>
-                <p>{step.description}</p>
+      {selectedPaymentMethod !== 'PHONE_PAYMENT' && (
+        <div className="section-card steps-card">
+          <div className="section-heading">
+            <p className="section-eyebrow">3 pasos para completar tu pago</p>
+            <h2>Pago directo con vendedores verificados</h2>
+          </div>
+          <div className="steps-grid">
+            {nextSteps.map((step, index) => (
+              <div className="step-card" key={step.title}>
+                <span className="step-index">{index + 1}</span>
+                <div>
+                  <strong>{step.title}</strong>
+                  <p>{step.description}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="section-card support-card">
         <div>
@@ -336,6 +366,88 @@ const ConfirmationStep = ({
           grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
           gap: 24px;
           align-items: start;
+        }
+        .confirmation-grid--phone {
+          grid-template-columns: 1fr 380px;
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+        .section-card--phone-simple {
+          text-align: center;
+          padding: 48px 32px;
+        }
+        .phone-message {
+          max-width: 600px;
+          margin: 0 auto;
+        }
+        .phone-icon {
+          width: 96px;
+          height: 96px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 24px;
+        }
+        .phone-icon :global(svg) {
+          color: #2563eb;
+        }
+        .phone-message h2 {
+          font-size: 1.75rem;
+          margin: 0 0 16px;
+          color: #0f172a;
+        }
+        .phone-message > p {
+          font-size: 1.05rem;
+          color: rgba(15, 23, 42, 0.7);
+          margin: 0 0 24px;
+          line-height: 1.6;
+        }
+        .phone-steps {
+          list-style: none;
+          padding: 0;
+          margin: 0 0 24px;
+          text-align: left;
+          display: inline-block;
+        }
+        .phone-steps li {
+          padding: 12px 0;
+          padding-left: 32px;
+          position: relative;
+          font-size: 1rem;
+          color: rgba(15, 23, 42, 0.8);
+        }
+        .phone-steps li::before {
+          content: '✓';
+          position: absolute;
+          left: 0;
+          width: 24px;
+          height: 24px;
+          background: linear-gradient(135deg, #2563eb, #1d4ed8);
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 0.85rem;
+        }
+        .phone-alert {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 16px 20px;
+          background: rgba(34, 197, 94, 0.08);
+          border: 1px solid rgba(34, 197, 94, 0.3);
+          border-radius: 16px;
+          font-size: 0.95rem;
+          color: rgba(15, 23, 42, 0.8);
+          text-align: left;
+        }
+        .phone-alert :global(svg) {
+          color: #22c55e;
+          flex-shrink: 0;
         }
         .grid-side {
           display: flex;
@@ -549,7 +661,8 @@ const ConfirmationStep = ({
           line-height: 1.6;
         }
         @media (max-width: 1024px) {
-          .confirmation-grid {
+          .confirmation-grid,
+          .confirmation-grid--phone {
             grid-template-columns: 1fr;
           }
         }
@@ -568,6 +681,16 @@ const ConfirmationStep = ({
           }
           .section-card {
             padding: 24px;
+          }
+          .section-card--phone-simple {
+            padding: 32px 24px;
+          }
+          .phone-icon {
+            width: 80px;
+            height: 80px;
+          }
+          .phone-message h2 {
+            font-size: 1.5rem;
           }
         }
         @media (max-width: 560px) {

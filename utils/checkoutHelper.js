@@ -260,3 +260,44 @@ export function formatPaymentStatus(status) {
     icon: '❓',
   };
 }
+
+/**
+ * Formatea el estado de tracking para mostrar
+ * @param {string} status - Estado de tracking
+ * @returns {Object} - Información formateada del estado
+ */
+export function formatTrackingStatus(status) {
+  const statusMap = {
+    ORDER_RECEIVED: {
+      label: 'Pedido Recibido',
+      color: '#10b981',
+      description: 'Tu pedido ha sido registrado',
+    },
+    PAYMENT_VERIFICATION: {
+      label: 'Verificación de Pago',
+      color: '#3b82f6',
+      description: 'Estamos verificando tu pago',
+    },
+    PREPARING_ORDER: {
+      label: 'Preparando Pedido',
+      color: '#8b5cf6',
+      description: 'Estamos preparando tus productos',
+    },
+    IN_TRANSIT: {
+      label: 'En Camino',
+      color: '#f59e0b',
+      description: 'Tu pedido está en tránsito',
+    },
+    DELIVERED: {
+      label: 'Entregado',
+      color: '#059669',
+      description: 'Tu pedido ha sido entregado',
+    },
+  };
+
+  return statusMap[status] || {
+    label: status,
+    color: '#6b7280',
+    description: '',
+  };
+}

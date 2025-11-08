@@ -1,6 +1,8 @@
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../../auth/[...nextauth]';
 import { apiResponse } from '../../../../lib/utils/apiResponse';
 import PaymentService from '../../../../services/paymentService';
+import { generateOrderRelease } from '../../../../config/paymentOrderData';
 
 const VALID_RELEASE_STATUSES = [
   'WAITING_SUPPORT',
@@ -14,7 +16,7 @@ export default async function handler(req, res) {
     return res.status(405).json(apiResponse(null, 'Method Not Allowed'));
   }
 
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session || session.user.role !== 'SOPORTE') {
     return res.status(403).json(apiResponse(null, 'Forbidden'));
@@ -35,6 +37,7 @@ export default async function handler(req, res) {
   const result = await PaymentService.updatePaymentRelease(orderId, releaseStatus, {
     notes,
     supportUserId: session.user.email || session.user.id,
+    generateOrderData: releaseStatus === 'RELEASED_TO_CUSTOMER',
   });
 
   if (!result.success) {
@@ -46,8 +49,11 @@ export default async function handler(req, res) {
       {
         order: result.order,
         releaseStatus: result.order.paymentReleaseStatus,
+        orderReleaseData: result.order.orderReleaseData,
       },
-      'Estado de liberacion actualizado'
+      releaseStatus === 'RELEASED_TO_CUSTOMER'
+        ? 'Orden de compra liberada al cliente'
+        : 'Estado de liberacion actualizado'
     )
   );
 }
