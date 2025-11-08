@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../../styles/components/SaleConfirmation.module.css';
+import styles from '../../styles/components/SaleConfirmation.module.css';
 import { CheckCircle, Package, Mail } from 'lucide-react';
 
 // Mock data

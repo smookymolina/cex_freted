@@ -16,10 +16,13 @@ export async function getServerSideProps(context) {
   const session = await getSession(context);
 
   if (session) {
+    // Usar ruta absoluta para desarrollo
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
     return {
       redirect: {
         destination: '/mi-cuenta/perfil',
         permanent: false,
+        basePath: false,
       },
     };
   }

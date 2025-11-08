@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from '../../../styles/components/AppraisalForm.module.css';
+import styles from '../../styles/components/AppraisalForm.module.css';
 
 // Mock data - en el futuro, esto vendría de una API
 const productData = {

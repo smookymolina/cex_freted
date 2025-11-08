@@ -44,30 +44,42 @@ const LoginForm = () => {
     setInfo('');
     setLoading(true);
 
-    const callbackUrl = isSafeRedirect(router.query.callbackUrl)
-      ? router.query.callbackUrl
-      : '/mi-cuenta/perfil';
+    try {
+      const callbackUrl = isSafeRedirect(router.query.callbackUrl)
+        ? router.query.callbackUrl
+        : '/mi-cuenta/perfil';
 
-    const result = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-      callbackUrl,
-    });
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+        callbackUrl,
+      });
 
-    if (result?.error) {
-      setError(result.error);
+      if (result?.error) {
+        setError(result.error);
+        setLoading(false);
+        return;
+      }
+
+      if (result?.ok) {
+        // Role-based redirect centralizado
+        const session = await getSession();
+        const nextRoute = getPostLoginRoute({
+          callbackUrl,
+          user: session?.user,
+        });
+
+        // Usar router.push con ruta absoluta
+        await router.push(nextRoute);
+      } else {
+        setError('Error al iniciar sesión. Por favor, intenta de nuevo.');
+        setLoading(false);
+      }
+    } catch (err) {
+      setError('Error de conexión. Por favor, verifica tu conexión e intenta de nuevo.');
       setLoading(false);
-      return;
     }
-
-    // Role-based redirect centralizado
-    const session = await getSession();
-    const nextRoute = getPostLoginRoute({
-      callbackUrl,
-      user: session?.user,
-    });
-    router.push(nextRoute);
   };
 
   return (

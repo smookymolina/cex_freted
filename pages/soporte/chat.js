@@ -26,18 +26,18 @@ const BOT_RESPONSES = {
   },
   grades: {
     message:
-      'Trabajamos con 3 grades:
+      `Trabajamos con 3 grades:
 
 - Grade A+: Como nuevo, excelente estado cosmético
 - Grade A: Muy buen estado, micro rayones imperceptibles
 - Grade B: Buen estado, señales de uso menores
 
-Todos funcionan al 100% y tienen la misma garantía.',
+Todos funcionan al 100% y tienen la misma garantía.`,
     delay: 1800,
   },
   vender: {
     message:
-      '¡Genial! Para vender tu dispositivo:
+      `¡Genial! Para vender tu dispositivo:
 
 1. Ve a "Tasar dispositivo" en el menú
 2. Selecciona tu dispositivo
@@ -45,7 +45,7 @@ Todos funcionan al 100% y tienen la misma garantía.',
 4. Recibe una oferta instantánea
 5. Si aceptas, te enviamos guía de envío prepagada
 
-El pago lo recibes en 24-48 horas después de verificar el dispositivo.',
+El pago lo recibes en 24-48 horas después de verificar el dispositivo.`,
     delay: 2000,
   },
   soporte: {

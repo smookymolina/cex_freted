@@ -57,6 +57,7 @@ export const authOptions = {
   },
   pages: {
     signIn: '/mi-cuenta/login',
+    error: '/mi-cuenta/login',
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -73,8 +74,22 @@ export const authOptions = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Usar rutas absolutas en desarrollo
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      }
+      // Si la URL ya contiene el baseUrl, devolverla tal cual
+      if (url.startsWith(baseUrl)) {
+        return url;
+      }
+      // Por defecto, redirigir al baseUrl
+      return baseUrl;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET || 'a_default_secret_for_development',
+  useSecureCookies: process.env.NODE_ENV === 'production',
+  debug: process.env.NODE_ENV === 'development',
 };
 
 export default NextAuth(authOptions);

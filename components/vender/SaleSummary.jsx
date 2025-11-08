@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../../styles/components/SaleSummary.module.css';
+import styles from '../../styles/components/SaleSummary.module.css';
 
 // Mock data - en una aplicación real, esto vendría del estado de la app o de la API
 const saleData = {
