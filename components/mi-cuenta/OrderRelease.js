@@ -14,26 +14,25 @@ import {
 } from 'lucide-react';
 
 const METHOD_LABELS = {
-  PHONE_PAYMENT: 'Pago telefónico',
+  PHONE_PAYMENT: 'Pago telef\u00f3nico',
   BANK_TRANSFER: 'Transferencia bancaria',
   CONVENIENCE_STORE: 'Pago en tienda',
-  CASH_DEPOSIT: 'Depósito en efectivo',
+  CASH_DEPOSIT: 'Dep\u00f3sito en efectivo',
   STORE_PAYMENT: 'Pago en sucursal',
 };
 
 const FALLBACK_INSTRUCTIONS = {
   PHONE_PAYMENT: [
-    'Llama al número telefónico proporcionado.',
-    'Ten a la mano tu tarjeta de crédito o débito.',
-    'Proporciona el número de referencia al ejecutivo.',
-    'El asesor procesará el cobro de forma segura.',
-    'Recibirás un correo de confirmación inmediata.',
-    'No es necesario subir comprobante adicional.',
+    'Agenda la llamada directamente con el ejecutivo asignado.',
+    'Verifica referencia, monto y tarjeta antes de autorizar.',
+    'Autoriza el cargo telef\u00f3nico y escucha la confirmaci\u00f3n durante la llamada.',
+    'Sube el comprobante del cargo en Mis Pedidos para acelerar la confirmaci\u00f3n.',
+    'Recibir\u00e1s la confirmaci\u00f3n final y podr\u00e1s continuar con el env\u00edo.',
   ],
   DEFAULT: [
     'Revisa que la referencia y el monto sean correctos.',
-    'Utiliza únicamente los medios oficiales proporcionados.',
-    'Conserva tu comprobante hasta recibir la confirmación.',
+    'Utiliza \u00fanicamente los medios oficiales proporcionados.',
+    'Conserva tu comprobante hasta recibir la confirmaci\u00f3n.',
     'Si tienes dudas contacta a nuestro equipo de soporte.',
   ],
 };
@@ -54,6 +53,32 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
     orderReleaseData.instructions?.length > 0
       ? orderReleaseData.instructions
       : FALLBACK_INSTRUCTIONS[paymentMethod] || FALLBACK_INSTRUCTIONS.DEFAULT;
+  const shouldRenderInstructions =
+    paymentMethod !== 'PHONE_PAYMENT' && Array.isArray(instructions) && instructions.length > 0;
+
+  const fallbackContactInfo = {
+    contact: 'Lic. Marisol Herrera',
+    phone: '55 7873 8515',
+    whatsapp: '+52 1 55 7873 8515',
+    email: 'marisol.herrera@cexfreted.com',
+    schedule: 'Lunes a Viernes: 9:00 AM - 8:00 PM | Sabados: 10:00 AM - 2:00 PM',
+  };
+
+  const rawContactInfo = orderReleaseData.contactInfo || {};
+  const hasContactData = Object.keys(rawContactInfo).length > 0;
+  const contactName = rawContactInfo.contact || fallbackContactInfo.contact;
+  const contactPhone = (() => {
+    const value = rawContactInfo.phone ? String(rawContactInfo.phone) : '';
+    if (!value) return fallbackContactInfo.phone;
+    if (/01-800|CEX|239-7246/i.test(value)) {
+      return fallbackContactInfo.phone;
+    }
+    return value;
+  })();
+  const contactWhatsapp = rawContactInfo.whatsapp || fallbackContactInfo.whatsapp;
+  const contactEmail = rawContactInfo.email || fallbackContactInfo.email;
+  const contactSchedule = rawContactInfo.schedule || fallbackContactInfo.schedule;
+  const shouldShowContact = hasContactData || paymentMethod === 'PHONE_PAYMENT';
 
   const copyToClipboard = (text, fieldName) => {
     if (!text) return;
@@ -108,52 +133,64 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
           <p className="release-hero__eyebrow">Orden de compra #{orderNumber || 'N/A'}</p>
           <h3 className="release-hero__title">{orderReleaseData.title || 'Pago autorizado'}</h3>
           <p className="release-hero__subtitle">
-            {orderReleaseData.description || 'Completa tu pago siguiendo las instrucciones de este módulo.'}
+            {orderReleaseData.description || 'Completa tu pago siguiendo las instrucciones de este m\u00f3dulo.'}
           </p>
         </div>
         <span className="release-chip">{methodLabel}</span>
       </header>
 
       <div className="release-stats">
-        {renderCopyField('Número de referencia', orderReleaseData.referenceNumber, 'reference')}
+        {renderCopyField('N\u00famero de referencia', orderReleaseData.referenceNumber, 'reference')}
         <div className="release-stat">
           <p className="release-stat__label">Monto a pagar</p>
           <p className="release-amount">{formatCurrency(orderReleaseData.totalAmount)}</p>
         </div>
       </div>
 
-      <div className="release-section">
-        <div className="release-section__head">
-          <AlertCircle size={18} />
-          <h4>Instrucciones de pago</h4>
+      {shouldRenderInstructions && (
+        <div className="release-section">
+          <div className="release-section__head">
+            <AlertCircle size={18} />
+            <h4>Instrucciones de pago</h4>
+          </div>
+          <ol className="release-steps">
+            {instructions.map((instruction, index) => (
+              <li key={index}>
+                <span>{index + 1}.</span>
+                <p>{instruction}</p>
+              </li>
+            ))}
+          </ol>
         </div>
-        <ol className="release-steps">
-          {instructions.map((instruction, index) => (
-            <li key={index}>
-              <span>{index + 1}.</span>
-              <p>{instruction}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
+      )}
 
-      {orderReleaseData.contactInfo && (
+      {shouldShowContact && (
         <div className="release-section">
           <div className="release-section__head">
             <Phone size={18} />
-            <h4>Información de contacto</h4>
+            <h4>Informaci\u00f3n de contacto</h4>
           </div>
           <div className="release-contact">
-            {orderReleaseData.contactInfo.phone && (
-              <div>
-                <p className="release-contact__label">Teléfono</p>
-                <p className="release-contact__value">{orderReleaseData.contactInfo.phone}</p>
-              </div>
-            )}
-            {orderReleaseData.contactInfo.schedule && (
+            <div>
+              <p className="release-contact__label">Ejecutivo asignado</p>
+              <p className="release-contact__value">{contactName}</p>
+              <p className="release-contact__sub">Especialista de pagos telef\u00f3nicos</p>
+            </div>
+            <div>
+              <p className="release-contact__label">Tel\u00e9fono directo</p>
+              <p className="release-contact__value">{contactPhone}</p>
+              {contactWhatsapp && <p className="release-contact__sub">WhatsApp: {contactWhatsapp}</p>}
+            </div>
+            {contactSchedule && (
               <div>
                 <p className="release-contact__label">Horario</p>
-                <p className="release-contact__value">{orderReleaseData.contactInfo.schedule}</p>
+                <p className="release-contact__value">{contactSchedule}</p>
+              </div>
+            )}
+            {contactEmail && (
+              <div>
+                <p className="release-contact__label">Correo</p>
+                <p className="release-contact__value">{contactEmail}</p>
               </div>
             )}
           </div>
@@ -463,6 +500,12 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
           font-size: 16px;
           font-weight: 600;
           color: #0f172a;
+        }
+
+        .release-contact__sub {
+          margin: 2px 0 0;
+          font-size: 12px;
+          color: rgba(15, 23, 42, 0.6);
         }
 
         .release-chips {

@@ -88,10 +88,11 @@ export const PAYMENT_ORDER_DATA = {
       'No es necesario subir comprobante',
     ],
     contactInfo: {
-      phone: '55 8526 4826',
-      whatsapp: '+52 1 55 8526 4826',
-      email: 'ventas@cexfreted.com',
-      schedule: 'Lunes a Viernes: 9:00 AM - 7:00 PM | Sábados: 10:00 AM - 2:00 PM',
+      contact: 'Lic. Marisol Herrera',
+      phone: '55 7873 8515',
+      whatsapp: '+52 1 55 7873 8515',
+      email: 'marisol.herrera@cexfreted.com',
+      schedule: 'Lunes a Viernes: 9:00 AM - 8:00 PM | Sabados: 10:00 AM - 2:00 PM',
     },
     acceptedCards: [
       'Visa',
