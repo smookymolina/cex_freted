@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { CheckCircle, Clock } from 'lucide-react';
+import { CheckCircle, Clock, ShieldCheck, Sparkles } from 'lucide-react';
 import PaymentInstructions from '../PaymentInstructions';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
@@ -8,236 +8,562 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
   currency: 'MXN',
 });
 
-const ConfirmationStep = ({ orderInfo, customerData, shippingData, selectedPaymentMethod }) => (
-  <section className="confirmation">
-    <div className="confirmation__icon">
-      <CheckCircle size={48} aria-hidden="true" />
-    </div>
-    <h1>¡Pedido Recibido!</h1>
-    <p className="subtitle">
-      Tu orden ha sido registrada con éxito y está pendiente de pago.
-    </p>
+const PAYMENT_METHOD_LABELS = {
+  PHONE_PAYMENT: 'Confirmación telefónica',
+  BANK_TRANSFER: 'Transferencia bancaria',
+  CASH_DEPOSIT: 'Depósito bancario',
+  CONVENIENCE_STORE: 'Pago en tienda',
+};
 
-    <div className="payment-instructions-wrapper">
-      <PaymentInstructions
-        paymentMethod={selectedPaymentMethod}
-        orderNumber={orderInfo?.orderNumber}
-        paymentReference={orderInfo?.paymentReference}
-        total={orderInfo?.total || 0}
-      />
-    </div>
+const ConfirmationStep = ({
+  orderInfo = {},
+  customerData = {},
+  shippingData = {},
+  selectedPaymentMethod,
+}) => {
+  const orderNumber = orderInfo?.orderNumber || 'Pendiente';
+  const totalAmount = CURRENCY_FORMATTER.format(orderInfo?.total || 0);
+  const paymentReference = orderInfo?.paymentReference || 'Por asignar';
+  const methodLabel = PAYMENT_METHOD_LABELS[selectedPaymentMethod] || 'Pago seleccionado';
+  const customerName = customerData?.fullName || 'Cliente Sociedad Tecnologica Integral';
+  const customerEmail = customerData?.email || '';
+  const customerPhone = customerData?.phone || '';
+  const addressLine = shippingData?.address || '';
+  const locationLine = [shippingData?.city, shippingData?.state].filter(Boolean).join(', ');
+  const postalCode = shippingData?.postalCode ? `CP ${shippingData.postalCode}` : '';
+  const references = shippingData?.references?.trim();
 
-    <div className="confirmation__summary">
-      <div>
-        <h3>Número de Orden</h3>
-        <p>{orderInfo?.orderNumber}</p>
-      </div>
-      <div>
-        <h3>Total a Pagar</h3>
-        <p>{CURRENCY_FORMATTER.format(orderInfo?.total || 0)}</p>
-      </div>
-      <div>
-        <h3>Estado del Pedido</h3>
-        <p className="status-pending">
-          <Clock size={16} />
-          Pendiente de Pago
-        </p>
-      </div>
-    </div>
+  const nextSteps = [
+    {
+      title: 'Confirma tu pago',
+      description:
+        paymentReference === 'Por asignar'
+          ? 'Realiza el deposito con el metodo elegido. Tu referencia aparecera en el comprobante.'
+          : `Ingresa ${paymentReference} como referencia para identificar tu pago.`,
+    },
+    {
+      title: 'Comparte el comprobante',
+      description:
+        'Envialo al correo o WhatsApp oficial de Sociedad Tecnologica Integral para validar la operacion en minutos.',
+    },
+    {
+      title: 'Recibe la liberacion',
+      description:
+        'En cuanto confirmamos el saldo, programamos el envio o recoleccion y te avisamos por correo y en tu panel.',
+    },
+  ];
 
-    <div className="confirmation__details">
-      <h3>Información de Contacto</h3>
-      <p>
-        {customerData.fullName} · {customerData.email}
+  const emailMessage = customerEmail || 'tu correo registrado';
+
+  return (
+    <section className="confirmation">
+      <div className="hero-card">
+        <div className="hero-visual">
+          <div className="hero-icon">
+            <CheckCircle size={32} aria-hidden="true" />
+          </div>
+          <span className="hero-glow" aria-hidden="true" />
+        </div>
+
+        <div className="hero-copy">
+          <p className="hero-eyebrow">
+            <Sparkles size={16} aria-hidden="true" />
+            Pago en proceso
+          </p>
+          <h1>¡Pedido recibido!</h1>
+          <p>
+            Gracias por comprar en Sociedad Tecnologica Integral. Reservamos tus equipos mientras completas el pago
+            con total seguridad. Sigue estos 3 pasos para completar la confirmacion sin contratiempos.
+          </p>
+          <div className="hero-tags">
+            <span className="hero-tag">Orden #{orderNumber}</span>
+            <span className="hero-tag">{totalAmount}</span>
+            <span className="hero-tag hero-tag--status">
+              <Clock size={14} aria-hidden="true" />
+              Pago pendiente
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="confirmation-grid">
+        <div className="grid-main">
+          <div className="section-card section-card--instructions">
+            <div className="section-heading">
+              <p className="section-eyebrow">Instrucciones de pago</p>
+              <h2>Completa tu pago ahora</h2>
+              <p className="section-description">
+                Sigue el método seleccionado y conserva tu comprobante para una validación rápida.
+              </p>
+            </div>
+            <div className="instructions-shell">
+              <PaymentInstructions
+                paymentMethod={selectedPaymentMethod}
+                orderNumber={orderInfo?.orderNumber}
+                paymentReference={orderInfo?.paymentReference}
+                total={orderInfo?.total || 0}
+              />
+            </div>
+          </div>
+        </div>
+
+        <aside className="grid-side">
+          <div className="section-card summary-card">
+            <div className="section-heading">
+              <p className="section-eyebrow">Resumen</p>
+              <h3>Detalles del pedido</h3>
+            </div>
+            <dl className="key-data">
+              <div>
+                <dt>Número de orden</dt>
+                <dd>{orderNumber}</dd>
+              </div>
+              <div>
+                <dt>Total</dt>
+                <dd>{totalAmount}</dd>
+              </div>
+              <div>
+                <dt>Método</dt>
+                <dd>{methodLabel}</dd>
+              </div>
+              <div>
+                <dt>Referencia</dt>
+                <dd>{paymentReference}</dd>
+              </div>
+            </dl>
+            <div className="guarantee-note">
+              <ShieldCheck size={18} aria-hidden="true" />
+              <span>Verificamos cada pago y te avisamos en menos de 15 minutos.</span>
+            </div>
+          </div>
+
+          <div className="section-card contact-card">
+            <div className="section-heading">
+              <p className="section-eyebrow">Datos del cliente</p>
+              <h3>Contacto y entrega</h3>
+            </div>
+            <div className="info-block">
+              <span className="info-label">Contacto</span>
+              <p>{customerName}</p>
+              {customerEmail && <p className="muted">{customerEmail}</p>}
+              {customerPhone && <p className="muted">Tel. {customerPhone}</p>}
+            </div>
+            {(addressLine || locationLine || postalCode) && (
+              <div className="info-block">
+                <span className="info-label">Entrega</span>
+                {addressLine && <p>{addressLine}</p>}
+                {locationLine && <p className="muted">{locationLine}</p>}
+                {postalCode && <p className="muted">{postalCode}</p>}
+              </div>
+            )}
+            {references && (
+              <div className="info-block">
+                <span className="info-label">Referencias</span>
+                <p>{references}</p>
+              </div>
+            )}
+          </div>
+        </aside>
+      </div>
+
+      <div className="section-card steps-card">
+        <div className="section-heading">
+          <p className="section-eyebrow">3 pasos para completar tu pago</p>
+          <h2>Asi confirmamos tu pago en Sociedad Tecnologica Integral</h2>
+        </div>
+        <div className="steps-grid">
+          {nextSteps.map((step, index) => (
+            <div className="step-card" key={step.title}>
+              <span className="step-index">{index + 1}</span>
+              <div>
+                <strong>{step.title}</strong>
+                <p>{step.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="section-card support-card">
+        <div>
+          <p className="section-eyebrow">¿Dudas?</p>
+          <h3>Estamos listos para ayudarte</h3>
+          <p>
+            Escríbenos con tu número de orden y validamos tu pago por correo o WhatsApp en minutos hábiles.
+          </p>
+        </div>
+        <Link href="/soporte" className="link-button link-button--ghost">
+          Contactar soporte
+        </Link>
+      </div>
+
+      <div className="confirmation__actions">
+        <Link href="/comprar" className="link-button">
+          Seguir comprando
+        </Link>
+        <Link href="/mi-cuenta/pedidos" className="link-button link-button--ghost">
+          Ver historial de pedidos
+        </Link>
+      </div>
+
+      <p className="confirmation__footer">
+        Recibirás un correo de confirmación en <strong>{emailMessage}</strong> con todos los detalles y el
+        seguimiento de envío. Si no lo ves, revisa tu carpeta de spam o promociones.
       </p>
-      <p>Teléfono: {customerData.phone}</p>
 
-      <h3>Dirección de Entrega</h3>
-      <p>
-        {shippingData.address}, {shippingData.city}, {shippingData.state}
-      </p>
-      <p>CP {shippingData.postalCode}</p>
-      {shippingData.references && (
-        <>
-          <h3>Referencias</h3>
-          <p>{shippingData.references}</p>
-        </>
-      )}
-    </div>
-
-    <div className="confirmation__actions">
-      <Link href="/comprar" className="link-button">
-        Seguir Comprando
-      </Link>
-      <Link href="/mi-cuenta/pedidos" className="link-button link-button--ghost">
-        Ver Historial de Pedidos
-      </Link>
-    </div>
-
-    <p className="confirmation__footer">
-      Recibirás un correo de confirmación en <strong>{customerData.email}</strong> con todos los detalles de tu pedido. Por favor, revisa tu bandeja de entrada.
-    </p>
-
-    <style jsx>{`
-      .confirmation {
-        text-align: center;
-        max-width: 720px;
-        margin: 0 auto;
-      }
-      .confirmation__icon {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, #10b981, #059669);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 24px;
-        color: #fff;
-        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-        animation: scaleIn 0.4s ease-out;
-      }
-      @keyframes scaleIn {
-        from {
-          transform: scale(0);
+      <style jsx>{`
+        .confirmation {
+          max-width: 1100px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 32px;
         }
-        to {
-          transform: scale(1);
+        .hero-card {
+          position: relative;
+          overflow: hidden;
+          border-radius: 28px;
+          padding: 40px;
+          display: flex;
+          gap: 32px;
+          align-items: center;
+          background: linear-gradient(135deg, #0f172a, #1d4ed8);
+          color: #fff;
+          box-shadow: 0 35px 80px rgba(15, 23, 42, 0.4);
         }
-      }
-      .confirmation h1 {
-        margin: 0 0 8px;
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #0f172a;
-      }
-      .subtitle {
-        margin: 0 0 32px;
-        font-size: 1rem;
-        color: rgba(15, 23, 42, 0.65);
-        line-height: 1.6;
-      }
-      .payment-instructions-wrapper {
-        margin-bottom: 32px;
-        text-align: left;
-      }
-      .confirmation__summary {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-        border-radius: 16px;
-        padding: 24px;
-        margin-bottom: 32px;
-      }
-      .confirmation__summary div {
-        text-align: center;
-      }
-      .confirmation__summary h3 {
-        margin: 0 0 8px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: rgba(15, 23, 42, 0.6);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      .confirmation__summary p {
-        margin: 0;
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #0f172a;
-      }
-      .status-pending {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        color: #d97706;
-        background: rgba(245, 158, 11, 0.1);
-        padding: 8px 16px;
-        border-radius: 99px;
-      }
-      .confirmation__details {
-        background: #fafbfc;
-        border: 1px solid rgba(15, 23, 42, 0.1);
-        border-radius: 16px;
-        padding: 24px;
-        margin: 32px 0;
-        text-align: left;
-      }
-      .confirmation__details h3 {
-        margin: 20px 0 8px;
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #0f172a;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      .confirmation__details h3:first-child {
-        margin-top: 0;
-      }
-      .confirmation__details p {
-        margin: 4px 0;
-        font-size: 0.95rem;
-        color: rgba(15, 23, 42, 0.75);
-        line-height: 1.5;
-      }
-      .confirmation__actions {
-        display: flex;
-        gap: 16px;
-        justify-content: center;
-        margin: 32px 0;
-      }
-      .link-button {
-        padding: 14px 28px;
-        border-radius: 12px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .link-button:not(.link-button--ghost) {
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        color: #fff;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-      }
-      .link-button:not(.link-button--ghost):hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
-      }
-      .link-button--ghost {
-        background: transparent;
-        color: rgba(15, 23, 42, 0.7);
-        border: 2px solid rgba(15, 23, 42, 0.12);
-      }
-      .link-button--ghost:hover {
-        background: rgba(15, 23, 42, 0.04);
-        border-color: rgba(15, 23, 42, 0.2);
-      }
-      .confirmation__footer {
-        margin: 32px 0 0;
-        padding: 20px;
-        background: rgba(59, 130, 246, 0.05);
-        border-left: 4px solid #2563eb;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        color: rgba(15, 23, 42, 0.75);
-        text-align: left;
-      }
-      @media (max-width: 768px) {
-        .confirmation__summary {
+        .hero-card::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.4), transparent 45%);
+          pointer-events: none;
+        }
+        .hero-visual {
+          position: relative;
+          flex-shrink: 0;
+        }
+        .hero-icon {
+          width: 96px;
+          height: 96px;
+          border-radius: 24px;
+          background: rgba(255, 255, 255, 0.15);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          backdrop-filter: blur(6px);
+          position: relative;
+          z-index: 1;
+        }
+        .hero-icon :global(svg) {
+          color: #34d399;
+        }
+        .hero-glow {
+          position: absolute;
+          inset: 0;
+          transform: translate(20px, -20px);
+          width: 120px;
+          height: 120px;
+          background: radial-gradient(circle, rgba(52, 211, 153, 0.6), transparent 60%);
+          z-index: 0;
+        }
+        .hero-copy {
+          position: relative;
+          z-index: 1;
+          flex: 1;
+        }
+        .hero-eyebrow {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 0.85rem;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          margin: 0 0 12px;
+          color: rgba(255, 255, 255, 0.8);
+        }
+        .hero-copy h1 {
+          font-size: 2.25rem;
+          margin: 0 0 12px;
+        }
+        .hero-copy p {
+          margin: 0;
+          font-size: 1.05rem;
+          color: rgba(255, 255, 255, 0.85);
+          line-height: 1.6;
+        }
+        .hero-tags {
+          margin-top: 24px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+        .hero-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 18px;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          font-size: 0.95rem;
+          font-weight: 600;
+        }
+        .hero-tag--status {
+          background: rgba(15, 23, 42, 0.45);
+        }
+        .confirmation-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+          gap: 24px;
+          align-items: start;
+        }
+        .grid-side {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+        .section-card {
+          background: #fff;
+          border-radius: 24px;
+          padding: 32px;
+          border: 1px solid rgba(15, 23, 42, 0.08);
+          box-shadow: 0 24px 60px rgba(15, 23, 42, 0.07);
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+        .section-card--instructions {
+          padding: 32px;
+        }
+        .section-heading {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .section-eyebrow {
+          font-size: 0.8rem;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: rgba(15, 23, 42, 0.5);
+          margin: 0;
+        }
+        .section-heading h2,
+        .section-heading h3 {
+          margin: 0;
+          color: #0f172a;
+        }
+        .section-heading h2 {
+          font-size: 1.5rem;
+        }
+        .section-heading h3 {
+          font-size: 1.25rem;
+        }
+        .section-description {
+          margin: 0;
+          font-size: 0.95rem;
+          color: rgba(15, 23, 42, 0.65);
+        }
+        .instructions-shell {
+          border-radius: 20px;
+          border: 1px solid rgba(15, 23, 42, 0.08);
+          background: linear-gradient(180deg, #f8fafc, #fff);
+          padding: 16px;
+        }
+        .instructions-shell :global(.payment-instructions) {
+          margin: 0;
+        }
+        .key-data {
+          display: grid;
           grid-template-columns: 1fr;
+          gap: 12px;
+          margin: 0;
+        }
+        .key-data div {
+          padding: 16px;
+          border-radius: 16px;
+          background: #f8fafc;
+          border: 1px solid rgba(15, 23, 42, 0.06);
+        }
+        .key-data dt {
+          margin: 0 0 4px;
+          font-size: 0.75rem;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: rgba(15, 23, 42, 0.55);
+        }
+        .key-data dd {
+          margin: 0;
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #0f172a;
+        }
+        .guarantee-note {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 0.9rem;
+          color: rgba(15, 23, 42, 0.75);
+          padding: 14px 16px;
+          border-radius: 16px;
+          background: rgba(34, 197, 94, 0.08);
+          border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .info-block {
+          border-radius: 16px;
+          border: 1px solid rgba(15, 23, 42, 0.08);
+          background: #f8fafc;
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .info-label {
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: rgba(15, 23, 42, 0.6);
+        }
+        .muted {
+          color: rgba(15, 23, 42, 0.6);
+          margin: 0;
+          font-size: 0.9rem;
+        }
+        .steps-card {
+          gap: 16px;
+        }
+        .steps-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 16px;
+        }
+        .step-card {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+          border-radius: 18px;
+          padding: 18px;
+          background: #fff;
+          border: 1px solid rgba(15, 23, 42, 0.05);
+          box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.05);
+        }
+        .step-index {
+          width: 36px;
+          height: 36px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, #2563eb, #1d4ed8);
+          color: #fff;
+          font-weight: 700;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .step-card strong {
+          display: block;
+          font-size: 1rem;
+          margin-bottom: 6px;
+          color: #0f172a;
+        }
+        .step-card p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: rgba(15, 23, 42, 0.7);
+          line-height: 1.5;
+        }
+        .support-card {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          background: linear-gradient(120deg, #eff6ff, #e0f2fe);
+          border: none;
+          box-shadow: none;
+        }
+        .support-card h3 {
+          margin: 6px 0;
         }
         .confirmation__actions {
-          flex-direction: column;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 16px;
+          justify-content: center;
         }
-      }
-    `}</style>
-  </section>
-);
+        .link-button {
+          padding: 14px 28px;
+          border-radius: 14px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.2s ease;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .link-button:not(.link-button--ghost) {
+          background: linear-gradient(135deg, #2563eb, #1d4ed8);
+          color: #fff;
+          box-shadow: 0 12px 30px rgba(37, 99, 235, 0.25);
+        }
+        .link-button:not(.link-button--ghost):hover {
+          transform: translateY(-2px);
+          box-shadow: 0 16px 35px rgba(37, 99, 235, 0.35);
+        }
+        .link-button--ghost {
+          background: #fff;
+          color: #0f172a;
+          border: 2px solid rgba(15, 23, 42, 0.1);
+        }
+        .link-button--ghost:hover {
+          border-color: rgba(15, 23, 42, 0.25);
+          transform: translateY(-1px);
+        }
+        .confirmation__footer {
+          margin: 0 auto;
+          padding: 20px 24px;
+          background: rgba(37, 99, 235, 0.06);
+          border-left: 4px solid #2563eb;
+          border-radius: 14px;
+          font-size: 0.9rem;
+          color: rgba(15, 23, 42, 0.8);
+          text-align: center;
+          line-height: 1.6;
+        }
+        @media (max-width: 1024px) {
+          .confirmation-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+        @media (max-width: 768px) {
+          .hero-card {
+            flex-direction: column;
+            text-align: left;
+            padding: 28px;
+          }
+          .hero-tags {
+            justify-content: flex-start;
+          }
+          .support-card {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .section-card {
+            padding: 24px;
+          }
+        }
+        @media (max-width: 560px) {
+          .hero-tags {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .confirmation__actions .link-button {
+            width: 100%;
+          }
+          .support-card .link-button {
+            width: 100%;
+          }
+        }
+      `}</style>
+    </section>
+  );
+};
 
 export default ConfirmationStep;

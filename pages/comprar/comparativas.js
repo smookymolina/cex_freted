@@ -22,7 +22,7 @@ export default function ComparativasPage() {
       <div className={styles.pageInner}>
         <header className={styles.pageHeading}>
           <span>Recursos de compra</span>
-          <h1>Comparativas elaboradas por el laboratorio Cex Freted</h1>
+          <h1>Comparativas elaboradas por el laboratorio Sociedad Tecnologica Integral</h1>
           <p>
             Estas piezas aportaran valor SEO y soporte a usuarios en duda. Se alimentaran desde el
             CMS con datos actualizados.

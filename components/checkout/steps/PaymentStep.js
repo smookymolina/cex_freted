@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreditCard, Loader, Info } from 'lucide-react';
+import { CreditCard, Loader, Info, Copy, CheckCircle2, Shield } from 'lucide-react';
 import PaymentMethodSelector from '../PaymentMethodSelector';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
@@ -40,6 +40,106 @@ const PaymentStep = ({
         selectedMethod={selectedPaymentMethod}
         onSelectMethod={onPaymentMethodChange}
       />
+
+      {selectedPaymentMethod && (selectedPaymentMethod === 'BANK_TRANSFER' || selectedPaymentMethod === 'CASH_DEPOSIT' || selectedPaymentMethod === 'CONVENIENCE_STORE') && (
+        <>
+          <div className="security-notice">
+            <Shield size={20} className="security-notice__icon" />
+            <div className="security-notice__content">
+              <strong>Compra Segura:</strong> Realiza el depósito directo con el vendedor.
+              Todos los pagos son verificados para garantizar la seguridad de tu compra.
+            </div>
+          </div>
+
+          <div className="payment-details">
+            <h3 className="payment-details__title">Datos para realizar tu pago</h3>
+            <p className="payment-details__subtitle">
+              A nombre de: <strong>SOCIEDAD CORPORATIVA MULTIEMPRESARIAL, S.A. DE C.V.</strong>
+            </p>
+
+            {(selectedPaymentMethod === 'BANK_TRANSFER' || selectedPaymentMethod === 'CASH_DEPOSIT') && (
+              <div className="bank-info-card">
+                <div className="bank-info-card__header">
+                  <div className="bank-logo">SANTANDER</div>
+                  <span className="account-type">Cuenta Maestra PYME</span>
+                </div>
+                <div className="bank-info-card__body">
+                  <div className="info-row">
+                    <span className="info-label">Cuenta:</span>
+                    <div className="info-value-group">
+                      <span className="info-value">65 50978658 2</span>
+                      <button
+                        type="button"
+                        className="copy-btn"
+                        onClick={() => navigator.clipboard.writeText('6550978658')}
+                        title="Copiar número de cuenta"
+                      >
+                        <Copy size={16} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">CLABE Interbancaria:</span>
+                    <div className="info-value-group">
+                      <span className="info-value">014180655097865823</span>
+                      <button
+                        type="button"
+                        className="copy-btn"
+                        onClick={() => navigator.clipboard.writeText('014180655097865823')}
+                        title="Copiar CLABE"
+                      >
+                        <Copy size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedPaymentMethod === 'CONVENIENCE_STORE' && (
+              <div className="bank-info-card bank-info-card--oxxo">
+                <div className="bank-info-card__header">
+                  <div className="bank-logo bank-logo--oxxo">OXXO</div>
+                  <span className="account-type">Pago en Autoservicio</span>
+                </div>
+                <div className="bank-info-card__body">
+                  <div className="info-row">
+                    <span className="info-label">Cuenta:</span>
+                    <div className="info-value-group">
+                      <span className="info-value">55-79-08-90-06-65-61-39</span>
+                      <button
+                        type="button"
+                        className="copy-btn"
+                        onClick={() => navigator.clipboard.writeText('55790890066561039')}
+                        title="Copiar número de cuenta"
+                      >
+                        <Copy size={16} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="oxxo-instructions">
+                    <CheckCircle2 size={16} />
+                    <span>Presenta este número en la caja de cualquier OXXO</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="payment-instructions">
+              <Info size={18} />
+              <div>
+                <p><strong>Instrucciones:</strong></p>
+                <ol>
+                  <li>Realiza el pago utilizando los datos mostrados arriba</li>
+                  <li>Guarda tu comprobante de pago</li>
+                  <li>El vendedor verificará tu pago en un plazo de 24-48 horas</li>
+                  <li>Recibirás una confirmación por correo electrónico</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {!selectedPaymentMethod && (
         <div className="info-box info-box--warning">
@@ -258,6 +358,239 @@ const PaymentStep = ({
         margin: 0;
         font-size: 0.95rem;
         color: rgba(15, 23, 42, 0.65);
+      }
+      .security-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.08));
+        border: 2px solid rgba(16, 185, 129, 0.3);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-top: 16px;
+      }
+      .security-notice__icon {
+        color: #10b981;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .security-notice__content {
+        font-size: 0.9rem;
+        color: rgba(15, 23, 42, 0.85);
+        line-height: 1.6;
+      }
+      .security-notice__content strong {
+        color: #059669;
+        font-weight: 700;
+      }
+      .payment-details {
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+        border: 2px solid rgba(15, 23, 42, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        margin-top: 20px;
+      }
+      .payment-details__title {
+        margin: 0 0 8px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #0f172a;
+      }
+      .payment-details__subtitle {
+        margin: 0 0 24px;
+        font-size: 0.9rem;
+        color: rgba(15, 23, 42, 0.7);
+      }
+      .payment-details__subtitle strong {
+        color: #0f172a;
+        font-weight: 600;
+      }
+      .bank-info-card {
+        background: #ffffff;
+        border: 2px solid rgba(37, 99, 235, 0.15);
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+      .bank-info-card:hover {
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
+        border-color: rgba(37, 99, 235, 0.25);
+      }
+      .bank-info-card--oxxo {
+        border-color: rgba(220, 38, 38, 0.2);
+      }
+      .bank-info-card--oxxo:hover {
+        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.12);
+        border-color: rgba(220, 38, 38, 0.3);
+      }
+      .bank-info-card__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        padding: 16px 20px;
+        gap: 12px;
+      }
+      .bank-info-card--oxxo .bank-info-card__header {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+      }
+      .bank-logo {
+        font-size: 1.25rem;
+        font-weight: 900;
+        color: #ffffff;
+        letter-spacing: 0.05em;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .bank-logo--oxxo {
+        font-size: 1.4rem;
+      }
+      .account-type {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .bank-info-card__body {
+        padding: 20px;
+      }
+      .info-row {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+      }
+      .info-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .info-row:first-child {
+        padding-top: 0;
+      }
+      .info-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: rgba(15, 23, 42, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .info-value-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(37, 99, 235, 0.05);
+        border: 1px solid rgba(37, 99, 235, 0.15);
+        border-radius: 8px;
+        padding: 12px 16px;
+      }
+      .bank-info-card--oxxo .info-value-group {
+        background: rgba(220, 38, 38, 0.05);
+        border-color: rgba(220, 38, 38, 0.15);
+      }
+      .info-value {
+        flex: 1;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 0.05em;
+      }
+      .copy-btn {
+        background: rgba(37, 99, 235, 0.1);
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        border-radius: 6px;
+        padding: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2563eb;
+      }
+      .copy-btn:hover {
+        background: rgba(37, 99, 235, 0.2);
+        border-color: rgba(37, 99, 235, 0.3);
+        transform: scale(1.05);
+      }
+      .copy-btn:active {
+        transform: scale(0.95);
+      }
+      .bank-info-card--oxxo .copy-btn {
+        background: rgba(220, 38, 38, 0.1);
+        border-color: rgba(220, 38, 38, 0.2);
+        color: #dc2626;
+      }
+      .bank-info-card--oxxo .copy-btn:hover {
+        background: rgba(220, 38, 38, 0.2);
+        border-color: rgba(220, 38, 38, 0.3);
+      }
+      .oxxo-instructions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 16px;
+        padding: 12px 16px;
+        background: rgba(16, 185, 129, 0.08);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 8px;
+        color: #059669;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+      .oxxo-instructions :global(svg) {
+        flex-shrink: 0;
+      }
+      .payment-instructions {
+        display: flex;
+        gap: 16px;
+        background: rgba(59, 130, 246, 0.05);
+        border: 1px solid rgba(59, 130, 246, 0.15);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+      .payment-instructions :global(svg) {
+        color: #3b82f6;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .payment-instructions p {
+        margin: 0 0 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #0f172a;
+      }
+      .payment-instructions ol {
+        margin: 0;
+        padding-left: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .payment-instructions li {
+        font-size: 0.9rem;
+        color: rgba(15, 23, 42, 0.75);
+        line-height: 1.6;
+      }
+      @media (max-width: 640px) {
+        .payment-details {
+          padding: 20px 16px;
+        }
+        .bank-info-card__header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        .info-value {
+          font-size: 0.95rem;
+        }
+        .payment-instructions {
+          flex-direction: column;
+          gap: 12px;
+        }
       }
     `}</style>
   </>
