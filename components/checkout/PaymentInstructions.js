@@ -53,6 +53,39 @@ const STORE_LOCATIONS = [
   },
 ];
 
+const CONVENIENCE_STORES = [
+  {
+    name: 'Oxxo',
+    description: 'Más de 20,000 tiendas en todo México',
+    commission: 'Sin comisión',
+    logo: '🏪',
+  },
+  {
+    name: '7-Eleven',
+    description: 'Disponible 24/7 en más de 2,000 ubicaciones',
+    commission: 'Sin comisión',
+    logo: '🏬',
+  },
+  {
+    name: 'Soriana',
+    description: 'En todas las tiendas Soriana del país',
+    commission: 'Sin comisión',
+    logo: '🛒',
+  },
+  {
+    name: 'Walmart',
+    description: 'Cajas de servicio en tiendas Walmart',
+    commission: 'Sin comisión',
+    logo: '🏪',
+  },
+  {
+    name: 'Bodega Aurrerá',
+    description: 'Red de tiendas en toda la república',
+    commission: 'Sin comisión',
+    logo: '🏬',
+  },
+];
+
 const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, total }) => {
   const [copiedText, setCopiedText] = React.useState('');
   const [isMobile, setIsMobile] = React.useState(false);
@@ -259,6 +292,103 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
               <strong>Importante:</strong> Después de realizar el pago, envía tu comprobante a{' '}
               <a href="mailto:pagos@cexfreted.com">pagos@cexfreted.com</a> con tu número de orden{' '}
               <strong>{orderNumber}</strong>
+            </div>
+          </div>
+        );
+
+      case 'CONVENIENCE_STORE':
+        return (
+          <div className="instructions">
+            <div className="instructions__header instructions__header--convenience">
+              <div className="header-icon-wrapper">
+                <MapPin size={32} />
+              </div>
+              <div>
+                <h3>Paga en tiendas de autoservicio</h3>
+                <p>Realiza tu pago en efectivo en más de 25,000 tiendas en todo México</p>
+              </div>
+            </div>
+
+            <div className="info-card info-card--premium">
+              <div className="info-row">
+                <span className="info-label">Número de Orden:</span>
+                <div className="info-value">
+                  <strong>{orderNumber}</strong>
+                  <CopyButton text={orderNumber} label="order" />
+                </div>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Referencia de Pago:</span>
+                <div className="info-value">
+                  <strong>{paymentReference}</strong>
+                  <CopyButton text={paymentReference} label="reference" />
+                </div>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Total a Pagar:</span>
+                <div className="info-value">
+                  <strong className="total-amount">${total.toLocaleString('es-MX')}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div className="convenience-container">
+              <div className="section-header">
+                <h4>Tiendas participantes</h4>
+                <span className="badge-available">Disponible ahora</span>
+              </div>
+
+              <div className="convenience-grid">
+                {CONVENIENCE_STORES.map((store, index) => (
+                  <div key={index} className="convenience-card">
+                    <div className="convenience-card__header">
+                      <span className="store-logo">{store.logo}</span>
+                      <div className="store-badge">{store.commission}</div>
+                    </div>
+                    <h5 className="store-name">{store.name}</h5>
+                    <p className="store-description">{store.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="payment-steps">
+              <h4 className="steps-title">Instrucciones para pagar</h4>
+              <div className="steps-list">
+                <div className="step-item">
+                  <div className="step-number">1</div>
+                  <div className="step-content">
+                    <strong>Acude a la tienda</strong>
+                    <p>Visita cualquier tienda de autoservicio participante</p>
+                  </div>
+                </div>
+                <div className="step-item">
+                  <div className="step-number">2</div>
+                  <div className="step-content">
+                    <strong>Proporciona tu referencia</strong>
+                    <p>Indica al cajero tu número de referencia: <code>{paymentReference}</code></p>
+                  </div>
+                </div>
+                <div className="step-item">
+                  <div className="step-number">3</div>
+                  <div className="step-content">
+                    <strong>Realiza el pago</strong>
+                    <p>Paga en efectivo el monto de <strong>${total.toLocaleString('es-MX')}</strong></p>
+                  </div>
+                </div>
+                <div className="step-item">
+                  <div className="step-number">4</div>
+                  <div className="step-content">
+                    <strong>Conserva tu ticket</strong>
+                    <p>Guarda el comprobante como prueba de pago</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="alert alert--warning">
+              <strong>¡Importante!</strong> Tu referencia de pago es válida por <strong>48 horas</strong>.
+              Una vez realizado el pago, la confirmación puede tardar hasta 15 minutos.
             </div>
           </div>
         );
@@ -635,6 +765,218 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
           font-weight: 600;
         }
 
+        .alert--warning {
+          background: rgba(245, 158, 11, 0.08);
+          border-left-color: #f59e0b;
+        }
+
+        /* Estilos para CONVENIENCE_STORE */
+        .instructions__header--convenience {
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(37, 99, 235, 0.08));
+          border: 2px solid rgba(37, 99, 235, 0.15);
+          border-radius: 16px;
+          padding: 20px;
+        }
+
+        .header-icon-wrapper {
+          width: 56px;
+          height: 56px;
+          background: linear-gradient(135deg, #2563eb, #1d4ed8);
+          border-radius: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        .header-icon-wrapper svg {
+          color: #fff;
+        }
+
+        .info-card--premium {
+          background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.05));
+          border: 2px solid rgba(16, 185, 129, 0.25);
+          box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+        }
+
+        .convenience-container {
+          background: #fff;
+          border: 2px solid rgba(15, 23, 42, 0.08);
+          border-radius: 16px;
+          padding: 24px;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+
+        .section-header h4 {
+          margin: 0;
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: #0f172a;
+        }
+
+        .badge-available {
+          background: linear-gradient(135deg, #10b981, #059669);
+          color: #fff;
+          padding: 6px 14px;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+        }
+
+        .convenience-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 16px;
+        }
+
+        .convenience-card {
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.03), rgba(37, 99, 235, 0.05));
+          border: 2px solid rgba(37, 99, 235, 0.12);
+          border-radius: 12px;
+          padding: 18px;
+          transition: all 0.3s ease;
+          cursor: default;
+        }
+
+        .convenience-card:hover {
+          border-color: rgba(37, 99, 235, 0.3);
+          box-shadow: 0 6px 20px rgba(37, 99, 235, 0.15);
+          transform: translateY(-4px);
+        }
+
+        .convenience-card__header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+        }
+
+        .store-logo {
+          font-size: 2rem;
+          line-height: 1;
+        }
+
+        .store-badge {
+          background: linear-gradient(135deg, #10b981, #059669);
+          color: #fff;
+          padding: 4px 10px;
+          border-radius: 12px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+        }
+
+        .store-name {
+          margin: 0 0 8px;
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #0f172a;
+        }
+
+        .store-description {
+          margin: 0;
+          font-size: 0.85rem;
+          color: rgba(15, 23, 42, 0.65);
+          line-height: 1.4;
+        }
+
+        .payment-steps {
+          background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(251, 191, 36, 0.08));
+          border: 2px solid rgba(245, 158, 11, 0.2);
+          border-radius: 16px;
+          padding: 24px;
+        }
+
+        .steps-title {
+          margin: 0 0 20px;
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: #0f172a;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .steps-title::before {
+          content: '📝';
+          font-size: 1.4rem;
+        }
+
+        .steps-list {
+          display: grid;
+          gap: 16px;
+        }
+
+        .step-item {
+          display: flex;
+          gap: 16px;
+          align-items: flex-start;
+          background: #fff;
+          padding: 16px;
+          border-radius: 12px;
+          border: 1px solid rgba(15, 23, 42, 0.1);
+          transition: all 0.2s ease;
+        }
+
+        .step-item:hover {
+          border-color: rgba(245, 158, 11, 0.3);
+          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+        }
+
+        .step-number {
+          width: 36px;
+          height: 36px;
+          background: linear-gradient(135deg, #f59e0b, #d97706);
+          color: #fff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 1.1rem;
+          flex-shrink: 0;
+          box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3);
+        }
+
+        .step-content {
+          flex: 1;
+        }
+
+        .step-content strong {
+          display: block;
+          font-size: 1rem;
+          color: #0f172a;
+          margin-bottom: 6px;
+        }
+
+        .step-content p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: rgba(15, 23, 42, 0.7);
+          line-height: 1.5;
+        }
+
+        .step-content code {
+          background: rgba(37, 99, 235, 0.1);
+          color: #2563eb;
+          padding: 2px 8px;
+          border-radius: 6px;
+          font-family: 'Courier New', monospace;
+          font-size: 0.9rem;
+          font-weight: 600;
+        }
+
         @media (max-width: 768px) {
           .instructions__header {
             flex-direction: column;
@@ -682,6 +1024,34 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
 
           .contact-phone {
             font-size: 0.95rem;
+          }
+
+          .convenience-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+          }
+
+          .convenience-container {
+            padding: 18px;
+          }
+
+          .payment-steps {
+            padding: 18px;
+          }
+
+          .step-item {
+            gap: 12px;
+          }
+
+          .step-number {
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
           }
         }
       `}</style>

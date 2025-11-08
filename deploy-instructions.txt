@@ -1,0 +1,26 @@
+1. Preparar el repositorio antes del push:
+   - Verifica npm scripts (`dev`, `build`, `start`, `lint`, `postinstall`) en package.json.
+   - Crea `.env.production` (basado en `.env.example`) con secretos reales: `DATABASE_URL`, `JWT_*`, `NEXTAUTH_*`, SMTP, etc.
+   - Define Node 20.17 con `.nvmrc`/`.node-version` y manten `"engines": { "node": ">=20.17.0", "npm": ">=10.8.0" }` en package.json.
+   - Documenta en README y en este archivo que el despliegue debe ejecutar `npx prisma migrate deploy`, `prisma generate` y los scripts en `scripts/` segun se necesite.
+
+2. Preparar el VPS Ubuntu 25:
+   - Crea usuario `deploy` y un directorio `/opt/cex-freted/{app,shared/.env,shared/prisma}`; otorga permisos a `deploy`.
+   - Instala dependencias base (`git`, `build-essential`, `sqlite3`, `ca-certificates`, `curl`) y Node 20.17 LTS + pm2 (`curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -`).
+   - Copia `.env.production` a `/opt/cex-freted/shared/.env`, ajusta `DATABASE_URL="file:../shared/prisma/prod.db"`, `NEXTAUTH_URL=https://tu-dominio` y genera secretos con `openssl rand -hex 32`.
+   - Configura Nginx como reverse proxy a `127.0.0.1:3000`, habilita HTTPS mediante Certbot y abre el firewall (`ufw allow 'Nginx Full'`).
+
+3. Clonar, construir y ejecutar:
+   - Como `deploy`:
+     ```bash
+     cd /opt/cex-freted/app
+     git clone git@github.com:tu-org/cex_freted.git .
+     ln -s ../shared/.env .env
+     npm ci
+     npx prisma migrate deploy
+     npx prisma generate
+     npm run build
+     ```
+   - Ejecuta los scripts opcionales (`node scripts/create-support-user.js`, etc.) cuando corresponda.
+   - Arranca con PM2: `pm2 start npm --name cex-freted -- start && pm2 save && pm2 startup systemd`.
+   - Verifica con `curl -I http://127.0.0.1:3000`, revisa `pm2 logs`, recarga Nginx y documenta cualquier ajuste adicional.

@@ -1,0 +1,9 @@
+# Requisitos del servidor (Ubuntu 25) para desplegar CEX Freted
+ca-certificates
+curl
+git
+build-essential
+sqlite3
+nodejs==20.17.0
+npm==10.8.0
+pm2==5.4.0

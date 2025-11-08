@@ -176,6 +176,7 @@ export function formatPaymentMethod(method) {
     CASH_DEPOSIT: 'Depósito en Efectivo',
     PHONE_PAYMENT: 'Pago Telefónico',
     STORE_PAYMENT: 'Pago en Tienda',
+    CONVENIENCE_STORE: 'Pago en Autoservicio',
   };
 
   return methodMap[method] || method;

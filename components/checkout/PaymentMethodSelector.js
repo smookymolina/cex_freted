@@ -1,5 +1,5 @@
 import React from 'react';
-import { Building2, Banknote, Phone, Store } from 'lucide-react';
+import { Building2, Banknote, Phone, Store, ShoppingCart } from 'lucide-react';
 
 const PAYMENT_METHODS = [
   {
@@ -14,6 +14,12 @@ const PAYMENT_METHODS = [
     name: 'Transferencia Bancaria',
     description: 'Realiza una transferencia a nuestra cuenta',
     icon: Building2,
+  },
+  {
+    id: 'CONVENIENCE_STORE',
+    name: 'Pago en Autoservicio',
+    description: 'Paga en Oxxo, 7-Eleven, Soriana y más',
+    icon: ShoppingCart,
   },
   {
     id: 'CASH_DEPOSIT',
