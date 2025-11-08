@@ -57,8 +57,8 @@ export default function MainLayout({ children }) {
           ))}
         </div>
         <div className={styles.footerBottom}>
-          <span>(c) {new Date().getFullYear()} Cex Freted. Todos los derechos reservados.</span>
-          <span>Construimos tecnologia circular con impacto positivo.</span>
+          <span>(c) {new Date().getFullYear()} Sociedad de Tecnología Integral. Todos los derechos reservados.</span>
+          <span>Construimos tecnología circular con impacto positivo.</span>
         </div>
       </footer>
     </div>

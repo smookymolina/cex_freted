@@ -9,7 +9,7 @@ const Header = () => {
     <header className="bg-white shadow-md">
       <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
         <div className="text-2xl font-bold text-blue-600">
-          <Link href="/">CEX_FRETED</Link>
+          <Link href="/">Sociedad de Tecnología Integral</Link>
         </div>
         <div className="hidden md:flex space-x-6 items-center">
           <Link href="/comprar" className="text-gray-600 hover:text-blue-600">Comprar</Link>

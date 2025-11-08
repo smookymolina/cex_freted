@@ -1,5 +1,5 @@
 import React from 'react';
-import { Building2, Banknote, Phone, Store, ShoppingCart } from 'lucide-react';
+import { Building2, Banknote, Phone, ShoppingCart } from 'lucide-react';
 
 const PAYMENT_METHODS = [
   {
@@ -26,12 +26,6 @@ const PAYMENT_METHODS = [
     name: 'Depósito en Efectivo',
     description: 'Deposita en nuestras cuentas bancarias',
     icon: Banknote,
-  },
-  {
-    id: 'STORE_PAYMENT',
-    name: 'Pago en Tienda',
-    description: 'Realiza tu pago en nuestras sucursales',
-    icon: Store,
   },
 ];
 

@@ -6,13 +6,13 @@ const BANK_ACCOUNTS = [
     bank: 'BBVA',
     accountNumber: '0115 4567 8901 2345 67',
     clabe: '012180001154678901234567',
-    holder: 'CEX FRETED SA DE CV',
+    holder: 'SOCIEDAD DE TECNOLOGIA INTEGRAL SA DE CV',
   },
   {
     bank: 'Santander',
     accountNumber: '6500 1234 5678 9012 34',
     clabe: '014180065001234567890123',
-    holder: 'CEX FRETED SA DE CV',
+    holder: 'SOCIEDAD DE TECNOLOGIA INTEGRAL SA DE CV',
   },
 ];
 
@@ -37,19 +37,6 @@ const CONTACT_NUMBERS = [
     phone: '5578738515',
     phoneFormatted: '55 7873 8515',
     whatsapp: '5215578738515'
-  },
-];
-
-const STORE_LOCATIONS = [
-  {
-    name: 'Sucursal Centro',
-    address: 'Av. Juárez 123, Centro Histórico, CDMX',
-    hours: 'Lun-Vie: 9:00-18:00, Sáb: 10:00-14:00',
-  },
-  {
-    name: 'Sucursal Sur',
-    address: 'Av. Universidad 456, Coyoacán, CDMX',
-    hours: 'Lun-Vie: 9:00-18:00',
   },
 ];
 
@@ -290,7 +277,7 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
 
             <div className="alert">
               <strong>Importante:</strong> Después de realizar el pago, envía tu comprobante a{' '}
-              <a href="mailto:pagos@cexfreted.com">pagos@cexfreted.com</a> con tu número de orden{' '}
+              <a href="mailto:pagos@sociedadtecnologia.com">pagos@sociedadtecnologia.com</a> con tu número de orden{' '}
               <strong>{orderNumber}</strong>
             </div>
           </div>
@@ -393,58 +380,6 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
           </div>
         );
 
-      case 'STORE_PAYMENT':
-        return (
-          <div className="instructions">
-            <div className="instructions__header">
-              <MapPin size={32} />
-              <div>
-                <h3>Visita una de nuestras sucursales</h3>
-                <p>Realiza tu pago directamente en cualquiera de nuestras ubicaciones.</p>
-              </div>
-            </div>
-
-            <div className="info-card">
-              <div className="info-row">
-                <span className="info-label">Número de Orden:</span>
-                <div className="info-value">
-                  <strong>{orderNumber}</strong>
-                  <CopyButton text={orderNumber} label="order" />
-                </div>
-              </div>
-              <div className="info-row">
-                <span className="info-label">Referencia de Pago:</span>
-                <div className="info-value">
-                  <strong>{paymentReference}</strong>
-                  <CopyButton text={paymentReference} label="reference" />
-                </div>
-              </div>
-              <div className="info-row">
-                <span className="info-label">Total a Pagar:</span>
-                <div className="info-value">
-                  <strong className="total-amount">${total.toLocaleString('es-MX')}</strong>
-                </div>
-              </div>
-            </div>
-
-            <div className="stores">
-              <h4>Nuestras sucursales:</h4>
-              {STORE_LOCATIONS.map((store, index) => (
-                <div key={index} className="store-item">
-                  <h5>{store.name}</h5>
-                  <p className="store-address">{store.address}</p>
-                  <p className="store-hours">{store.hours}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="alert">
-              <strong>Recuerda:</strong> Lleva tu número de orden{' '}
-              <strong>{orderNumber}</strong> y tu referencia de pago <strong>{paymentReference}</strong> para agilizar tu pago.
-            </div>
-          </div>
-        );
-
       default:
         return null;
     }
@@ -539,15 +474,13 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
         }
 
         .contacts,
-        .bank-accounts,
-        .stores {
+        .bank-accounts {
           display: grid;
           gap: 12px;
         }
 
         .contacts h4,
-        .bank-accounts h4,
-        .stores h4 {
+        .bank-accounts h4 {
           margin: 0 0 8px;
           font-size: 1.05rem;
           font-weight: 700;
@@ -676,32 +609,6 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
           display: flex;
           align-items: center;
           gap: 8px;
-        }
-
-        .store-item {
-          padding: 16px;
-          background: #fff;
-          border: 1px solid rgba(15, 23, 42, 0.1);
-          border-radius: 10px;
-        }
-
-        .store-item h5 {
-          margin: 0 0 8px;
-          font-size: 1.05rem;
-          color: #0f172a;
-        }
-
-        .store-address {
-          margin: 4px 0;
-          color: rgba(15, 23, 42, 0.7);
-          font-size: 0.9rem;
-        }
-
-        .store-hours {
-          margin: 4px 0 0;
-          color: #2563eb;
-          font-size: 0.85rem;
-          font-weight: 600;
         }
 
         .mobile-tip {

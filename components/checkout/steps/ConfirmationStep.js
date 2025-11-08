@@ -1,13 +1,14 @@
 import React from 'react';
 import Link from 'next/link';
-import { CheckCircle, Clock, PhoneOutgoing } from 'lucide-react';
+import { CheckCircle, Clock } from 'lucide-react';
+import PaymentInstructions from '../PaymentInstructions';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
   style: 'currency',
   currency: 'MXN',
 });
 
-const ConfirmationStep = ({ orderInfo, customerData, shippingData }) => (
+const ConfirmationStep = ({ orderInfo, customerData, shippingData, selectedPaymentMethod }) => (
   <section className="confirmation">
     <div className="confirmation__icon">
       <CheckCircle size={48} aria-hidden="true" />
@@ -17,16 +18,13 @@ const ConfirmationStep = ({ orderInfo, customerData, shippingData }) => (
       Tu orden ha sido registrada con éxito y está pendiente de pago.
     </p>
 
-    <div className="next-step-box">
-      <div className="next-step-box__icon">
-        <PhoneOutgoing size={24} />
-      </div>
-      <div className="next-step-box__content">
-        <h3>Siguiente Paso: Llamada de Confirmación</h3>
-        <p>
-          Un agente de CEX Freted te llamará al número <strong>{customerData.phone}</strong> en las próximas 24 horas hábiles para procesar tu pago de forma segura.
-        </p>
-      </div>
+    <div className="payment-instructions-wrapper">
+      <PaymentInstructions
+        paymentMethod={selectedPaymentMethod}
+        orderNumber={orderInfo?.orderNumber}
+        paymentReference={orderInfo?.paymentReference}
+        total={orderInfo?.total || 0}
+      />
     </div>
 
     <div className="confirmation__summary">
@@ -119,39 +117,9 @@ const ConfirmationStep = ({ orderInfo, customerData, shippingData }) => (
         color: rgba(15, 23, 42, 0.65);
         line-height: 1.6;
       }
-      .next-step-box {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        background: #fff;
-        border: 2px solid #2563eb;
-        border-radius: 16px;
-        padding: 24px;
+      .payment-instructions-wrapper {
         margin-bottom: 32px;
         text-align: left;
-      }
-      .next-step-box__icon {
-        flex-shrink: 0;
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: #2563eb;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .next-step-box__content h3 {
-        margin: 0 0 8px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #0f172a;
-      }
-      .next-step-box__content p {
-        margin: 0;
-        font-size: 0.95rem;
-        color: rgba(15, 23, 42, 0.75);
-        line-height: 1.6;
       }
       .confirmation__summary {
         display: grid;

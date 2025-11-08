@@ -62,7 +62,7 @@ const AdminLayout = ({ children }) => {
   return (
     <>
       <Head>
-        <title>Panel de Soporte - CEX Freted</title>
+        <title>Panel de Soporte - STI</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className="admin-layout">
@@ -71,7 +71,7 @@ const AdminLayout = ({ children }) => {
           <div className="sidebar-header">
             <div className="logo">
               <span className="logo-icon">🛠️</span>
-              <span className="logo-text">CEX Soporte</span>
+              <span className="logo-text">STI Soporte</span>
             </div>
           </div>
 
@@ -115,7 +115,7 @@ const AdminLayout = ({ children }) => {
           <div className="mobile-header-content">
             <div className="logo">
               <span className="logo-icon">🛠️</span>
-              <span className="logo-text">CEX Soporte</span>
+              <span className="logo-text">STI Soporte</span>
             </div>
             <button
               className="mobile-menu-btn"

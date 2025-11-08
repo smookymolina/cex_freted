@@ -1,5 +1,6 @@
 import React from 'react';
-import { CreditCard, Loader, PhoneCall, Info } from 'lucide-react';
+import { CreditCard, Loader, Info } from 'lucide-react';
+import PaymentMethodSelector from '../PaymentMethodSelector';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
   style: 'currency',
@@ -13,6 +14,8 @@ const PaymentStep = ({
   total,
   paymentStatus,
   processingError,
+  selectedPaymentMethod,
+  onPaymentMethodChange,
 }) => (
   <>
     <header className="step-header">
@@ -27,31 +30,25 @@ const PaymentStep = ({
       </div>
     </header>
 
-    <section className="payment-instructions">
-      <div className="payment-method-card">
-        <div className="payment-method-card__icon">
-          <PhoneCall size={24} />
-        </div>
-        <div className="payment-method-card__details">
-          <h4>Método de Pago: Telefónico</h4>
-          <p>Un agente de CEX Freted se comunicará contigo para procesar el pago de forma segura.</p>
-        </div>
-      </div>
+    <section className="payment-selection">
+      <h2>Selecciona tu método de pago</h2>
+      <p className="payment-description">
+        Elige la opción que más te convenga para realizar el pago de tu pedido.
+      </p>
 
-      <div className="info-box">
-        <Info size={40} className="info-box__icon" />
-        <div className="info-box__content">
-          <h4>¿Cómo funciona el pago telefónico?</h4>
-          <ol>
-            <li>Al confirmar tu pedido, nuestro sistema lo registrará como "pendiente de pago".</li>
-            <li>
-              Un agente te llamará al número <strong>{customerData.phone}</strong> en las próximas 24 horas hábiles.
-            </li>
-            <li>Durante la llamada, podrás proporcionar los datos de tu tarjeta de crédito o débito de forma 100% segura.</li>
-            <li>Una vez aprobado el pago, recibirás la confirmación final y procederemos con el envío.</li>
-          </ol>
+      <PaymentMethodSelector
+        selectedMethod={selectedPaymentMethod}
+        onSelectMethod={onPaymentMethodChange}
+      />
+
+      {!selectedPaymentMethod && (
+        <div className="info-box info-box--warning">
+          <Info size={24} className="info-box__icon" />
+          <div className="info-box__content">
+            <p>Por favor, selecciona un método de pago para continuar con tu pedido.</p>
+          </div>
         </div>
-      </div>
+      )}
     </section>
 
     <aside className="order-summary">
@@ -113,42 +110,23 @@ const PaymentStep = ({
         color: rgba(15, 23, 42, 0.65);
         line-height: 1.5;
       }
-      .payment-instructions {
+      .payment-selection {
         margin-bottom: 32px;
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: 20px;
       }
-      .payment-method-card {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        background: #fff;
-        border: 2px solid #2563eb;
-        border-radius: 12px;
-        padding: 20px;
-      }
-      .payment-method-card__icon {
-        flex-shrink: 0;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: #2563eb;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .payment-method-card__details h4 {
-        margin: 0 0 4px;
-        font-size: 1.1rem;
-        font-weight: 600;
+      .payment-selection h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 700;
         color: #0f172a;
       }
-      .payment-method-card__details p {
+      .payment-description {
         margin: 0;
-        font-size: 0.9rem;
-        color: rgba(15, 23, 42, 0.75);
+        font-size: 0.95rem;
+        color: rgba(15, 23, 42, 0.65);
+        line-height: 1.5;
       }
       .info-box {
         display: flex;
@@ -180,6 +158,19 @@ const PaymentStep = ({
         font-size: 0.9rem;
         color: rgba(15, 23, 42, 0.75);
         line-height: 1.6;
+      }
+      .info-box__content p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: rgba(15, 23, 42, 0.75);
+        line-height: 1.6;
+      }
+      .info-box--warning {
+        background: rgba(251, 191, 36, 0.08);
+        border-left-color: #f59e0b;
+      }
+      .info-box--warning .info-box__icon {
+        color: #f59e0b;
       }
       .order-summary {
         background: linear-gradient(135deg, #f8fafc, #f1f5f9);

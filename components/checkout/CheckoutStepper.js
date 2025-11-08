@@ -281,7 +281,7 @@ const CheckoutStepper = () => {
           <PaymentStep
             customerData={customerData}
             selectedPaymentMethod={selectedPaymentMethod}
-            setSelectedPaymentMethod={setSelectedPaymentMethod}
+            onPaymentMethodChange={setSelectedPaymentMethod}
             subtotal={subtotal}
             shippingCost={shippingCost}
             total={total}

@@ -13,7 +13,7 @@ class PaymentService {
   static generateOrderNumber() {
     const year = new Date().getFullYear();
     const random = Math.floor(Math.random() * 900000) + 100000;
-    return `CEX-${year}-${random}`;
+    return `STI-${year}-${random}`;
   }
 
   /**

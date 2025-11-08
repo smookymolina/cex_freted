@@ -5,7 +5,7 @@ const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
-const CART_STORAGE_KEY = 'cex_freted_cart';
+const CART_STORAGE_KEY = 'sti_cart';
 
 const initialState = {
   items: [],
