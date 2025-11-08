@@ -1,4 +1,4 @@
-\ufeffimport React from 'react';
+import React from 'react';
 import { Phone, Building2, MapPin, Copy, CheckCircle, MessageCircle } from 'lucide-react';
 
 const CONTACT_NUMBERS = [
@@ -28,33 +28,33 @@ const CONTACT_NUMBERS = [
 const CONVENIENCE_STORES = [
   {
     name: 'Oxxo',
-    description: 'M\u00e1s de 20,000 tiendas en todo M\u00e9xico',
-    commission: 'Sin comisi\u00f3n',
-    logo: '\u00f0\u0178\u008f\u00aa',
+    description: 'Más de 20,000 tiendas en todo México',
+    commission: 'Sin comisión',
+    logo: '🏪',
   },
   {
     name: '7-Eleven',
-    description: 'Disponible 24/7 en m\u00e1s de 2,000 ubicaciones',
-    commission: 'Sin comisi\u00f3n',
-    logo: '\u00f0\u0178\u008f\u00ac',
+    description: 'Disponible 24/7 en más de 2,000 ubicaciones',
+    commission: 'Sin comisión',
+    logo: '🏬',
   },
   {
     name: 'Soriana',
-    description: 'En todas las tiendas Soriana del pa\u00eds',
-    commission: 'Sin comisi\u00f3n',
-    logo: '\u00f0\u0178\u203a\u2019',
+    description: 'En todas las tiendas Soriana del país',
+    commission: 'Sin comisión',
+    logo: '🛙',
   },
   {
     name: 'Walmart',
     description: 'Cajas de servicio en tiendas Walmart',
-    commission: 'Sin comisi\u00f3n',
-    logo: '\u00f0\u0178\u008f\u00aa',
+    commission: 'Sin comisión',
+    logo: '🏪',
   },
   {
-    name: 'Bodega Aurrer\u00e1',
-    description: 'Red de tiendas en toda la rep\u00fablica',
-    commission: 'Sin comisi\u00f3n',
-    logo: '\u00f0\u0178\u008f\u00ac',
+    name: 'Bodega Aurrerá',
+    description: 'Red de tiendas en toda la república',
+    commission: 'Sin comisión',
+    logo: '🏬',
   },
 ];
 
@@ -63,7 +63,7 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
-    // Detectar si el usuario est\u00e1 en m\u00f3vil
+    // Detectar si el usuario está en móvil
     const checkMobile = () => {
       const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
@@ -139,9 +139,9 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
             <div className="instructions__header">
               <Phone size={32} />
               <div>
-                <h3>Confirma tu pago por tel\u00e9fono</h3>
+                <h3>Confirma tu pago por teléfono</h3>
                 <p>
-                  Para finalizar la compra, comun\u00edcate con nuestro equipo y proporciona tu
+                  Para finalizar la compra, comunícate con nuestro equipo y proporciona tu
                   referencia de pago.
                 </p>
               </div>
@@ -149,7 +149,7 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
 
             <div className="info-card">
               <div className="info-row">
-                <span className="info-label">N\u00famero de Orden:</span>
+                <span className="info-label">Número de Orden:</span>
                 <div className="info-value">
                   <strong>{orderNumber}</strong>
                   <CopyButton text={orderNumber} label="order" />
@@ -178,18 +178,18 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
               <div className="mobile-tip">
                 <Phone size={20} />
                 <div>
-                  <strong>\u00a1Est\u00e1s en un dispositivo m\u00f3vil!</strong>
+                  <strong>¡Estás en un dispositivo móvil!</strong>
                   <p>
-                    Toca el bot\u00f3n "Llamar" para marcar directamente o usa WhatsApp para un
-                    contacto r\u00e1pido con tu informaci\u00f3n precargada.
+                    Toca el botón "Llamar" para marcar directamente o usa WhatsApp para un
+                    contacto rápido con tu información precargada.
                   </p>
                 </div>
               </div>
             )}
 
             <div className="alert">
-              Tu pedido quedar\u00e1 reservado durante <strong>24 horas</strong> mientras confirmamos
-              el pago telef\u00f3nico.
+              Tu pedido quedará reservado durante <strong>24 horas</strong> mientras confirmamos
+              el pago telefónico.
             </div>
           </div>
         );
@@ -219,7 +219,7 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
 
             <div className="info-card">
               <div className="info-row">
-                <span className="info-label">N\u00c7\u00a7mero de Orden:</span>
+                <span className="info-label">Nǧmero de Orden:</span>
                 <div className="info-value">
                   <strong>{orderNumber}</strong>
                   <CopyButton text={orderNumber} label="order" />
@@ -276,7 +276,7 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
 
             <div className="alert">
               <strong>Si no recibes la llamada:</strong> marca al numero de tu zona o escribe a{' '}
-              <a href="mailto:pagos@sociedadtecnologia.com">pagos@sociedadtecnologia.com</a> con tu n\u00c7\u00a7mero de orden{' '}
+              <a href="mailto:pagos@sociedadtecnologia.com">pagos@sociedadtecnologia.com</a> con tu nǧmero de orden{' '}
               <strong>{orderNumber}</strong> para forzar la verificacion.
             </div>
           </div>
@@ -307,7 +307,7 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
 
             <div className="info-card info-card--premium">
               <div className="info-row">
-                <span className="info-label">N\u01e7mero de Orden:</span>
+                <span className="info-label">Nǧmero de Orden:</span>
                 <div className="info-value">
                   <strong>{orderNumber}</strong>
                   <CopyButton text={orderNumber} label="order" />
@@ -851,7 +851,7 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
         }
 
         .steps-title::before {
-          content: '\u00f0\u0178\u201c\u009d';
+          content: '📝';
           font-size: 1.4rem;
         }
 
@@ -1009,9 +1009,3 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
 };
 
 export default PaymentInstructions;
-
-
-
-
-
-
