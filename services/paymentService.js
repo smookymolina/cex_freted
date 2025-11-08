@@ -76,6 +76,7 @@ class PaymentService {
             total: totals.total,
             items: items,
             status: 'PENDING',
+            paymentReleaseStatus: 'WAITING_SUPPORT',
           },
         });
 
@@ -319,6 +320,73 @@ class PaymentService {
       };
     } catch (error) {
       console.error('Error al actualizar estado de orden:', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Actualiza el estado de liberaci��n de pago de una orden
+   * @param {string} orderId
+   * @param {string} releaseStatus
+   * @param {Object} options
+   * @param {string} options.notes
+   * @param {string} options.supportUserId
+   * @returns {Promise<Object>}
+   */
+  static async updatePaymentRelease(orderId, releaseStatus, options = {}) {
+    try {
+      const validReleaseStatuses = [
+        'WAITING_SUPPORT',
+        'CALL_SCHEDULED',
+        'RELEASED_TO_CUSTOMER',
+        'ON_HOLD',
+      ];
+
+      if (!validReleaseStatuses.includes(releaseStatus)) {
+        throw new Error('Estado de liberacion invalido');
+      }
+
+      const data = {
+        paymentReleaseStatus: releaseStatus,
+        paymentReleaseBy: options.supportUserId || null,
+      };
+
+      if (options.notes !== undefined) {
+        data.paymentReleaseNotes = options.notes;
+      }
+
+      if (releaseStatus === 'RELEASED_TO_CUSTOMER') {
+        data.paymentReleaseAt = new Date();
+      } else if (releaseStatus === 'WAITING_SUPPORT') {
+        data.paymentReleaseAt = null;
+      } else {
+        data.paymentReleaseAt = null;
+      }
+
+      const order = await prisma.order.update({
+        where: { id: orderId },
+        data,
+        include: {
+          payments: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return {
+        success: true,
+        order,
+      };
+    } catch (error) {
+      console.error('Error al actualizar liberacion de pago:', error);
       return {
         success: false,
         error: error.message,

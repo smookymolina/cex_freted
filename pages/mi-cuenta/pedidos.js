@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { getSession } from 'next-auth/react';
 import AccountLayout from '../../components/mi-cuenta/AccountLayout';
 import { productDetailsBySlug } from '../../data/product-details';
 import { Package, Truck, CheckCircle, XCircle, Clock, ChevronRight, Loader, RefreshCw } from 'lucide-react';
-import { formatOrderStatus, formatPaymentMethod } from '../../utils/checkoutHelper';
+import { formatOrderStatus, formatPaymentMethod, formatReleaseStatus } from '../../utils/checkoutHelper';
 
 const formatDate = (dateString) =>
   new Date(dateString).toLocaleDateString('es-ES', {
@@ -88,7 +88,7 @@ const PedidosPage = () => {
       }
     } catch (err) {
       console.error('Error fetching orders:', err);
-      setError('Error de conexión. Por favor intenta nuevamente.');
+      setError('Error de conexiÃ³n. Por favor intenta nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -152,13 +152,13 @@ const PedidosPage = () => {
                 <Package size={32} />
                 <h4>
                   {selectedFilter === 'all'
-                    ? 'No tienes pedidos aún'
-                    : 'No hay pedidos en esta categoría'}
+                    ? 'No tienes pedidos aÃºn'
+                    : 'No hay pedidos en esta categorÃ­a'}
                 </h4>
                 <p>
                   {selectedFilter === 'all'
                     ? 'Comienza a comprar productos certificados y haz tu primer pedido.'
-                    : 'Filtra por otro estado para ver tus órdenes recientes.'}
+                    : 'Filtra por otro estado para ver tus Ã³rdenes recientes.'}
                 </p>
                 <a href="/comprar" className="empty-action">
                   Ir a comprar
@@ -167,6 +167,8 @@ const PedidosPage = () => {
             ) : (
               filteredOrders.map((order) => {
                 const statusInfo = formatOrderStatus(order.status);
+                const releaseInfo = formatReleaseStatus(order.paymentReleaseStatus || 'WAITING_SUPPORT');
+                const releaseTimestamp = order.paymentReleaseAt ? formatDate(order.paymentReleaseAt) : null;
                 const StatusIcon = statusIcons[order.status] || Package;
                 const items = Array.isArray(order.items) ? order.items : [];
 
@@ -177,13 +179,21 @@ const PedidosPage = () => {
                         <span className="order-id">{order.orderNumber}</span>
                         <span className="order-date">{formatDate(order.createdAt)}</span>
                       </div>
-                      <span
-                        className="order-status"
-                        style={{ color: statusInfo.color, backgroundColor: `${statusInfo.color}20` }}
-                      >
-                        <StatusIcon size={16} aria-hidden="true" />
-                        {statusInfo.label}
-                      </span>
+                      <div className="order-status-pill">
+                        <span
+                          className="order-status"
+                          style={{ color: statusInfo.color, backgroundColor: `${statusInfo.color}20` }}
+                        >
+                          <StatusIcon size={16} aria-hidden="true" />
+                          {statusInfo.label}
+                        </span>
+                        <span
+                          className="release-status"
+                          style={{ color: releaseInfo.color, borderColor: `${releaseInfo.color}33` }}
+                        >
+                          {releaseInfo.label}
+                        </span>
+                      </div>
                     </header>
 
                     <div className="order-body">
@@ -197,7 +207,7 @@ const PedidosPage = () => {
                             </div>
                             <div className="item-details">
                               <p className="item-name">{item.name || item.slug}</p>
-                              {item.grade && <span className="item-grade">Condición: {item.grade}</span>}
+                              {item.grade && <span className="item-grade">CondiciÃ³n: {item.grade}</span>}
                               <span className="item-quantity">Cantidad: {item.quantity}</span>
                             </div>
                             <div className="item-price">{formatCurrency(item.price)}</div>
@@ -218,7 +228,7 @@ const PedidosPage = () => {
                           <strong className="info-value">{formatCurrency(order.total)}</strong>
                         </div>
                         <div className="info-item">
-                          <span className="info-label">Método de pago</span>
+                          <span className="info-label">MÃ©todo de pago</span>
                           <span className="info-value">
                             {order.payments[0]
                               ? formatPaymentMethod(order.payments[0].paymentMethod)
@@ -235,9 +245,20 @@ const PedidosPage = () => {
                         )}
                       </div>
 
+                      <div className="release-card">
+                        <div className="release-card-head">
+                          <span className="release-card-label">Orden de pago</span>
+                          {releaseTimestamp && <span className="release-card-time">{releaseTimestamp}</span>}
+                        </div>
+                        <p className="release-card-description">{releaseInfo.description}</p>
+                        {order.paymentReleaseNotes && (
+                          <p className="release-card-note">Nota de soporte: {order.paymentReleaseNotes}</p>
+                        )}
+                      </div>
+
                       {order.shippingAddress && (
                         <div className="shipping-info">
-                          <span className="info-label">Dirección de envío:</span>
+                          <span className="info-label">DirecciÃ³n de envÃ­o:</span>
                           <p>
                             {order.shippingAddress}, {order.shippingCity}, {order.shippingState} - CP{' '}
                             {order.shippingPostalCode}
@@ -445,6 +466,23 @@ const PedidosPage = () => {
           border-radius: 999px;
         }
 
+        .order-status-pill {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+        }
+
+        .release-status {
+          border: 1px solid;
+          border-radius: 999px;
+          padding: 6px 12px;
+          font-size: 12px;
+          font-weight: 600;
+          background: #fff;
+        }
+
         .order-body {
           display: flex;
           flex-direction: column;
@@ -551,6 +589,46 @@ const PedidosPage = () => {
           font-weight: 600;
         }
 
+        .release-card {
+          margin-top: 18px;
+          padding: 16px 18px;
+          border-radius: 16px;
+          border: 1px solid rgba(37, 99, 235, 0.2);
+          background: rgba(37, 99, 235, 0.05);
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .release-card-head {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .release-card-label {
+          font-weight: 700;
+          color: #0f172a;
+        }
+
+        .release-card-time {
+          font-size: 12px;
+          color: #475569;
+        }
+
+        .release-card-description {
+          margin: 0;
+          color: #0f172a;
+          font-size: 0.95rem;
+        }
+
+        .release-card-note {
+          margin: 0;
+          font-size: 0.9rem;
+          color: #475569;
+        }
+
         .shipping-info {
           padding: 14px 16px;
           border: 1px dashed rgba(59, 130, 246, 0.35);
@@ -654,6 +732,15 @@ const PedidosPage = () => {
             flex-direction: column;
             align-items: flex-start;
           }
+
+          .order-status-pill {
+            justify-content: flex-start;
+          }
+
+          .release-card-head {
+            flex-direction: column;
+            align-items: flex-start;
+          }
         }
 
         @media (max-width: 540px) {
@@ -694,3 +781,4 @@ export async function getServerSideProps(context) {
 }
 
 export default PedidosPage;
+

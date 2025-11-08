@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react';
 import { useSession } from 'next-auth/react';
 import AccountLayout from '../../components/mi-cuenta/AccountLayout';
 import { Package, ShoppingBag, User, Settings, TrendingUp, Clock, CheckCircle, Loader } from 'lucide-react';
-import { formatOrderStatus } from '../../utils/checkoutHelper';
+import { formatOrderStatus, formatReleaseStatus } from '../../utils/checkoutHelper';
 
 const DashboardPage = () => {
   const { data: session } = useSession();
@@ -164,6 +164,7 @@ const DashboardPage = () => {
             <div className="orders-list">
               {orders.map((order) => {
                 const statusInfo = formatOrderStatus(order.status);
+                const releaseInfo = formatReleaseStatus(order.paymentReleaseStatus || 'WAITING_SUPPORT');
                 return (
                   <div key={order.id} className="order-item">
                     <div className="order-main-info">
@@ -179,6 +180,9 @@ const DashboardPage = () => {
                         }}
                       >
                         {statusInfo.label}
+                      </span>
+                      <span className="release-status-badge" style={{ color: releaseInfo.color }}>
+                        {releaseInfo.label}
                       </span>
                     </div>
                     <div className="order-total-value">{formatCurrency(order.total)}</div>
@@ -413,6 +417,17 @@ const DashboardPage = () => {
           font-size: 13px;
           font-weight: 600;
           width: fit-content;
+        }
+
+        .release-status-badge {
+          font-size: 12px;
+          font-weight: 600;
+          border: 1px solid currentColor;
+          border-radius: 999px;
+          padding: 4px 10px;
+          margin-top: 6px;
+          width: fit-content;
+          display: inline-flex;
         }
 
         .order-total-value {

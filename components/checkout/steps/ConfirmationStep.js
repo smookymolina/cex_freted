@@ -32,24 +32,24 @@ const ConfirmationStep = ({
   const locationLine = [shippingData?.city, shippingData?.state].filter(Boolean).join(', ');
   const postalCode = shippingData?.postalCode ? `CP ${shippingData.postalCode}` : '';
   const references = shippingData?.references?.trim();
+  const referenceReady = paymentReference && paymentReference !== 'Por asignar';
+  const phoneTargetText = customerPhone ? `al telefono ${customerPhone}` : 'al telefono registrado';
 
   const nextSteps = [
     {
-      title: 'Confirma tu pago',
-      description:
-        paymentReference === 'Por asignar'
-          ? 'Realiza el deposito con el metodo elegido. Tu referencia aparecera en el comprobante.'
-          : `Ingresa ${paymentReference} como referencia para identificar tu pago.`,
+      title: 'Recibe la llamada de verificacion',
+      description: `Un especialista de soporte te contactara ${phoneTargetText} para compartirte los datos oficiales del vendedor. Esto garantiza que pagues directo al vendedor certificado, sin intermediarios.`,
     },
     {
-      title: 'Comparte el comprobante',
-      description:
-        'Envialo al correo o WhatsApp oficial de Sociedad Tecnologica Integral para validar la operacion en minutos.',
+      title: 'Deposita solo con datos oficiales',
+      description: referenceReady
+        ? `Si ya cuentas con la referencia ${paymentReference}, valida que coincida con la que recibes en la llamada antes de transferir.`
+        : 'Espera a que el asesor te comparta la cuenta o referencia antes de depositar. Asi evitamos cuentas falsas.',
     },
     {
-      title: 'Recibe la liberacion',
+      title: 'Comparte tu comprobante',
       description:
-        'En cuanto confirmamos el saldo, programamos el envio o recoleccion y te avisamos por correo y en tu panel.',
+        'Envialo al correo o WhatsApp oficial para liberar tu equipo. En cuanto validamos el saldo programamos envio o recoleccion.',
     },
   ];
 
@@ -72,8 +72,8 @@ const ConfirmationStep = ({
           </p>
           <h1>¡Pedido recibido!</h1>
           <p>
-            Gracias por comprar en Sociedad Tecnologica Integral. Reservamos tus equipos mientras completas el pago
-            con total seguridad. Sigue estos 3 pasos para completar la confirmacion sin contratiempos.
+            Gracias por comprar en Sociedad Tecnologica Integral. En minutos un asesor de soporte te llamara para
+            entregarte la cuenta o referencia del vendedor que enviara tus equipos y acompanarte durante el pago.
           </p>
           <div className="hero-tags">
             <span className="hero-tag">Orden #{orderNumber}</span>
@@ -82,6 +82,11 @@ const ConfirmationStep = ({
               <Clock size={14} aria-hidden="true" />
               Pago pendiente
             </span>
+          </div>
+          <div className="hero-note">
+            <strong>Pago directo al vendedor.</strong>
+            No usamos intermediarios para manejar tu dinero; por eso compartimos los datos solo por llamada y validamos
+            cada deposito con el vendedor antes de liberar el pedido.
           </div>
         </div>
       </div>
@@ -93,7 +98,8 @@ const ConfirmationStep = ({
               <p className="section-eyebrow">Instrucciones de pago</p>
               <h2>Completa tu pago ahora</h2>
               <p className="section-description">
-                Sigue el método seleccionado y conserva tu comprobante para una validación rápida.
+                Espera la llamada de soporte para recibir los datos oficiales del vendedor y realiza el pago solo con
+                la informacion que te compartamos por nuestros canales verificados.
               </p>
             </div>
             <div className="instructions-shell">
@@ -133,7 +139,7 @@ const ConfirmationStep = ({
             </dl>
             <div className="guarantee-note">
               <ShieldCheck size={18} aria-hidden="true" />
-              <span>Verificamos cada pago y te avisamos en menos de 15 minutos.</span>
+              <span>Un asesor valida tu deposito directo con el vendedor en menos de 15 minutos.</span>
             </div>
           </div>
 
@@ -169,7 +175,7 @@ const ConfirmationStep = ({
       <div className="section-card steps-card">
         <div className="section-heading">
           <p className="section-eyebrow">3 pasos para completar tu pago</p>
-          <h2>Asi confirmamos tu pago en Sociedad Tecnologica Integral</h2>
+          <h2>Pago directo con vendedores verificados</h2>
         </div>
         <div className="steps-grid">
           {nextSteps.map((step, index) => (
@@ -296,6 +302,21 @@ const ConfirmationStep = ({
           display: flex;
           flex-wrap: wrap;
           gap: 12px;
+        }
+        .hero-note {
+          margin-top: 20px;
+          padding: 18px 20px;
+          border-radius: 18px;
+          background: rgba(15, 23, 42, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          font-size: 0.95rem;
+          line-height: 1.6;
+          color: rgba(255, 255, 255, 0.9);
+        }
+        .hero-note strong {
+          display: block;
+          font-size: 1rem;
+          margin-bottom: 6px;
         }
         .hero-tag {
           display: inline-flex;

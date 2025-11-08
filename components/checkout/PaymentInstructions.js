@@ -1,20 +1,5 @@
-import React from 'react';
+﻿import React from 'react';
 import { Phone, Building2, MapPin, Copy, CheckCircle, MessageCircle } from 'lucide-react';
-
-const BANK_ACCOUNTS = [
-  {
-    bank: 'BBVA',
-    accountNumber: '0115 4567 8901 2345 67',
-    clabe: '012180001154678901234567',
-    holder: 'SOCIEDAD DE TECNOLOGIA INTEGRAL SA DE CV',
-  },
-  {
-    bank: 'Santander',
-    accountNumber: '6500 1234 5678 9012 34',
-    clabe: '014180065001234567890123',
-    holder: 'SOCIEDAD DE TECNOLOGIA INTEGRAL SA DE CV',
-  },
-];
 
 const CONTACT_NUMBERS = [
   {
@@ -43,33 +28,33 @@ const CONTACT_NUMBERS = [
 const CONVENIENCE_STORES = [
   {
     name: 'Oxxo',
-    description: 'Más de 20,000 tiendas en todo México',
-    commission: 'Sin comisión',
-    logo: '🏪',
+    description: 'MÃ¡s de 20,000 tiendas en todo MÃ©xico',
+    commission: 'Sin comisiÃ³n',
+    logo: 'ðŸª',
   },
   {
     name: '7-Eleven',
-    description: 'Disponible 24/7 en más de 2,000 ubicaciones',
-    commission: 'Sin comisión',
-    logo: '🏬',
+    description: 'Disponible 24/7 en mÃ¡s de 2,000 ubicaciones',
+    commission: 'Sin comisiÃ³n',
+    logo: 'ðŸ¬',
   },
   {
     name: 'Soriana',
-    description: 'En todas las tiendas Soriana del país',
-    commission: 'Sin comisión',
-    logo: '🛒',
+    description: 'En todas las tiendas Soriana del paÃ­s',
+    commission: 'Sin comisiÃ³n',
+    logo: 'ðŸ›’',
   },
   {
     name: 'Walmart',
     description: 'Cajas de servicio en tiendas Walmart',
-    commission: 'Sin comisión',
-    logo: '🏪',
+    commission: 'Sin comisiÃ³n',
+    logo: 'ðŸª',
   },
   {
-    name: 'Bodega Aurrerá',
-    description: 'Red de tiendas en toda la república',
-    commission: 'Sin comisión',
-    logo: '🏬',
+    name: 'Bodega AurrerÃ¡',
+    description: 'Red de tiendas en toda la repÃºblica',
+    commission: 'Sin comisiÃ³n',
+    logo: 'ðŸ¬',
   },
 ];
 
@@ -78,7 +63,7 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
-    // Detectar si el usuario está en móvil
+    // Detectar si el usuario estÃ¡ en mÃ³vil
     const checkMobile = () => {
       const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
@@ -109,6 +94,43 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
     </button>
   );
 
+  const ContactList = ({ heading }) => {
+    const referenceText = paymentReference || 'Por asignar';
+    const orderLabel = orderNumber || 'Pendiente';
+    return (
+      <div className="contacts">
+        {heading && <h4>{heading}</h4>}
+        {CONTACT_NUMBERS.map((contact) => (
+          <div key={contact.zone} className="contact-card">
+            <div className="contact-info">
+              <strong className="zone-name">{contact.zone}</strong>
+              <span className="contact-name">{contact.contact}</span>
+              <span className="contact-phone">{contact.phoneFormatted}</span>
+            </div>
+            <div className="contact-actions">
+              <a href={`tel:${contact.phone}`} className="action-button action-button--call" title="Llamar ahora">
+                <Phone size={18} />
+                Llamar
+              </a>
+              <a
+                href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
+                  `Hola, necesito confirmar mi pago. Mi numero de orden es: ${orderLabel} y mi referencia de pago es: ${referenceText}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="action-button action-button--whatsapp"
+                title="Enviar WhatsApp"
+              >
+                <MessageCircle size={18} />
+                WhatsApp
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const renderInstructions = () => {
     switch (paymentMethod) {
       case 'PHONE_PAYMENT':
@@ -117,9 +139,9 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
             <div className="instructions__header">
               <Phone size={32} />
               <div>
-                <h3>Confirma tu pago por teléfono</h3>
+                <h3>Confirma tu pago por telÃ©fono</h3>
                 <p>
-                  Para finalizar la compra, comunícate con nuestro equipo y proporciona tu
+                  Para finalizar la compra, comunÃ­cate con nuestro equipo y proporciona tu
                   referencia de pago.
                 </p>
               </div>
@@ -127,7 +149,7 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
 
             <div className="info-card">
               <div className="info-row">
-                <span className="info-label">Número de Orden:</span>
+                <span className="info-label">NÃºmero de Orden:</span>
                 <div className="info-value">
                   <strong>{orderNumber}</strong>
                   <CopyButton text={orderNumber} label="order" />
@@ -148,63 +170,36 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
               </div>
             </div>
 
-            <div className="contacts">
-              <h4>Selecciona tu zona para contactar:</h4>
-              {CONTACT_NUMBERS.map((contact) => (
-                <div key={contact.zone} className="contact-card">
-                  <div className="contact-info">
-                    <strong className="zone-name">{contact.zone}</strong>
-                    <span className="contact-name">{contact.contact}</span>
-                    <span className="contact-phone">{contact.phoneFormatted}</span>
-                  </div>
-                  <div className="contact-actions">
-                    <a
-                      href={`tel:${contact.phone}`}
-                      className="action-button action-button--call"
-                      title="Llamar ahora"
-                    >
-                      <Phone size={18} />
-                      Llamar
-                    </a>
-                    <a
-                      href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                        `Hola, necesito confirmar mi pago. Mi número de orden es: ${orderNumber} y mi referencia de pago es: ${paymentReference}`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="action-button action-button--whatsapp"
-                      title="Enviar WhatsApp"
-                    >
-                      <MessageCircle size={18} />
-                      WhatsApp
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ContactList heading="Selecciona tu zona para contactar:" />
+
+
 
             {isMobile && (
               <div className="mobile-tip">
                 <Phone size={20} />
                 <div>
-                  <strong>¡Estás en un dispositivo móvil!</strong>
+                  <strong>Â¡EstÃ¡s en un dispositivo mÃ³vil!</strong>
                   <p>
-                    Toca el botón "Llamar" para marcar directamente o usa WhatsApp para un
-                    contacto rápido con tu información precargada.
+                    Toca el botÃ³n "Llamar" para marcar directamente o usa WhatsApp para un
+                    contacto rÃ¡pido con tu informaciÃ³n precargada.
                   </p>
                 </div>
               </div>
             )}
 
             <div className="alert">
-              Tu pedido quedará reservado durante <strong>24 horas</strong> mientras confirmamos
-              el pago telefónico.
+              Tu pedido quedarÃ¡ reservado durante <strong>24 horas</strong> mientras confirmamos
+              el pago telefÃ³nico.
             </div>
           </div>
         );
 
       case 'BANK_TRANSFER':
-      case 'CASH_DEPOSIT':
+      case 'CASH_DEPOSIT': {
+        const hasReference = paymentReference && paymentReference !== 'Por asignar';
+        const referenceLabel = hasReference
+          ? paymentReference
+          : 'Se compartira durante la llamada de verificacion';
         return (
           <div className="instructions">
             <div className="instructions__header">
@@ -212,20 +207,19 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
               <div>
                 <h3>
                   {paymentMethod === 'BANK_TRANSFER'
-                    ? 'Realiza tu transferencia bancaria'
-                    : 'Realiza tu depósito en efectivo'}
+                    ? 'Coordinamos tu transferencia bancaria'
+                    : 'Deposito en efectivo acompanado'}
                 </h3>
                 <p>
-                  {paymentMethod === 'BANK_TRANSFER'
-                    ? 'Usa los siguientes datos para realizar la transferencia:'
-                    : 'Acude a cualquier sucursal bancaria y deposita a:'}
+                  Nuestro equipo de soporte te llamara para darte la cuenta directa del vendedor que enviara tu pedido.
+                  El dinero llega a vendedores certificados y no usamos intermediarios.
                 </p>
               </div>
             </div>
 
             <div className="info-card">
               <div className="info-row">
-                <span className="info-label">Número de Orden:</span>
+                <span className="info-label">NÇ§mero de Orden:</span>
                 <div className="info-value">
                   <strong>{orderNumber}</strong>
                   <CopyButton text={orderNumber} label="order" />
@@ -234,8 +228,8 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
               <div className="info-row">
                 <span className="info-label">Referencia de Pago:</span>
                 <div className="info-value">
-                  <strong>{paymentReference}</strong>
-                  <CopyButton text={paymentReference} label="reference" />
+                  <strong>{referenceLabel}</strong>
+                  {hasReference && <CopyButton text={paymentReference} label="reference" />}
                 </div>
               </div>
               <div className="info-row">
@@ -246,44 +240,54 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
               </div>
             </div>
 
-            <div className="bank-accounts">
-              <h4>Cuentas bancarias:</h4>
-              {BANK_ACCOUNTS.map((account, index) => (
-                <div key={index} className="bank-account">
-                  <div className="bank-name">{account.bank}</div>
-                  <div className="account-details">
-                    <div className="account-row">
-                      <span>Beneficiario:</span>
-                      <strong>{account.holder}</strong>
-                    </div>
-                    <div className="account-row">
-                      <span>Número de Cuenta:</span>
-                      <div className="copyable">
-                        <strong>{account.accountNumber}</strong>
-                        <CopyButton text={account.accountNumber} label={`account-${index}`} />
-                      </div>
-                    </div>
-                    <div className="account-row">
-                      <span>CLABE:</span>
-                      <div className="copyable">
-                        <strong>{account.clabe}</strong>
-                        <CopyButton text={account.clabe} label={`clabe-${index}`} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="trust-callout">
+              <strong>Pago directo al vendedor</strong>
+              <p>
+                Validamos tu orden por telefono porque no usamos intermediarios. El asesor confirma tu numero de orden,
+                monto y te entrega la cuenta oficial del vendedor.
+              </p>
             </div>
 
+            <div className="call-flow">
+              <div className="call-step">
+                <span className="call-step__index">1</span>
+                <div>
+                  <strong>Recibe la llamada certificada</strong>
+                  <p>En menos de 10 minutos te marcamos desde uno de nuestros numeros oficiales para confirmar tu pedido.</p>
+                </div>
+              </div>
+              <div className="call-step">
+                <span className="call-step__index">2</span>
+                <div>
+                  <strong>Obtienes la cuenta del vendedor</strong>
+                  <p>El asesor explica que el dinero va directo al vendedor y te comparte la cuenta o referencia unica.</p>
+                </div>
+              </div>
+              <div className="call-step">
+                <span className="call-step__index">3</span>
+                <div>
+                  <strong>Deposita y envia tu comprobante</strong>
+                  <p>Realiza la transferencia solo con los datos confirmados y envia el comprobante para liberar tu equipo.</p>
+                </div>
+              </div>
+            </div>
+
+            <ContactList heading="Numeros oficiales que pueden llamarte:" />
+
             <div className="alert">
-              <strong>Importante:</strong> Después de realizar el pago, envía tu comprobante a{' '}
-              <a href="mailto:pagos@sociedadtecnologia.com">pagos@sociedadtecnologia.com</a> con tu número de orden{' '}
-              <strong>{orderNumber}</strong>
+              <strong>Si no recibes la llamada:</strong> marca al numero de tu zona o escribe a{' '}
+              <a href="mailto:pagos@sociedadtecnologia.com">pagos@sociedadtecnologia.com</a> con tu nÇ§mero de orden{' '}
+              <strong>{orderNumber}</strong> para forzar la verificacion.
             </div>
           </div>
         );
+      }
 
-      case 'CONVENIENCE_STORE':
+      case 'CONVENIENCE_STORE': {
+        const hasReference = paymentReference && paymentReference !== 'Por asignar';
+        const referenceLabel = hasReference
+          ? paymentReference
+          : 'Se generara durante la llamada de verificacion';
         return (
           <div className="instructions">
             <div className="instructions__header instructions__header--convenience">
@@ -292,13 +296,18 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
               </div>
               <div>
                 <h3>Paga en tiendas de autoservicio</h3>
-                <p>Realiza tu pago en efectivo en más de 25,000 tiendas en todo México</p>
+                <p>Generamos tu referencia durante una llamada de soporte para que pagues directo al vendedor sin intermediarios.</p>
               </div>
+            </div>
+
+            <div className="trust-callout trust-callout--light">
+              <strong>Acompanamiento personalizado</strong>
+              <p>Un asesor te explica que el dinero lo reciben vendedores certificados y comparte la referencia oficial de pago en tienda.</p>
             </div>
 
             <div className="info-card info-card--premium">
               <div className="info-row">
-                <span className="info-label">Número de Orden:</span>
+                <span className="info-label">Nǧmero de Orden:</span>
                 <div className="info-value">
                   <strong>{orderNumber}</strong>
                   <CopyButton text={orderNumber} label="order" />
@@ -307,8 +316,8 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
               <div className="info-row">
                 <span className="info-label">Referencia de Pago:</span>
                 <div className="info-value">
-                  <strong>{paymentReference}</strong>
-                  <CopyButton text={paymentReference} label="reference" />
+                  <strong>{referenceLabel}</strong>
+                  {hasReference && <CopyButton text={paymentReference} label="reference" />}
                 </div>
               </div>
               <div className="info-row">
@@ -318,6 +327,8 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
                 </div>
               </div>
             </div>
+
+            <ContactList heading="Numeros oficiales que generaran tu referencia:" />
 
             <div className="convenience-container">
               <div className="section-header">
@@ -340,45 +351,46 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
             </div>
 
             <div className="payment-steps">
-              <h4 className="steps-title">Instrucciones para pagar</h4>
+              <h4 className="steps-title">Pasos para confirmar tu pago</h4>
               <div className="steps-list">
                 <div className="step-item">
                   <div className="step-number">1</div>
                   <div className="step-content">
-                    <strong>Acude a la tienda</strong>
-                    <p>Visita cualquier tienda de autoservicio participante</p>
+                    <strong>Recibe la llamada de soporte</strong>
+                    <p>Tu asesor genera la referencia y te recuerda que el dinero va directo al vendedor.</p>
                   </div>
                 </div>
                 <div className="step-item">
                   <div className="step-number">2</div>
                   <div className="step-content">
-                    <strong>Proporciona tu referencia</strong>
-                    <p>Indica al cajero tu número de referencia: <code>{paymentReference}</code></p>
+                    <strong>Valida al asesor</strong>
+                    <p>Debe confirmar tu numero de orden, monto y tienda antes de compartir la referencia.</p>
                   </div>
                 </div>
                 <div className="step-item">
                   <div className="step-number">3</div>
                   <div className="step-content">
-                    <strong>Realiza el pago</strong>
-                    <p>Paga en efectivo el monto de <strong>${total.toLocaleString('es-MX')}</strong></p>
+                    <strong>Acude y paga con la referencia oficial</strong>
+                    <p>Presenta la referencia que recibiste y paga <strong>${total.toLocaleString('es-MX')}</strong> en efectivo.</p>
                   </div>
                 </div>
                 <div className="step-item">
                   <div className="step-number">4</div>
                   <div className="step-content">
-                    <strong>Conserva tu ticket</strong>
-                    <p>Guarda el comprobante como prueba de pago</p>
+                    <strong>Envia tu comprobante</strong>
+                    <p>Comparte una foto del ticket para liberar tu pedido en minutos habiles.</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="alert alert--warning">
-              <strong>¡Importante!</strong> Tu referencia de pago es válida por <strong>48 horas</strong>.
-              Una vez realizado el pago, la confirmación puede tardar hasta 15 minutos.
+              <strong>No pagues sin tu referencia oficial.</strong> Te llamaremos en minutos y la referencia permanece vigente 48 horas.
+              Despues del pago, la confirmacion tarda hasta 15 minutos.
             </div>
           </div>
         );
+      }
 
       default:
         return null;
@@ -473,14 +485,12 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
           background: rgba(37, 99, 235, 0.2);
         }
 
-        .contacts,
-        .bank-accounts {
+        .contacts {
           display: grid;
           gap: 12px;
         }
 
-        .contacts h4,
-        .bank-accounts h4 {
+        .contacts h4 {
           margin: 0 0 8px;
           font-size: 1.05rem;
           font-weight: 700;
@@ -498,6 +508,28 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
         .contact-card:hover {
           border-color: rgba(37, 99, 235, 0.3);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .trust-callout {
+          padding: 18px 20px;
+          border-radius: 16px;
+          background: rgba(16, 185, 129, 0.08);
+          border: 1px solid rgba(16, 185, 129, 0.3);
+          line-height: 1.6;
+          font-size: 0.95rem;
+          color: rgba(15, 23, 42, 0.85);
+        }
+
+        .trust-callout strong {
+          display: block;
+          font-size: 1rem;
+          margin-bottom: 6px;
+          color: #0f172a;
+        }
+
+        .trust-callout--light {
+          background: rgba(37, 99, 235, 0.06);
+          border-color: rgba(37, 99, 235, 0.25);
         }
 
         .contact-info {
@@ -572,43 +604,46 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
           transform: translateY(0);
         }
 
-        .bank-account {
-          background: #fff;
-          border: 1px solid rgba(15, 23, 42, 0.1);
-          border-radius: 10px;
-          overflow: hidden;
-        }
-
-        .bank-name {
-          background: linear-gradient(135deg, #2563eb, #1d4ed8);
-          color: #fff;
-          padding: 12px 16px;
-          font-weight: 700;
-          font-size: 1.1rem;
-        }
-
-        .account-details {
-          padding: 16px;
+        .call-flow {
           display: grid;
-          gap: 10px;
-        }
-
-        .account-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
           gap: 12px;
         }
 
-        .account-row span {
-          font-size: 0.85rem;
-          color: rgba(15, 23, 42, 0.6);
+        .call-step {
+          display: flex;
+          gap: 14px;
+          align-items: flex-start;
+          padding: 14px 16px;
+          border: 1px solid rgba(15, 23, 42, 0.08);
+          border-radius: 14px;
+          background: #fff;
         }
 
-        .copyable {
+        .call-step__index {
+          width: 32px;
+          height: 32px;
+          border-radius: 10px;
+          background: linear-gradient(135deg, #2563eb, #1d4ed8);
+          color: #fff;
+          font-weight: 700;
           display: flex;
           align-items: center;
-          gap: 8px;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .call-step strong {
+          display: block;
+          font-size: 1rem;
+          color: #0f172a;
+          margin-bottom: 4px;
+        }
+
+        .call-step p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: rgba(15, 23, 42, 0.7);
+          line-height: 1.5;
         }
 
         .mobile-tip {
@@ -816,7 +851,7 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
         }
 
         .steps-title::before {
-          content: '📝';
+          content: 'ðŸ“';
           font-size: 1.4rem;
         }
 
@@ -908,15 +943,13 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
         }
 
         @media (max-width: 640px) {
-          .info-row,
-          .account-row {
+          .info-row {
             flex-direction: column;
             align-items: flex-start;
             gap: 8px;
           }
 
-          .info-value,
-          .copyable {
+          .info-value {
             width: 100%;
             justify-content: space-between;
           }
@@ -960,6 +993,15 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
             height: 32px;
             font-size: 1rem;
           }
+
+          .call-step {
+            flex-direction: column;
+          }
+
+          .call-step__index {
+            width: 30px;
+            height: 30px;
+          }
         }
       `}</style>
     </div>
@@ -967,3 +1009,9 @@ const PaymentInstructions = ({ paymentMethod, orderNumber, paymentReference, tot
 };
 
 export default PaymentInstructions;
+
+
+
+
+
+

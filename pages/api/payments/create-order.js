@@ -107,6 +107,8 @@ export default async function handler(req, res) {
         orderNumber: result.orderNumber,
         total: result.order.total,
         status: result.order.status,
+        paymentReleaseStatus: result.order.paymentReleaseStatus,
+        paymentReleaseAt: result.order.paymentReleaseAt,
         createdAt: result.order.createdAt,
       },
       payment: {

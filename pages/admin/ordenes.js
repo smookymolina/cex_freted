@@ -28,7 +28,14 @@ import {
   Copy,
   Check,
 } from 'lucide-react';
-import { formatOrderStatus, formatPaymentMethod, formatPaymentStatus } from '../../utils/checkoutHelper';
+import {
+  formatOrderStatus,
+  formatPaymentMethod,
+  formatPaymentStatus,
+  formatReleaseStatus,
+} from '../../utils/checkoutHelper';
+
+const extractOrder = (payload) => payload?.data?.order || payload?.order || null;
 import { useToast } from '../../context/ToastContext';
 
 const AdminOrdersPage = () => {
@@ -57,6 +64,7 @@ const AdminOrdersPage = () => {
   // Estados de UI
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [updatingStatus, setUpdatingStatus] = useState(null);
+  const [updatingRelease, setUpdatingRelease] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [copiedOrderNumber, setCopiedOrderNumber] = useState(null);
 
@@ -188,16 +196,15 @@ const AdminOrdersPage = () => {
       });
 
       const data = await res.json();
+      const updatedOrder = extractOrder(data);
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Error al actualizar el estado');
+      if (!res.ok || !updatedOrder) {
+        throw new Error(data.error || data.message || 'Error al actualizar el estado');
       }
 
       // Actualizar la orden localmente con los datos de la API
       setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order.id === orderId ? data.order : order
-        )
+        prevOrders.map((order) => (order.id === orderId ? updatedOrder : order))
       );
 
       toast?.success(`Estado actualizado a ${statusInfo.label}`);
@@ -206,6 +213,43 @@ const AdminOrdersPage = () => {
       toast?.error('Error: ' + err.message);
     } finally {
       setUpdatingStatus(null);
+    }
+  };
+
+  const handleUpdateReleaseStatus = async (orderId, newStatus) => {
+    const releaseInfo = formatReleaseStatus(newStatus);
+
+    if (!confirm(`¿Actualizar la liberacion a ${releaseInfo.label}?`)) {
+      return;
+    }
+
+    setUpdatingRelease(orderId);
+
+    try {
+      const res = await fetch('/api/admin/orders/update-release', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          releaseStatus: newStatus,
+        }),
+      });
+
+      const data = await res.json();
+      const updatedOrder = extractOrder(data);
+
+      if (!res.ok || !updatedOrder) {
+        throw new Error(data.error || data.message || 'No se pudo actualizar la liberacion');
+      }
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) => (order.id === orderId ? updatedOrder : order))
+      );
+      toast?.success(`Liberacion actualizada a ${releaseInfo.label}`);
+    } catch (err) {
+      toast?.error('Error: ' + err.message);
+    } finally {
+      setUpdatingRelease(null);
     }
   };
 
@@ -456,6 +500,13 @@ const AdminOrdersPage = () => {
     'REFUNDED',
   ];
 
+  const releaseStatuses = [
+    'WAITING_SUPPORT',
+    'CALL_SCHEDULED',
+    'RELEASED_TO_CUSTOMER',
+    'ON_HOLD',
+  ];
+
   const paymentMethods = [
     { value: 'BANK_TRANSFER', label: 'Transferencia Bancaria' },
     { value: 'CASH_DEPOSIT', label: 'Depósito en Efectivo' },
@@ -652,6 +703,9 @@ const AdminOrdersPage = () => {
               {orders.map((order) => {
                 const isExpanded = expandedOrder === order.id;
                 const statusInfo = formatOrderStatus(order.status);
+                const releaseInfo = formatReleaseStatus(order.paymentReleaseStatus || 'WAITING_SUPPORT');
+                const releaseIsUpdating = updatingRelease === order.id;
+                const releaseTimestamp = order.paymentReleaseAt ? formatDate(order.paymentReleaseAt) : null;
                 const items = Array.isArray(order.items) ? order.items : [];
                 const payment = order.payments?.[0];
 
@@ -687,6 +741,12 @@ const AdminOrdersPage = () => {
                             style={{ background: statusInfo.color + '20', color: statusInfo.color }}
                           >
                             {statusInfo.label}
+                          </span>
+                          <span
+                            className="release-badge"
+                            style={{ background: releaseInfo.color + '15', color: releaseInfo.color }}
+                          >
+                            {releaseInfo.label}
                           </span>
                           {payment && (
                             <span className="payment-badge">
@@ -729,6 +789,52 @@ const AdminOrdersPage = () => {
                             </div>
                           </div>
                         )}
+
+                        <div className="details-section release-section">
+                          <h4>Estado de liberacion para el cliente</h4>
+                          <div className="release-status-card">
+                            <div className="release-status-head">
+                              <span
+                                className="release-chip"
+                                style={{ background: releaseInfo.color + '20', color: releaseInfo.color }}
+                              >
+                                {releaseInfo.label}
+                              </span>
+                              {releaseTimestamp && (
+                                <span className="release-timestamp">Actualizado {releaseTimestamp}</span>
+                              )}
+                            </div>
+                            <p className="release-description">{releaseInfo.description}</p>
+                            {order.paymentReleaseBy && (
+                              <p className="release-meta">Atendido por: {order.paymentReleaseBy}</p>
+                            )}
+                            {order.paymentReleaseNotes && (
+                              <p className="release-notes">Nota: {order.paymentReleaseNotes}</p>
+                            )}
+                          </div>
+                          <div className="release-actions">
+                            {releaseStatuses.map((releaseStatus) => {
+                              const releaseOption = formatReleaseStatus(releaseStatus);
+                              const isCurrent = (order.paymentReleaseStatus || 'WAITING_SUPPORT') === releaseStatus;
+                              return (
+                                <button
+                                  key={releaseStatus}
+                                  onClick={() => handleUpdateReleaseStatus(order.id, releaseStatus)}
+                                  disabled={isCurrent || releaseIsUpdating}
+                                  className={`release-btn ${isCurrent ? 'current' : ''}`}
+                                  style={{
+                                    borderColor: releaseOption.color,
+                                    color: isCurrent ? '#fff' : releaseOption.color,
+                                    background: isCurrent ? releaseOption.color : 'transparent',
+                                  }}
+                                >
+                                  {releaseIsUpdating && !isCurrent && <Loader className="btn-spinner" size={14} />}
+                                  {releaseOption.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
 
                         {/* Customer Info */}
                         <div className="details-section">
@@ -1485,6 +1591,14 @@ const AdminOrdersPage = () => {
           font-weight: 600;
         }
 
+        .release-badge {
+          font-size: 0.78rem;
+          font-weight: 600;
+          padding: 5px 12px;
+          border-radius: 999px;
+          border: 1px solid transparent;
+        }
+
         .payment-badge {
           font-size: 0.8rem;
           color: #64748b;
@@ -1789,6 +1903,85 @@ const AdminOrdersPage = () => {
           gap: 12px;
         }
 
+        .release-section {
+          border-top: 1px dashed rgba(15, 23, 42, 0.08);
+          padding-top: 16px;
+          margin-top: 8px;
+        }
+
+        .release-status-card {
+          border: 1px solid rgba(15, 23, 42, 0.1);
+          border-radius: 14px;
+          padding: 16px;
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.04), rgba(14, 116, 144, 0.04));
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .release-status-head {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .release-chip {
+          font-weight: 600;
+          font-size: 0.85rem;
+          padding: 6px 14px;
+          border-radius: 999px;
+        }
+
+        .release-timestamp {
+          font-size: 0.8rem;
+          color: #475569;
+        }
+
+        .release-description {
+          margin: 0;
+          color: #0f172a;
+          font-weight: 500;
+        }
+
+        .release-meta,
+        .release-notes {
+          margin: 0;
+          font-size: 0.9rem;
+          color: #475569;
+        }
+
+        .release-actions {
+          margin-top: 12px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .release-btn {
+          border: 1px solid #94a3b8;
+          padding: 10px 14px;
+          border-radius: 10px;
+          font-weight: 600;
+          background: transparent;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .release-btn:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+        }
+
+        .release-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
         .status-btn {
           padding: 10px 16px;
           border: 2px solid;
@@ -2076,6 +2269,14 @@ const AdminOrdersPage = () => {
           }
 
           .status-btn {
+            width: 100%;
+          }
+
+          .release-actions {
+            flex-direction: column;
+          }
+
+          .release-btn {
             width: 100%;
           }
         }

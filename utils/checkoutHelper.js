@@ -165,6 +165,39 @@ export function formatOrderStatus(status) {
   };
 }
 
+export function formatReleaseStatus(status) {
+  const releaseMap = {
+    WAITING_SUPPORT: {
+      label: 'Pendiente de liberacion',
+      color: '#f97316',
+      description: 'Soporte revisa tu pedido para compartir la orden de pago.',
+    },
+    CALL_SCHEDULED: {
+      label: 'Llamada programada',
+      color: '#f59e0b',
+      description: 'Un asesor se comunicara contigo para entregar los datos oficiales.',
+    },
+    RELEASED_TO_CUSTOMER: {
+      label: 'Orden liberada',
+      color: '#22c55e',
+      description: 'Ya compartimos la cuenta o referencia de pago. Revisa correo o WhatsApp.',
+    },
+    ON_HOLD: {
+      label: 'En espera del cliente',
+      color: '#ef4444',
+      description: 'Necesitamos tu confirmacion para continuar con la liberacion.',
+    },
+  };
+
+  return (
+    releaseMap[status] || {
+      label: status || 'Sin estado',
+      color: '#6b7280',
+      description: 'Estado de liberacion no disponible.',
+    }
+  );
+}
+
 /**
  * Formatea el método de pago para mostrar
  * @param {string} method - Método de pago

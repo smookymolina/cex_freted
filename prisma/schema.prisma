@@ -85,6 +85,10 @@ model Order {
   total              Float
   items              Json
   status             OrderStatus @default(PENDING)
+  paymentReleaseStatus PaymentReleaseStatus @default(WAITING_SUPPORT)
+  paymentReleaseNotes  String?
+  paymentReleaseBy     String?
+  paymentReleaseAt     DateTime?
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
   supportNotes       String?
@@ -134,6 +138,13 @@ enum PaymentStatus {
   FAILED
   REFUNDED
   CANCELLED
+}
+
+enum PaymentReleaseStatus {
+  WAITING_SUPPORT
+  CALL_SCHEDULED
+  RELEASED_TO_CUSTOMER
+  ON_HOLD
 }
 
 enum Role {
