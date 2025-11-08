@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -23,8 +20,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -38,32 +34,30 @@ model Session {
 }
 
 model User {
-  id                    String    @id @default(cuid())
-  name                  String?
-  email                 String?   @unique
-  emailVerified         DateTime?
-  image                 String?
-  password              String?
-  phone                 String?
-  refreshToken          String?
-  resetPasswordToken    String?
-  resetPasswordExpires  DateTime?
-  role                  Role      @default(COMPRADOR)
-  // Configuraciones de notificaciones
-  notifyEmail           Boolean   @default(true)
-  notifyPush            Boolean   @default(false)
-  notifySms             Boolean   @default(false)
-  notifyMarketing       Boolean   @default(true)
-  // Configuraciones de privacidad
-  profilePublic         Boolean   @default(false)
-  showPurchases         Boolean   @default(false)
-  allowMessages         Boolean   @default(true)
-  cart                  Json?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @default(now()) @updatedAt
-  accounts              Account[]
-  sessions              Session[]
-  orders                Order[]
+  id                   String    @id @default(cuid())
+  name                 String?
+  email                String?   @unique
+  emailVerified        DateTime?
+  image                String?
+  password             String?
+  phone                String?
+  refreshToken         String?
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+  role                 Role      @default("COMPRADOR")
+  notifyEmail          Boolean   @default(true)
+  notifyPush           Boolean   @default(false)
+  notifySms            Boolean   @default(false)
+  notifyMarketing      Boolean   @default(true)
+  profilePublic        Boolean   @default(false)
+  showPurchases        Boolean   @default(false)
+  allowMessages        Boolean   @default(true)
+  cart                 Json?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @default(now()) @updatedAt
+  accounts             Account[]
+  orders               Order[]
+  sessions             Session[]
 }
 
 model VerificationToken {
@@ -74,106 +68,74 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Modelo de pedidos/ordenes
 model Order {
-  id                String          @id @default(cuid())
-  orderNumber       String          @unique
-  userId            String
-  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Información del cliente
-  customerName      String
-  customerEmail     String
-  customerPhone     String
-
-  // Información de envío
-  shippingAddress   String
-  shippingCity      String
-  shippingState     String
+  id                 String      @id @default(cuid())
+  orderNumber        String      @unique
+  userId             String
+  customerName       String
+  customerEmail      String
+  customerPhone      String
+  shippingAddress    String
+  shippingCity       String
+  shippingState      String
   shippingPostalCode String
   shippingReferences String?
-
-  // Totales
-  subtotal          Float
-  shippingCost      Float
-  total             Float
-
-  // Items del pedido (guardado como JSON)
-  items             Json
-
-  // Estado del pedido
-  status            OrderStatus     @default(PENDING)
-  supportNotes      String?         // Notas internas del equipo de soporte
-
-  // Relaciones
-  payments          Payment[]
-
-  // Timestamps
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  subtotal           Float
+  shippingCost       Float
+  total              Float
+  items              Json
+  status             OrderStatus @default("PENDING")
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  supportNotes       String?
+  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments           Payment[]
 }
 
-// Modelo de pagos
 model Payment {
-  id                String          @id @default(cuid())
-  orderId           String
-  order             Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  // Detalles del pago
-  amount            Float
-  paymentMethod     PaymentMethod
-  status            PaymentStatus   @default(PENDING)
-
-  // Información de la transacción
-  transactionId     String?         @unique
-  referenceNumber   String          @unique
-
-  // Metadatos específicos del método de pago
-  paymentMetadata   Json?
-
-  // Información de procesamiento
-  processedAt       DateTime?
-  processedBy       String?         // Usuario que procesó el pago (admin)
-
-  // Notas adicionales
-  notes             String?
-
-  // Timestamps
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  id              String        @id @default(cuid())
+  orderId         String
+  amount          Float
+  paymentMethod   PaymentMethod
+  status          PaymentStatus @default("PENDING")
+  transactionId   String?       @unique
+  referenceNumber String        @unique
+  paymentMetadata Json?
+  processedAt     DateTime?
+  processedBy     String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  order           Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
-// Estados del pedido
 enum OrderStatus {
-  PENDING           // Esperando pago
-  PAYMENT_CONFIRMED // Pago confirmado
-  PROCESSING        // En proceso
-  SHIPPED           // Enviado
-  DELIVERED         // Entregado
-  CANCELLED         // Cancelado
-  REFUNDED          // Reembolsado
+  PENDING
+  PAYMENT_CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
 }
 
-// Métodos de pago disponibles
 enum PaymentMethod {
-  BANK_TRANSFER     // Transferencia bancaria
-  CASH_DEPOSIT      // Depósito en efectivo
-  PHONE_PAYMENT     // Pago telefónico
-  STORE_PAYMENT     // Pago en tienda
+  BANK_TRANSFER
+  CASH_DEPOSIT
+  PHONE_PAYMENT
+  STORE_PAYMENT
 }
 
-// Estados del pago
 enum PaymentStatus {
-  PENDING           // Pendiente
-  PROCESSING        // En proceso de verificación
-  COMPLETED         // Completado
-  FAILED            // Fallido
-  REFUNDED          // Reembolsado
-  CANCELLED         // Cancelado
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
 }
 
-// Roles de usuario
 enum Role {
-  COMPRADOR         // Usuario que compra
-  SOPORTE           // Usuario de soporte/atención al cliente
+  COMPRADOR
+  SOPORTE
 }

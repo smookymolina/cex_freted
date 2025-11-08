@@ -541,7 +541,7 @@ const ProfilePage = ({ user, stats = defaultStats }) => {
 export async function getServerSideProps(context) {
   const session = await getSession(context);
 
-  if (!session) {
+  if (!session || !session.user || !session.user.id) {
     return {
       redirect: {
         destination: '/mi-cuenta/login',
@@ -550,30 +550,43 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const [userRecord, orders] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        createdAt: true,
-        emailVerified: true,
+  let userRecord = null;
+  let orders = [];
+
+  try {
+    [userRecord, orders] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          createdAt: true,
+          emailVerified: true,
+        },
+      }),
+      prisma.order.findMany({
+        where: { userId: session.user.id },
+        select: {
+          id: true,
+          status: true,
+          total: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+    ]);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    return {
+      redirect: {
+        destination: '/mi-cuenta/login',
+        permanent: false,
       },
-    }),
-    prisma.order.findMany({
-      where: { userId: session.user.id },
-      select: {
-        id: true,
-        status: true,
-        total: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    }),
-  ]);
+    };
+  }
 
   if (!userRecord) {
     return {
