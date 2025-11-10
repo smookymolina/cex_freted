@@ -88,7 +88,7 @@ export default function PrimaryNav() {
       </div>
       <div className={styles.bar}>
         <Link href="/" className={styles.brand}>
-          Sociedad Tecnologica Integral
+          Sociedad Tecnológica Integral
           <span>Recommerce premium certificado</span>
         </Link>
         <nav className={`${styles.navLinks} ${styles.desktopNav}`}>

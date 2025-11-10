@@ -347,27 +347,35 @@
   }
 
   .bar {
-    padding: 12px;
-    gap: 8px;
+    padding: 10px 8px;
+    gap: 6px;
   }
 
   .brand {
-    font-size: 0.85rem;
-    max-width: 180px;
+    font-size: 0.7rem;
+    max-width: none;
     flex: 1;
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.15;
+    overflow: visible;
   }
 
   .brand span {
-    font-size: 0.65rem;
+    font-size: 0.55rem;
+    display: block;
+    white-space: normal;
+    overflow: visible;
   }
 
   .mobileActions {
-    gap: 4px;
+    gap: 2px;
+    flex-shrink: 0;
   }
 
   .mobileCartButton {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
 
   .mobileCartBadge {

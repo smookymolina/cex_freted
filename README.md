@@ -39,6 +39,18 @@ Revisa `.env.example`. Para produccion debes:
 - `npm run lint`: aplica las reglas de ESLint.
 - `npm run postinstall`: ejecuta `prisma generate` automaticamente tras cada `npm install`/`npm ci`.
 
+### Gestion de base de datos
+
+- `npm run db:reset`: **Reinicia completamente la base de datos** (elimina todos los datos, recrea las tablas, aplica todas las migraciones y ejecuta el seed para crear el usuario admin con rol SOPORTE).
+  - **Credenciales del admin creado:**
+    - Email: `admin_general@sti.com`
+    - Password: `Admin01`
+    - Rol: `SOPORTE`
+  - **Usar cuando:** necesites empezar desde cero con la base de datos limpia.
+
+- `npm run db:reset:full`: **Aplica solo las migraciones pendientes** sin eliminar datos existentes (preserva todos los registros actuales en la base de datos).
+  - **Usar cuando:** necesites actualizar el schema de la base de datos pero quieras mantener todos los datos existentes.
+
 Scripts utilitarios adicionales se encuentran en `scripts/` (`create-support-user.js`, `verify-role-home.mjs`).
 
 ## Despliegue en VPS (resumen)
