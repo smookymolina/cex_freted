@@ -1,6 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, Search, HelpCircle, ShoppingCart, Package, CreditCard, Shield } from 'lucide-react';
 import styles from '../../styles/components/common.module.css';
+
+// Hook personalizado para detectar el tamaño de pantalla de forma segura
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Solo se ejecuta en el cliente
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 480);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return isMobile;
+}
 
 const FAQ_CATEGORIES = [
   {
@@ -112,7 +131,7 @@ const FAQ_CATEGORIES = [
   }
 ];
 
-function FAQItem({ question, answer, isOpen, onToggle }) {
+function FAQItem({ question, answer, isOpen, onToggle, isMobile }) {
   return (
     <div style={{
       border: '1px solid var(--color-border)',
@@ -126,7 +145,7 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
         onClick={onToggle}
         style={{
           width: '100%',
-          padding: window.innerWidth < 480 ? '16px 16px' : '20px 24px',
+          padding: isMobile ? '16px 16px' : '20px 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -143,16 +162,16 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
         <span style={{
           fontWeight: 600,
           color: 'var(--color-contrast)',
-          paddingRight: window.innerWidth < 480 ? '16px' : '32px',
-          fontSize: window.innerWidth < 480 ? '0.875rem' : '0.95rem',
+          paddingRight: isMobile ? '16px' : '32px',
+          fontSize: isMobile ? '0.875rem' : '0.95rem',
           lineHeight: '1.4'
         }}>
           {question}
         </span>
         <ChevronDown
           style={{
-            width: window.innerWidth < 480 ? '18px' : '20px',
-            height: window.innerWidth < 480 ? '18px' : '20px',
+            width: isMobile ? '18px' : '20px',
+            height: isMobile ? '18px' : '20px',
             color: 'var(--color-primary)',
             flexShrink: 0,
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
@@ -166,9 +185,9 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
         transition: 'max-height var(--transition-slow)'
       }}>
         <div style={{
-          padding: window.innerWidth < 480 ? '0 16px 16px 16px' : '0 24px 24px 24px',
+          padding: isMobile ? '0 16px 16px 16px' : '0 24px 24px 24px',
           color: 'var(--color-muted)',
-          fontSize: window.innerWidth < 480 ? '0.875rem' : '0.95rem',
+          fontSize: isMobile ? '0.875rem' : '0.95rem',
           lineHeight: '1.6'
         }}>
           {answer}
@@ -182,6 +201,7 @@ export default function FAQPage() {
   const [openItems, setOpenItems] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const isMobile = useIsMobile();
 
   const toggleItem = (categoryId, index) => {
     const key = `${categoryId}-${index}`;
@@ -216,10 +236,10 @@ export default function FAQPage() {
 
         {/* Búsqueda */}
         <div style={{
-          marginBottom: window.innerWidth < 480 ? '32px' : '48px',
+          marginBottom: isMobile ? '32px' : '48px',
           maxWidth: '640px',
-          margin: window.innerWidth < 480 ? '0 0 32px' : '0 auto 48px',
-          padding: window.innerWidth < 480 ? '0 8px' : '0'
+          margin: isMobile ? '0 0 32px' : '0 auto 48px',
+          padding: isMobile ? '0 8px' : '0'
         }}>
           <div style={{ position: 'relative' }}>
             <Search style={{
@@ -227,20 +247,20 @@ export default function FAQPage() {
               left: '16px',
               top: '50%',
               transform: 'translateY(-50%)',
-              width: window.innerWidth < 480 ? '18px' : '20px',
-              height: window.innerWidth < 480 ? '18px' : '20px',
+              width: isMobile ? '18px' : '20px',
+              height: isMobile ? '18px' : '20px',
               color: 'var(--color-muted)'
             }} />
             <input
               type="text"
-              placeholder={window.innerWidth < 480 ? "Buscar..." : "Buscar preguntas..."}
+              placeholder={isMobile ? "Buscar..." : "Buscar preguntas..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={styles.input}
               style={{
-                paddingLeft: window.innerWidth < 480 ? '44px' : '48px',
+                paddingLeft: isMobile ? '44px' : '48px',
                 borderRadius: 'var(--radius-full)',
-                fontSize: window.innerWidth < 480 ? '0.875rem' : '0.95rem'
+                fontSize: isMobile ? '0.875rem' : '0.95rem'
               }}
             />
           </div>
@@ -250,17 +270,17 @@ export default function FAQPage() {
         <div style={{
           display: 'flex',
           flexWrap: 'wrap',
-          gap: window.innerWidth < 480 ? '8px' : '12px',
+          gap: isMobile ? '8px' : '12px',
           justifyContent: 'center',
-          marginBottom: window.innerWidth < 480 ? '32px' : '48px',
-          padding: window.innerWidth < 480 ? '0 8px' : '0'
+          marginBottom: isMobile ? '32px' : '48px',
+          padding: isMobile ? '0 8px' : '0'
         }}>
           <button
             onClick={() => setSelectedCategory('all')}
             className={selectedCategory === 'all' ? styles.btnPrimary : styles.btnOutline}
             style={{
-              fontSize: window.innerWidth < 480 ? '0.75rem' : '0.85rem',
-              padding: window.innerWidth < 480 ? '8px 16px' : '10px 20px'
+              fontSize: isMobile ? '0.75rem' : '0.85rem',
+              padding: isMobile ? '8px 16px' : '10px 20px'
             }}
           >
             Todas
@@ -273,14 +293,14 @@ export default function FAQPage() {
                 onClick={() => setSelectedCategory(category.id)}
                 className={selectedCategory === category.id ? styles.btnPrimary : styles.btnOutline}
                 style={{
-                  fontSize: window.innerWidth < 480 ? '0.75rem' : '0.85rem',
-                  padding: window.innerWidth < 480 ? '8px 16px' : '10px 20px',
+                  fontSize: isMobile ? '0.75rem' : '0.85rem',
+                  padding: isMobile ? '8px 16px' : '10px 20px',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: window.innerWidth < 480 ? '6px' : '8px'
+                  gap: isMobile ? '6px' : '8px'
                 }}
               >
-                {window.innerWidth > 480 && <Icon style={{ width: '16px', height: '16px' }} />}
+                {!isMobile && <Icon style={{ width: '16px', height: '16px' }} />}
                 {category.title}
               </button>
             );
@@ -291,11 +311,11 @@ export default function FAQPage() {
         {filteredCategories.length === 0 ? (
           <div style={{
             textAlign: 'center',
-            padding: window.innerWidth < 480 ? '32px 16px' : '48px 0'
+            padding: isMobile ? '32px 16px' : '48px 0'
           }}>
             <p style={{
               color: 'var(--color-muted)',
-              fontSize: window.innerWidth < 480 ? '1rem' : '1.125rem'
+              fontSize: isMobile ? '1rem' : '1.125rem'
             }}>
               No se encontraron preguntas que coincidan con tu búsqueda.
             </p>
@@ -304,26 +324,26 @@ export default function FAQPage() {
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: window.innerWidth < 480 ? '32px' : '48px',
-            padding: window.innerWidth < 480 ? '0 8px' : '0'
+            gap: isMobile ? '32px' : '48px',
+            padding: isMobile ? '0 8px' : '0'
           }}>
             {filteredCategories.map(category => (
               <div key={category.id}>
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: window.innerWidth < 480 ? '8px' : '12px',
-                  marginBottom: window.innerWidth < 480 ? '16px' : '20px'
+                  gap: isMobile ? '8px' : '12px',
+                  marginBottom: isMobile ? '16px' : '20px'
                 }}>
                   {React.createElement(category.icon, {
                     style: {
-                      width: window.innerWidth < 480 ? '20px' : '24px',
-                      height: window.innerWidth < 480 ? '20px' : '24px',
+                      width: isMobile ? '20px' : '24px',
+                      height: isMobile ? '20px' : '24px',
                       color: 'var(--color-primary)'
                     }
                   })}
                   <h2 style={{
-                    fontSize: window.innerWidth < 480 ? '1.5rem' : '1.75rem',
+                    fontSize: isMobile ? '1.5rem' : '1.75rem',
                     fontWeight: 700,
                     color: 'var(--color-contrast)',
                     margin: 0,
@@ -335,7 +355,7 @@ export default function FAQPage() {
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: window.innerWidth < 480 ? '8px' : '12px'
+                  gap: isMobile ? '8px' : '12px'
                 }}>
                   {category.questions.map((item, index) => (
                     <FAQItem
@@ -344,6 +364,7 @@ export default function FAQPage() {
                       answer={item.answer}
                       isOpen={openItems[`${category.id}-${index}`]}
                       onToggle={() => toggleItem(category.id, index)}
+                      isMobile={isMobile}
                     />
                   ))}
                 </div>
@@ -354,50 +375,50 @@ export default function FAQPage() {
 
         {/* CTA de contacto */}
         <div style={{
-          marginTop: window.innerWidth < 480 ? '48px' : '64px',
+          marginTop: isMobile ? '48px' : '64px',
           background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-dark))',
           borderRadius: 'var(--radius-lg)',
-          padding: window.innerWidth < 480 ? '32px 20px' : '48px 32px',
+          padding: isMobile ? '32px 20px' : '48px 32px',
           textAlign: 'center',
           color: 'var(--color-surface)',
           boxShadow: 'var(--shadow-xl)'
         }}>
           <h3 style={{
-            fontSize: window.innerWidth < 480 ? '1.5rem' : '1.75rem',
+            fontSize: isMobile ? '1.5rem' : '1.75rem',
             fontWeight: 700,
-            marginBottom: window.innerWidth < 480 ? '6px' : '8px',
+            marginBottom: isMobile ? '6px' : '8px',
             lineHeight: '1.3'
           }}>
             ¿No encontraste lo que buscabas?
           </h3>
           <p style={{
             opacity: 0.9,
-            marginBottom: window.innerWidth < 480 ? '20px' : '24px',
-            fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem',
-            padding: window.innerWidth < 480 ? '0 8px' : '0'
+            marginBottom: isMobile ? '20px' : '24px',
+            fontSize: isMobile ? '0.9rem' : '1rem',
+            padding: isMobile ? '0 8px' : '0'
           }}>
             Nuestro equipo de soporte está disponible 24/7 para ayudarte
           </p>
           <div style={{
             display: 'flex',
-            flexDirection: window.innerWidth < 480 ? 'column' : 'row',
+            flexDirection: isMobile ? 'column' : 'row',
             flexWrap: 'wrap',
-            gap: window.innerWidth < 480 ? '12px' : '16px',
+            gap: isMobile ? '12px' : '16px',
             justifyContent: 'center',
-            padding: window.innerWidth < 480 ? '0 8px' : '0'
+            padding: isMobile ? '0 8px' : '0'
           }}>
             <a
               href="/soporte/chat"
               style={{
                 display: 'inline-block',
-                padding: window.innerWidth < 480 ? '12px 24px' : '14px 28px',
+                padding: isMobile ? '12px 24px' : '14px 28px',
                 background: 'var(--color-surface)',
                 color: 'var(--color-primary)',
                 fontWeight: 600,
                 borderRadius: 'var(--radius-full)',
                 textDecoration: 'none',
                 transition: 'transform var(--transition-base)',
-                fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem'
+                fontSize: isMobile ? '0.9rem' : '1rem'
               }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
@@ -408,7 +429,7 @@ export default function FAQPage() {
               href="tel:+34900000111"
               style={{
                 display: 'inline-block',
-                padding: window.innerWidth < 480 ? '12px 24px' : '14px 28px',
+                padding: isMobile ? '12px 24px' : '14px 28px',
                 background: 'rgba(255, 255, 255, 0.2)',
                 color: 'var(--color-surface)',
                 fontWeight: 600,
@@ -416,12 +437,12 @@ export default function FAQPage() {
                 textDecoration: 'none',
                 transition: 'transform var(--transition-base)',
                 backdropFilter: 'blur(10px)',
-                fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem'
+                fontSize: isMobile ? '0.9rem' : '1rem'
               }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
-              {window.innerWidth < 480 ? 'Llamar ahora' : 'Llamar: +34 900 000 111'}
+              {isMobile ? 'Llamar ahora' : 'Llamar: +34 900 000 111'}
             </a>
           </div>
         </div>
