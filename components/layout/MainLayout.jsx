@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import PrimaryNav from '../navigation/PrimaryNav';
 import styles from '../../styles/layout/main-layout.module.css';
 
@@ -39,6 +40,9 @@ const footerColumns = [
 export default function MainLayout({ children }) {
   return (
     <div className={styles.layout}>
+      <Head>
+        <link rel="icon" href="/favicon.png" />
+      </Head>
       <PrimaryNav />
       <main className={styles.main}>{children}</main>
       <footer className={styles.footer}>
