@@ -407,18 +407,39 @@ const mockPosts = [
   }
 ];
 
-const PostPage = () => {
-  const router = useRouter();
-  const { slug } = router.query;
-
-  // Encuentra el post basado en el slug. Si no se encuentra, podrías mostrar un 404.
-  const post = mockPosts.find(p => p.slug === slug);
-
+const PostPage = ({ post }) => {
   if (!post) {
     return <div>Artículo no encontrado</div>;
   }
 
   return <BlogPostPage post={post} />;
 };
+
+export async function getStaticPaths() {
+  const paths = mockPosts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+}
+
+export async function getStaticProps({ params }) {
+  const post = mockPosts.find((p) => p.slug === params.slug);
+
+  if (!post) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      post,
+    },
+  };
+}
 
 export default PostPage;

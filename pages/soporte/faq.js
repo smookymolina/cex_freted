@@ -8,6 +8,8 @@ function useIsMobile() {
 
   useEffect(() => {
     // Solo se ejecuta en el cliente
+    if (typeof window === 'undefined') return;
+
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 480);
     };

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../components/layout/AdminLayout';
@@ -594,9 +594,63 @@ const AdminOrdersPage = () => {
     { value: 'STORE_PAYMENT', label: 'Pago en Tienda' },
   ];
 
+  const roleLabel = session?.user?.role === 'SOPORTE' ? 'Soporte' : session?.user?.role || 'Equipo';
+
+  const heroHighlights = [
+    {
+      label: 'Órdenes activas',
+      value: pagination?.total ?? stats?.totalOrders ?? '--',
+      note: 'en seguimiento',
+    },
+    {
+      label: 'Pagos pendientes',
+      value: stats?.pendingPayments ?? '--',
+      note: 'por validar',
+    },
+    {
+      label: 'Ingresos del rango',
+      value: stats ? formatCurrency(stats.totalRevenue || 0) : '--',
+      note: 'según fechas seleccionadas',
+    },
+  ];
+
+  const activeFilters =
+    (filterStatus !== 'ALL' ? 1 : 0) +
+    (filterPaymentMethod !== 'ALL' ? 1 : 0) +
+    (filterDateFrom ? 1 : 0) +
+    (filterDateTo ? 1 : 0) +
+    (filterMinAmount ? 1 : 0) +
+    (filterMaxAmount ? 1 : 0);
+
   return (
     <AdminLayout>
       <div className="admin-container">
+        <section className="support-hero">
+          <div className="support-hero__copy">
+            <span className="hero-badge">Rol: {roleLabel}</span>
+            <h1>Panel de Soporte</h1>
+            <p>
+              Supervisa órdenes, pagos y liberaciones en tiempo real con un layout optimizado para dispositivos
+              móviles.
+            </p>
+            <div className="hero-meta">
+              <span>Sesión activa: {session?.user?.name || 'Equipo de soporte'}</span>
+              <span>Diseño optimizado para pantallas móviles</span>
+            </div>
+          </div>
+          <div className="support-hero__metrics">
+            {heroHighlights.map((item) => (
+              <div key={item.label} className="support-hero__metric">
+                <p>{item.label}</p>
+                <strong>
+                  {typeof item.value === 'number' ? item.value.toLocaleString('es-MX') : item.value}
+                </strong>
+                <span>{item.note}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Header */}
         <div className="page-header">
           <div>
@@ -711,12 +765,7 @@ const AdminOrdersPage = () => {
           >
             <Filter size={18} />
             Filtros
-            {(filterStatus !== 'ALL' ||
-              filterPaymentMethod !== 'ALL' ||
-              filterDateFrom ||
-              filterDateTo ||
-              filterMinAmount ||
-              filterMaxAmount) && <span className="filter-badge">●</span>}
+            {activeFilters > 0 && <span className="filter-badge">{activeFilters}</span>}
           </button>
         </div>
 
@@ -1440,6 +1489,108 @@ const AdminOrdersPage = () => {
           display: flex;
           flex-direction: column;
           gap: 24px;
+          width: min(1200px, 100%);
+          margin: 0 auto;
+          padding: clamp(20px, 4vw, 40px);
+        }
+        .support-hero {
+          position: relative;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 32px;
+          padding: clamp(24px, 5vw, 48px);
+          border-radius: 24px;
+          color: #f8fafc;
+          background: linear-gradient(135deg, #0f172a, #312e81 45%, #1d4ed8);
+          box-shadow: 0 20px 45px rgba(15, 23, 42, 0.35);
+          overflow: hidden;
+          isolation: isolate;
+        }
+        .support-hero::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 45%);
+          z-index: 0;
+        }
+        .support-hero__copy {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 14px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          border-radius: 999px;
+          background: rgba(248, 250, 252, 0.15);
+          border: 1px solid rgba(248, 250, 252, 0.3);
+        }
+        .support-hero__copy h1 {
+          margin: 0;
+          font-size: clamp(1.8rem, 4vw, 2.8rem);
+          color: #fff;
+        }
+        .support-hero__copy p {
+          margin: 0;
+          font-size: 1rem;
+          color: rgba(248, 250, 252, 0.85);
+        }
+        .hero-meta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          font-size: 0.9rem;
+          color: rgba(248, 250, 252, 0.75);
+        }
+        .hero-meta span {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 4px 10px;
+          border-radius: 999px;
+          background: rgba(15, 23, 42, 0.35);
+        }
+        .support-hero__metrics {
+          position: relative;
+          z-index: 1;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          gap: 12px;
+        }
+        .support-hero__metric {
+          background: rgba(15, 23, 42, 0.35);
+          border: 1px solid rgba(248, 250, 252, 0.2);
+          border-radius: 16px;
+          padding: 16px;
+          min-height: 120px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 6px;
+          backdrop-filter: blur(6px);
+        }
+        .support-hero__metric p {
+          margin: 0;
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: rgba(248, 250, 252, 0.75);
+        }
+        .support-hero__metric strong {
+          font-size: 1.8rem;
+          color: #fff;
+        }
+        .support-hero__metric span {
+          font-size: 0.85rem;
+          color: rgba(248, 250, 252, 0.7);
         }
         .date-picker-container {
           display: flex;
@@ -1484,8 +1635,10 @@ const AdminOrdersPage = () => {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          flex-wrap: wrap;
+          gap: 16px;
           background: white;
-          padding: 28px 32px;
+          padding: clamp(20px, 4vw, 32px);
           border-radius: 16px;
           box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
         }
@@ -1501,9 +1654,17 @@ const AdminOrdersPage = () => {
           color: #64748b;
         }
 
+        .page-header > div {
+          flex: 1 1 280px;
+          min-width: 220px;
+        }
+
         .header-actions {
           display: flex;
           gap: 12px;
+          flex: 1 1 240px;
+          justify-content: flex-end;
+          flex-wrap: wrap;
         }
 
         .export-btn,
@@ -1608,10 +1769,13 @@ const AdminOrdersPage = () => {
         .search-section {
           display: flex;
           gap: 12px;
+          flex-wrap: wrap;
+          align-items: stretch;
         }
 
         .search-bar {
-          flex: 1;
+          flex: 1 1 280px;
+          min-width: 220px;
           display: flex;
           align-items: center;
           gap: 12px;
@@ -1637,6 +1801,7 @@ const AdminOrdersPage = () => {
           display: flex;
           align-items: center;
           gap: 8px;
+          justify-content: center;
           padding: 16px 24px;
           border: none;
           background: white;
@@ -1662,8 +1827,16 @@ const AdminOrdersPage = () => {
           position: absolute;
           top: 8px;
           right: 8px;
-          color: #ef4444;
-          font-size: 1.2rem;
+          width: 22px;
+          height: 22px;
+          border-radius: 999px;
+          background: #ef4444;
+          color: white;
+          font-size: 0.8rem;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
         }
 
         /* PASO 2: Filters Panel */
@@ -1672,6 +1845,8 @@ const AdminOrdersPage = () => {
           padding: 24px;
           border-radius: 12px;
           box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+          border: 1px solid #e2e8f0;
+          overflow: hidden;
         }
 
         .filters-grid {
@@ -1712,6 +1887,8 @@ const AdminOrdersPage = () => {
         .filters-actions {
           display: flex;
           justify-content: flex-end;
+          flex-wrap: wrap;
+          gap: 12px;
         }
 
         .clear-filters-btn {
@@ -1777,12 +1954,14 @@ const AdminOrdersPage = () => {
           display: flex;
           flex-direction: column;
           gap: 16px;
+          min-width: 0;
         }
 
         .order-card {
           background: white;
           border-radius: 12px;
           box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+          border: 1px solid #e2e8f0;
           overflow: hidden;
           transition: all 0.2s;
         }
@@ -1795,6 +1974,8 @@ const AdminOrdersPage = () => {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
           padding: 20px 24px;
           cursor: pointer;
           background: rgba(15, 23, 42, 0.02);
@@ -1810,18 +1991,24 @@ const AdminOrdersPage = () => {
           align-items: center;
           flex: 1;
           gap: 20px;
+          flex-wrap: wrap;
+          width: 100%;
+          min-width: 0;
         }
 
         .order-info {
           display: flex;
           flex-direction: column;
           gap: 4px;
+          flex: 1 1 220px;
+          min-width: 200px;
         }
 
         .order-number-row {
           display: flex;
           align-items: center;
           gap: 8px;
+          flex-wrap: wrap;
         }
 
         .order-info h3 {
@@ -1829,6 +2016,7 @@ const AdminOrdersPage = () => {
           font-size: 1.1rem;
           color: #0f172a;
           font-weight: 600;
+          word-break: break-word;
         }
 
         .copy-btn {
@@ -1854,10 +2042,13 @@ const AdminOrdersPage = () => {
         }
 
         .order-meta {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
           gap: 8px;
+          flex: 1 1 220px;
+          min-width: 200px;
+          justify-items: flex-end;
+          text-align: right;
         }
 
         .order-status {
@@ -1884,6 +2075,7 @@ const AdminOrdersPage = () => {
           font-size: 1.3rem;
           font-weight: 700;
           color: #2563eb;
+          white-space: nowrap;
         }
 
         .expand-btn {
@@ -1896,7 +2088,7 @@ const AdminOrdersPage = () => {
 
         /* Order Details */
         .order-details {
-          padding: 24px;
+          padding: clamp(16px, 4vw, 28px);
           border-top: 1px solid #e2e8f0;
           display: flex;
           flex-direction: column;
@@ -1922,6 +2114,7 @@ const AdminOrdersPage = () => {
         .payment-action-buttons {
           display: flex;
           gap: 12px;
+          flex-wrap: wrap;
         }
 
         .confirm-payment-btn,
@@ -2532,6 +2725,8 @@ const AdminOrdersPage = () => {
           border-radius: 16px;
           max-width: 500px;
           width: 100%;
+          max-height: min(90vh, 640px);
+          overflow-y: auto;
           box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
           animation: modalSlideIn 0.3s ease-out;
         }
@@ -2686,15 +2881,34 @@ const AdminOrdersPage = () => {
 
         /* Responsive */
         @media (max-width: 768px) {
+          .support-hero {
+            grid-template-columns: 1fr;
+            padding: 24px;
+          }
+
+          .support-hero__metrics {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          }
+
+          .hero-meta span {
+            width: 100%;
+            justify-content: center;
+          }
+
           .page-header {
             flex-direction: column;
             align-items: flex-start;
             gap: 16px;
           }
 
+          .page-header > div {
+            width: 100%;
+          }
+
           .header-actions {
             width: 100%;
             flex-direction: column;
+            justify-content: flex-start;
           }
 
           .export-btn,
@@ -2724,7 +2938,8 @@ const AdminOrdersPage = () => {
           }
 
           .order-meta {
-            align-items: flex-start;
+            justify-items: flex-start;
+            text-align: left;
           }
 
           .payment-action-buttons {
@@ -2757,6 +2972,41 @@ const AdminOrdersPage = () => {
 
           .proof-decision-btn {
             width: 100%;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .admin-container {
+            padding: 16px;
+          }
+
+          .support-hero {
+            padding: 20px;
+          }
+
+          .support-hero__copy h1 {
+            font-size: 1.6rem;
+          }
+
+          .support-hero__metric {
+            min-height: auto;
+          }
+
+          .page-header h1 {
+            font-size: 1.5rem;
+          }
+
+          .order-header {
+            padding: 16px;
+          }
+
+          .order-details {
+            padding: 16px;
+          }
+
+          .search-bar,
+          .filter-toggle-btn {
+            padding: 14px 16px;
           }
         }
       `}</style>
