@@ -227,20 +227,146 @@
   margin: 0;
 }
 
-@media (max-width: 768px) {
+/* Mobile First Responsive Design */
+@media (max-width: 480px) {
+  .page {
+    padding: 1rem 0.75rem;
+  }
+
+  .pageHeading {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .pageHeading span {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+  }
+
   .pageHeading h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
+    margin: 0.75rem 0;
+  }
+
+  .pageHeading p {
+    font-size: 0.95rem;
+    padding: 0 0.5rem;
   }
 
   .contactGrid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .contactCard {
+    padding: 1.5rem;
+  }
+
+  .cardIcon {
+    font-size: 2.5rem;
+  }
+
+  .contactCard h2 {
+    font-size: 1.25rem;
+  }
+
+  .cardDescription {
+    font-size: 0.8rem;
+  }
+
+  .contactList li {
+    padding: 0.6rem 0;
+    font-size: 0.875rem;
   }
 
   .sectionGrid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .sectionCard {
+    padding: 1.5rem;
+  }
+
+  .sectionCard h2,
+  .sectionCard h3 {
+    font-size: 1.125rem;
+  }
+
+  .sectionCard li {
+    font-size: 0.875rem;
+    padding: 0.6rem 0;
+  }
+
+  .quickLinks {
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .quickLinks h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
   }
 
   .linksGrid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .quickLinkCard {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .quickLinkIcon {
+    font-size: 2rem;
+  }
+
+  .quickLinkCard strong {
+    font-size: 1rem;
+  }
+
+  .quickLinkCard p {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .page {
+    padding: 1.5rem 1rem;
+  }
+
+  .pageHeading h1 {
+    font-size: 2rem;
+  }
+
+  .pageHeading p {
+    font-size: 1rem;
+  }
+
+  .contactGrid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .sectionGrid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .linksGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .contactGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .linksGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

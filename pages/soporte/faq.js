@@ -126,7 +126,7 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
         onClick={onToggle}
         style={{
           width: '100%',
-          padding: '20px 24px',
+          padding: window.innerWidth < 480 ? '16px 16px' : '20px 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -143,15 +143,16 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
         <span style={{
           fontWeight: 600,
           color: 'var(--color-contrast)',
-          paddingRight: '32px',
-          fontSize: '0.95rem'
+          paddingRight: window.innerWidth < 480 ? '16px' : '32px',
+          fontSize: window.innerWidth < 480 ? '0.875rem' : '0.95rem',
+          lineHeight: '1.4'
         }}>
           {question}
         </span>
         <ChevronDown
           style={{
-            width: '20px',
-            height: '20px',
+            width: window.innerWidth < 480 ? '18px' : '20px',
+            height: window.innerWidth < 480 ? '18px' : '20px',
             color: 'var(--color-primary)',
             flexShrink: 0,
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
@@ -160,14 +161,14 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
         />
       </button>
       <div style={{
-        maxHeight: isOpen ? '400px' : '0',
+        maxHeight: isOpen ? '600px' : '0',
         overflow: 'hidden',
         transition: 'max-height var(--transition-slow)'
       }}>
         <div style={{
-          padding: '0 24px 24px 24px',
+          padding: window.innerWidth < 480 ? '0 16px 16px 16px' : '0 24px 24px 24px',
           color: 'var(--color-muted)',
-          fontSize: '0.95rem',
+          fontSize: window.innerWidth < 480 ? '0.875rem' : '0.95rem',
           lineHeight: '1.6'
         }}>
           {answer}
@@ -214,24 +215,33 @@ export default function FAQPage() {
         </div>
 
         {/* Búsqueda */}
-        <div style={{ marginBottom: '48px', maxWidth: '640px', margin: '0 auto 48px' }}>
+        <div style={{
+          marginBottom: window.innerWidth < 480 ? '32px' : '48px',
+          maxWidth: '640px',
+          margin: window.innerWidth < 480 ? '0 0 32px' : '0 auto 48px',
+          padding: window.innerWidth < 480 ? '0 8px' : '0'
+        }}>
           <div style={{ position: 'relative' }}>
             <Search style={{
               position: 'absolute',
               left: '16px',
               top: '50%',
               transform: 'translateY(-50%)',
-              width: '20px',
-              height: '20px',
+              width: window.innerWidth < 480 ? '18px' : '20px',
+              height: window.innerWidth < 480 ? '18px' : '20px',
               color: 'var(--color-muted)'
             }} />
             <input
               type="text"
-              placeholder="Buscar preguntas..."
+              placeholder={window.innerWidth < 480 ? "Buscar..." : "Buscar preguntas..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={styles.input}
-              style={{ paddingLeft: '48px', borderRadius: 'var(--radius-full)' }}
+              style={{
+                paddingLeft: window.innerWidth < 480 ? '44px' : '48px',
+                borderRadius: 'var(--radius-full)',
+                fontSize: window.innerWidth < 480 ? '0.875rem' : '0.95rem'
+              }}
             />
           </div>
         </div>
@@ -240,14 +250,18 @@ export default function FAQPage() {
         <div style={{
           display: 'flex',
           flexWrap: 'wrap',
-          gap: '12px',
+          gap: window.innerWidth < 480 ? '8px' : '12px',
           justifyContent: 'center',
-          marginBottom: '48px'
+          marginBottom: window.innerWidth < 480 ? '32px' : '48px',
+          padding: window.innerWidth < 480 ? '0 8px' : '0'
         }}>
           <button
             onClick={() => setSelectedCategory('all')}
             className={selectedCategory === 'all' ? styles.btnPrimary : styles.btnOutline}
-            style={{ fontSize: '0.85rem', padding: '10px 20px' }}
+            style={{
+              fontSize: window.innerWidth < 480 ? '0.75rem' : '0.85rem',
+              padding: window.innerWidth < 480 ? '8px 16px' : '10px 20px'
+            }}
           >
             Todas
           </button>
@@ -259,14 +273,14 @@ export default function FAQPage() {
                 onClick={() => setSelectedCategory(category.id)}
                 className={selectedCategory === category.id ? styles.btnPrimary : styles.btnOutline}
                 style={{
-                  fontSize: '0.85rem',
-                  padding: '10px 20px',
+                  fontSize: window.innerWidth < 480 ? '0.75rem' : '0.85rem',
+                  padding: window.innerWidth < 480 ? '8px 16px' : '10px 20px',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: window.innerWidth < 480 ? '6px' : '8px'
                 }}
               >
-                <Icon style={{ width: '16px', height: '16px' }} />
+                {window.innerWidth > 480 && <Icon style={{ width: '16px', height: '16px' }} />}
                 {category.title}
               </button>
             );
@@ -275,34 +289,54 @@ export default function FAQPage() {
 
         {/* Preguntas */}
         {filteredCategories.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '48px 0' }}>
-            <p style={{ color: 'var(--color-muted)', fontSize: '1.125rem' }}>
+          <div style={{
+            textAlign: 'center',
+            padding: window.innerWidth < 480 ? '32px 16px' : '48px 0'
+          }}>
+            <p style={{
+              color: 'var(--color-muted)',
+              fontSize: window.innerWidth < 480 ? '1rem' : '1.125rem'
+            }}>
               No se encontraron preguntas que coincidan con tu búsqueda.
             </p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: window.innerWidth < 480 ? '32px' : '48px',
+            padding: window.innerWidth < 480 ? '0 8px' : '0'
+          }}>
             {filteredCategories.map(category => (
               <div key={category.id}>
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '12px',
-                  marginBottom: '20px'
+                  gap: window.innerWidth < 480 ? '8px' : '12px',
+                  marginBottom: window.innerWidth < 480 ? '16px' : '20px'
                 }}>
                   {React.createElement(category.icon, {
-                    style: { width: '24px', height: '24px', color: 'var(--color-primary)' }
+                    style: {
+                      width: window.innerWidth < 480 ? '20px' : '24px',
+                      height: window.innerWidth < 480 ? '20px' : '24px',
+                      color: 'var(--color-primary)'
+                    }
                   })}
                   <h2 style={{
-                    fontSize: '1.75rem',
+                    fontSize: window.innerWidth < 480 ? '1.5rem' : '1.75rem',
                     fontWeight: 700,
                     color: 'var(--color-contrast)',
-                    margin: 0
+                    margin: 0,
+                    lineHeight: '1.3'
                   }}>
                     {category.title}
                   </h2>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: window.innerWidth < 480 ? '8px' : '12px'
+                }}>
                   {category.questions.map((item, index) => (
                     <FAQItem
                       key={index}
@@ -320,32 +354,50 @@ export default function FAQPage() {
 
         {/* CTA de contacto */}
         <div style={{
-          marginTop: '64px',
+          marginTop: window.innerWidth < 480 ? '48px' : '64px',
           background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-dark))',
           borderRadius: 'var(--radius-lg)',
-          padding: '48px 32px',
+          padding: window.innerWidth < 480 ? '32px 20px' : '48px 32px',
           textAlign: 'center',
           color: 'var(--color-surface)',
           boxShadow: 'var(--shadow-xl)'
         }}>
-          <h3 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '8px' }}>
+          <h3 style={{
+            fontSize: window.innerWidth < 480 ? '1.5rem' : '1.75rem',
+            fontWeight: 700,
+            marginBottom: window.innerWidth < 480 ? '6px' : '8px',
+            lineHeight: '1.3'
+          }}>
             ¿No encontraste lo que buscabas?
           </h3>
-          <p style={{ opacity: 0.9, marginBottom: '24px', fontSize: '1rem' }}>
+          <p style={{
+            opacity: 0.9,
+            marginBottom: window.innerWidth < 480 ? '20px' : '24px',
+            fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem',
+            padding: window.innerWidth < 480 ? '0 8px' : '0'
+          }}>
             Nuestro equipo de soporte está disponible 24/7 para ayudarte
           </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: window.innerWidth < 480 ? 'column' : 'row',
+            flexWrap: 'wrap',
+            gap: window.innerWidth < 480 ? '12px' : '16px',
+            justifyContent: 'center',
+            padding: window.innerWidth < 480 ? '0 8px' : '0'
+          }}>
             <a
               href="/soporte/chat"
               style={{
                 display: 'inline-block',
-                padding: '14px 28px',
+                padding: window.innerWidth < 480 ? '12px 24px' : '14px 28px',
                 background: 'var(--color-surface)',
                 color: 'var(--color-primary)',
                 fontWeight: 600,
                 borderRadius: 'var(--radius-full)',
                 textDecoration: 'none',
-                transition: 'transform var(--transition-base)'
+                transition: 'transform var(--transition-base)',
+                fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem'
               }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
@@ -356,19 +408,20 @@ export default function FAQPage() {
               href="tel:+34900000111"
               style={{
                 display: 'inline-block',
-                padding: '14px 28px',
+                padding: window.innerWidth < 480 ? '12px 24px' : '14px 28px',
                 background: 'rgba(255, 255, 255, 0.2)',
                 color: 'var(--color-surface)',
                 fontWeight: 600,
                 borderRadius: 'var(--radius-full)',
                 textDecoration: 'none',
                 transition: 'transform var(--transition-base)',
-                backdropFilter: 'blur(10px)'
+                backdropFilter: 'blur(10px)',
+                fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem'
               }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
-              Llamar: +34 900 000 111
+              {window.innerWidth < 480 ? 'Llamar ahora' : 'Llamar: +34 900 000 111'}
             </a>
           </div>
         </div>

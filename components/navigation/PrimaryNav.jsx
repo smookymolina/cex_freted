@@ -135,7 +135,15 @@ export default function PrimaryNav() {
             )}
           </div>
         </div>
-        <div className={styles.mobileMenuButton}>
+        <div className={styles.mobileActions}>
+          <Link href="/checkout/carrito" className={styles.mobileCartButton}>
+            <ShoppingCart style={{ width: '20px', height: '20px' }} />
+            {cartCount > 0 && (
+              <span className={styles.mobileCartBadge}>
+                {cartCount > 99 ? '99+' : cartCount}
+              </span>
+            )}
+          </Link>
           <Button onClick={toggleMobileMenu} variant="ghost">
             {isMobileMenuOpen ? <X /> : <Menu />}
           </Button>

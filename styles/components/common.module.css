@@ -217,17 +217,119 @@
   gap: 24px;
 }
 
-@media (max-width: 768px) {
+/* Mobile First Responsive - Pequeño */
+@media (max-width: 480px) {
+  .pageContainer {
+    padding: 32px 12px;
+  }
+
+  .pageHeader {
+    margin-bottom: 32px;
+  }
+
+  .iconWrapper {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+  }
+
+  .iconWrapper svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .pageTitle {
+    font-size: 1.75rem;
+    margin-bottom: 12px;
+  }
+
+  .pageSubtitle {
+    font-size: 0.95rem;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .cardHeader {
+    font-size: 1.125rem;
+  }
+
+  .cardContent {
+    font-size: 0.875rem;
+  }
+
+  .btnPrimary,
+  .btnOutline {
+    padding: 12px 20px;
+    font-size: 0.875rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .input {
+    padding: 12px 14px;
+    font-size: 0.875rem;
+  }
+
   .grid2,
   .grid3 {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+  }
+
+  .alertInfo,
+  .alertSuccess,
+  .alertWarning,
+  .alertError {
+    padding: 12px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Mobile First Responsive - Medio */
+@media (min-width: 481px) and (max-width: 768px) {
+  .pageContainer {
+    padding: 40px 16px;
   }
 
   .pageTitle {
     font-size: 2rem;
   }
 
+  .pageSubtitle {
+    font-size: 1rem;
+  }
+
+  .grid2,
+  .grid3 {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .btnPrimary,
+  .btnOutline {
+    padding: 13px 24px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
   .pageContainer {
-    padding: 48px 16px;
+    padding: 56px 20px;
+  }
+
+  .grid2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid3 {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
