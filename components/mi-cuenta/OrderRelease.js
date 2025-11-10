@@ -304,32 +304,53 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
 
       <style jsx>{`
         .release-card {
-          border: 1px solid rgba(16, 185, 129, 0.3);
-          border-radius: 20px;
-          background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.04));
-          padding: 28px;
+          border: 2px solid rgba(16, 185, 129, 0.25);
+          border-radius: 24px;
+          background: linear-gradient(135deg, rgba(16, 185, 129, 0.06), rgba(59, 130, 246, 0.03), rgba(255, 255, 255, 0.98));
+          padding: 32px;
           display: flex;
           flex-direction: column;
-          gap: 24px;
+          gap: 28px;
+          box-shadow: 0 12px 32px rgba(16, 185, 129, 0.12), 0 4px 12px rgba(15, 23, 42, 0.06);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .release-card::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+          pointer-events: none;
         }
 
         .release-hero {
           display: grid;
           grid-template-columns: auto minmax(0, 1fr) auto;
-          gap: 18px;
+          gap: 20px;
           align-items: center;
+          position: relative;
+          z-index: 1;
         }
 
         .release-hero__icon {
-          width: 60px;
-          height: 60px;
-          border-radius: 18px;
-          background: #10b981;
+          width: 72px;
+          height: 72px;
+          border-radius: 20px;
+          background: linear-gradient(135deg, #10b981, #059669);
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
-          box-shadow: 0 15px 35px rgba(16, 185, 129, 0.35);
+          box-shadow: 0 12px 28px rgba(16, 185, 129, 0.4), 0 4px 12px rgba(16, 185, 129, 0.2);
+          transition: transform 0.3s ease;
+        }
+
+        .release-hero__icon:hover {
+          transform: scale(1.05) rotate(5deg);
         }
 
         .release-hero__eyebrow {
@@ -371,17 +392,39 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
         .release-stats {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 18px;
+          gap: 20px;
+          position: relative;
+          z-index: 1;
         }
 
         .release-stat {
-          background: white;
-          border-radius: 16px;
-          padding: 16px 18px;
-          border: 1px solid rgba(148, 163, 184, 0.3);
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+          border-radius: 18px;
+          padding: 20px;
+          border: 2px solid rgba(37, 99, 235, 0.15);
           display: flex;
           flex-direction: column;
-          gap: 10px;
+          gap: 12px;
+          box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .release-stat::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 4px;
+          background: linear-gradient(90deg, #2563eb, #0ea5e9);
+        }
+
+        .release-stat:hover {
+          border-color: rgba(37, 99, 235, 0.3);
+          transform: translateY(-4px);
+          box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12);
         }
 
         .release-stat__label {
@@ -411,44 +454,70 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
         }
 
         .release-copy {
-          border: 1px solid rgba(148, 163, 184, 0.4);
-          border-radius: 10px;
-          padding: 6px;
-          background: white;
-          color: #475569;
+          border: 2px solid rgba(37, 99, 235, 0.2);
+          border-radius: 12px;
+          padding: 8px;
+          background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), white);
+          color: #2563eb;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.2s ease;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+        }
+
+        .release-copy:hover {
+          border-color: rgba(37, 99, 235, 0.4);
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(248, 250, 252, 0.95));
+          transform: scale(1.05);
+          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
         }
 
         .release-copy--active {
           border-color: rgba(16, 185, 129, 0.5);
           color: #059669;
-          background: rgba(16, 185, 129, 0.12);
+          background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+          animation: copySuccess 0.3s ease;
+        }
+
+        @keyframes copySuccess {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.15); }
         }
 
         .release-section {
-          background: white;
-          border-radius: 18px;
-          padding: 20px 22px;
-          border: 1px solid rgba(148, 163, 184, 0.25);
+          background: linear-gradient(135deg, #ffffff, rgba(248, 250, 252, 0.8));
+          border-radius: 20px;
+          padding: 24px;
+          border: 2px solid rgba(148, 163, 184, 0.15);
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 18px;
+          box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+          transition: all 0.3s ease;
+        }
+
+        .release-section:hover {
+          border-color: rgba(37, 99, 235, 0.2);
+          box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
         }
 
         .release-section__head {
           display: flex;
           align-items: center;
-          gap: 10px;
-          color: #0f172a;
+          gap: 12px;
+          color: #2563eb;
+          padding-bottom: 12px;
+          border-bottom: 2px solid rgba(37, 99, 235, 0.1);
         }
 
         .release-section__head h4 {
           margin: 0;
-          font-size: 16px;
+          font-size: 18px;
           font-weight: 700;
+          color: #0f172a;
         }
 
         .release-steps {
@@ -522,42 +591,85 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
 
         .bank-card,
         .store-card {
-          border: 1px solid rgba(148, 163, 184, 0.25);
-          border-radius: 16px;
-          padding: 16px;
-          background: rgba(248, 250, 252, 0.9);
+          border: 2px solid transparent;
+          border-radius: 20px;
+          padding: 24px;
+          background: linear-gradient(135deg, #ffffff, #f8fafc);
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 16px;
+          box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .bank-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 6px;
+          background: linear-gradient(90deg, #2563eb, #1d4ed8, #0ea5e9);
+          border-radius: 20px 20px 0 0;
+        }
+
+        .bank-card:hover,
+        .store-card:hover {
+          border-color: rgba(37, 99, 235, 0.3);
+          box-shadow: 0 12px 36px rgba(37, 99, 235, 0.15), 0 4px 12px rgba(37, 99, 235, 0.08);
+          transform: translateY(-4px);
+        }
+
+        .bank-card header {
+          padding-top: 8px;
         }
 
         .bank-card header h5,
         .store-card h5 {
-          margin: 0;
-          font-size: 16px;
+          margin: 0 0 6px;
+          font-size: 20px;
+          font-weight: 700;
           color: #0f172a;
+          background: linear-gradient(135deg, #2563eb, #0ea5e9);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .bank-card header span {
-          font-size: 13px;
-          color: rgba(15, 23, 42, 0.7);
+          font-size: 14px;
+          color: rgba(15, 23, 42, 0.6);
+          font-weight: 500;
         }
 
         .bank-card__fields {
           display: flex;
           flex-direction: column;
-          gap: 10px;
+          gap: 14px;
         }
 
         .bank-card__fields .release-stat {
-          background: rgba(255, 255, 255, 0.92);
-          border: 1px dashed rgba(148, 163, 184, 0.4);
-          padding: 12px;
+          background: linear-gradient(135deg, rgba(248, 250, 252, 0.8), rgba(255, 255, 255, 0.95));
+          border: 2px solid rgba(37, 99, 235, 0.15);
+          padding: 16px;
+          border-radius: 14px;
+          transition: all 0.2s ease;
+        }
+
+        .bank-card__fields .release-stat:hover {
+          border-color: rgba(37, 99, 235, 0.3);
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(255, 255, 255, 0.98));
+          transform: translateX(4px);
         }
 
         .bank-card__fields .release-stat__value {
-          font-size: 16px;
+          font-size: 17px;
+          font-weight: 700;
           color: #0f172a;
+          font-family: 'Courier New', monospace;
+          letter-spacing: 0.02em;
         }
 
         .store-row {
@@ -581,20 +693,58 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
         }
 
         .release-notes {
-          background: rgba(253, 230, 138, 0.25);
-          border: 1px solid rgba(250, 204, 21, 0.5);
-          border-radius: 18px;
-          padding: 20px 22px;
+          background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(245, 158, 11, 0.08));
+          border: 2px solid rgba(245, 158, 11, 0.35);
+          border-radius: 20px;
+          padding: 24px;
+          box-shadow: 0 4px 16px rgba(245, 158, 11, 0.1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .release-notes::before {
+          content: '⚠';
+          position: absolute;
+          top: -20px;
+          right: -20px;
+          font-size: 120px;
+          opacity: 0.05;
+          transform: rotate(15deg);
+        }
+
+        .release-notes .release-section__head {
+          color: #92400e;
+          padding-bottom: 12px;
+          border-bottom: 2px solid rgba(245, 158, 11, 0.2);
+          margin-bottom: 16px;
         }
 
         .release-notes ul {
-          margin: 12px 0 0;
-          padding-left: 18px;
+          margin: 0;
+          padding-left: 0;
+          list-style: none;
           color: #92400e;
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 10px;
           font-size: 14px;
+          font-weight: 500;
+          position: relative;
+        }
+
+        .release-notes li {
+          padding-left: 28px;
+          position: relative;
+          line-height: 1.6;
+        }
+
+        .release-notes li::before {
+          content: '•';
+          position: absolute;
+          left: 8px;
+          color: #f59e0b;
+          font-size: 20px;
+          font-weight: 700;
         }
 
         @media (max-width: 720px) {

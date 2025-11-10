@@ -25,6 +25,9 @@ import {
   TrendingUp,
   Clock,
   FileText,
+  Eye,
+  ShieldCheck,
+  ShieldX,
   Copy,
   Check,
 } from 'lucide-react';
@@ -80,6 +83,9 @@ const AdminOrdersPage = () => {
   const [orderNotes, setOrderNotes] = useState({});
   const [editingNotes, setEditingNotes] = useState(null);
   const [updatingNotes, setUpdatingNotes] = useState(null);
+  const [proofNotes, setProofNotes] = useState({});
+  const [verifyingProofId, setVerifyingProofId] = useState(null);
+  const [proofAction, setProofAction] = useState(null);
 
   const ITEMS_PER_PAGE = 10;
 
@@ -153,6 +159,15 @@ const AdminOrdersPage = () => {
         return acc;
       }, {});
       setOrderNotes(notesData);
+
+      const proofNotesData = data.reduce((acc, order) => {
+        const payment = order.payments?.[0];
+        if (payment) {
+          acc[payment.id] = '';
+        }
+        return acc;
+      }, {});
+      setProofNotes(proofNotesData);
 
     } catch (err) {
       setError(err.message);
@@ -358,6 +373,74 @@ const AdminOrdersPage = () => {
     }
   };
 
+  const handleVerifyProof = async ({ paymentId, approved }) => {
+    if (!paymentId) return;
+
+    const actionLabel = approved ? 'aprobar' : 'rechazar';
+    if (!confirm(`¿Deseas ${actionLabel} este comprobante?`)) {
+      return;
+    }
+
+    setVerifyingProofId(paymentId);
+    setProofAction(approved ? 'APPROVE' : 'REJECT');
+
+    try {
+      const res = await fetch('/api/admin/payments/verify-proof', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentId,
+          approved,
+          notes: proofNotes[paymentId] || undefined,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'No se pudo completar la acción');
+      }
+
+      const updatedPayment = data.data?.payment;
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) => {
+          const hasPayment = order.payments?.some((payment) => payment.id === paymentId);
+          if (!hasPayment) {
+            return order;
+          }
+
+          const nextPayments = order.payments.map((payment) =>
+            payment.id === paymentId ? { ...payment, ...(updatedPayment || payment) } : payment
+          );
+
+          return {
+            ...order,
+            ...(approved
+              ? { status: 'PAYMENT_CONFIRMED', trackingStatus: 'PREPARING_ORDER' }
+              : {}),
+            ...(proofNotes[paymentId] && !approved
+              ? { supportNotes: proofNotes[paymentId] }
+              : {}),
+            payments: nextPayments,
+          };
+        })
+      );
+
+      setProofNotes((prev) => ({ ...prev, [paymentId]: '' }));
+      toast?.success(
+        data.message || (approved ? 'Comprobante verificado y pago confirmado' : 'Comprobante rechazado')
+      );
+    } catch (err) {
+      toast?.error(err.message || 'Error al verificar comprobante');
+    } finally {
+      setVerifyingProofId(null);
+      setProofAction(null);
+    }
+  };
+
   const handleSaveNotes = async (orderId) => {
     setUpdatingNotes(orderId);
     try {
@@ -461,6 +544,48 @@ const AdminOrdersPage = () => {
       hour: '2-digit',
       minute: '2-digit',
     });
+
+  const formatDateTimeLong = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleString('es-MX', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  };
+
+  const getProofStatusInfo = (payment) => {
+    if (!payment?.paymentProof) {
+      return {
+        label: 'Sin comprobante',
+        tone: 'muted',
+        description: 'El cliente aún no comparte evidencia.',
+      };
+    }
+
+    if (payment.paymentProofVerified) {
+      return {
+        label: 'Pago validado',
+        tone: 'success',
+        description: 'Comprobante aprobado y pedido listo para preparar.',
+      };
+    }
+
+    if (payment.status === 'FAILED') {
+      return {
+        label: 'Rechazado',
+        tone: 'danger',
+        description: 'Solicita un nuevo archivo al cliente para continuar.',
+      };
+    }
+
+    return {
+      label: 'En revisión',
+      tone: 'pending',
+      description: 'Pendiente de validación por el equipo de soporte.',
+    };
+  };
+
+  const isPdfProof = (filePath = '') => filePath.toLowerCase().endsWith('.pdf');
 
   if (status === 'loading' || loading) {
     return (
@@ -708,6 +833,10 @@ const AdminOrdersPage = () => {
                 const releaseTimestamp = order.paymentReleaseAt ? formatDate(order.paymentReleaseAt) : null;
                 const items = Array.isArray(order.items) ? order.items : [];
                 const payment = order.payments?.[0];
+                const proofStatus = payment ? getProofStatusInfo(payment) : null;
+                const proofUploadedAt = payment?.paymentProofUploadedAt
+                  ? formatDateTimeLong(payment.paymentProofUploadedAt)
+                  : null;
 
                 return (
                   <div key={order.id} className="order-card">
@@ -948,6 +1077,126 @@ const AdminOrdersPage = () => {
                                   <span className="value">{payment.notes}</span>
                                 </div>
                               )}
+                            </div>
+                          </div>
+                        )}
+
+                        {payment?.paymentProof && (
+                          <div className="details-section">
+                            <div className="proof-preview-head">
+                              <h4>
+                                <FileText size={18} />
+                                Comprobante enviado por el cliente
+                              </h4>
+                              {proofStatus && (
+                                <span className={`proof-status-pill proof-status-pill--${proofStatus.tone}`}>
+                                  {proofStatus.label}
+                                </span>
+                              )}
+                            </div>
+                            <div className="proof-preview">
+                              <div className="proof-preview__frame">
+                                {isPdfProof(payment.paymentProof) ? (
+                                  <iframe
+                                    src={`${payment.paymentProof}#toolbar=0&navpanes=0`}
+                                    title={`Comprobante ${order.orderNumber}`}
+                                  />
+                                ) : (
+                                  <img
+                                    src={payment.paymentProof}
+                                    alt={`Comprobante del pedido ${order.orderNumber}`}
+                                  />
+                                )}
+                              </div>
+                              <div className="proof-preview__side">
+                                <div className="proof-preview__meta">
+                                  <div>
+                                    <p className="meta-label">Subido el</p>
+                                    <p className="meta-value">{proofUploadedAt || 'Pendiente'}</p>
+                                  </div>
+                                  <div>
+                                    <p className="meta-label">Formato</p>
+                                    <p className="meta-value">
+                                      {isPdfProof(payment.paymentProof) ? 'PDF' : 'Imagen'}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="proof-preview__actions">
+                                  <a
+                                    className="proof-preview-btn"
+                                    href={payment.paymentProof}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <Eye size={16} />
+                                    Ver en pestaña
+                                  </a>
+                                  <a
+                                    className="proof-preview-btn proof-preview-btn--ghost"
+                                    href={payment.paymentProof}
+                                    download
+                                  >
+                                    <Download size={16} />
+                                    Descargar
+                                  </a>
+                                </div>
+                                {!payment.paymentProofVerified ? (
+                                  <>
+                                    <textarea
+                                      className="proof-note-input"
+                                      rows={3}
+                                      placeholder="Notas internas para aprobar o rechazar este comprobante"
+                                      value={proofNotes[payment.id] || ''}
+                                      onChange={(event) =>
+                                        setProofNotes((prev) => ({
+                                          ...prev,
+                                          [payment.id]: event.target.value,
+                                        }))
+                                      }
+                                      disabled={verifyingProofId === payment.id}
+                                    />
+                                    <div className="proof-decision-buttons">
+                                      <button
+                                        type="button"
+                                        className="proof-decision-btn proof-decision-btn--approve"
+                                        onClick={() => handleVerifyProof({ paymentId: payment.id, approved: true })}
+                                        disabled={verifyingProofId === payment.id}
+                                      >
+                                        {verifyingProofId === payment.id && proofAction === 'APPROVE' ? (
+                                          <Loader className="btn-spinner" size={14} />
+                                        ) : (
+                                          <ShieldCheck size={16} />
+                                        )}
+                                        Aprobar
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="proof-decision-btn proof-decision-btn--reject"
+                                        onClick={() => handleVerifyProof({ paymentId: payment.id, approved: false })}
+                                        disabled={verifyingProofId === payment.id}
+                                      >
+                                        {verifyingProofId === payment.id && proofAction === 'REJECT' ? (
+                                          <Loader className="btn-spinner" size={14} />
+                                        ) : (
+                                          <ShieldX size={16} />
+                                        )}
+                                        Rechazar
+                                      </button>
+                                    </div>
+                                    {proofStatus?.description && (
+                                      <p className="proof-preview__helper">{proofStatus.description}</p>
+                                    )}
+                                  </>
+                                ) : (
+                                  <p className="proof-preview__helper">
+                                    Este comprobante fue validado{' '}
+                                    {payment.paymentProofVerifiedAt
+                                      ? `el ${formatDateTimeLong(payment.paymentProofVerifiedAt)}`
+                                      : 'por el equipo de soporte'}
+                                    .
+                                  </p>
+                                )}
+                              </div>
                             </div>
                           </div>
                         )}
@@ -1811,6 +2060,197 @@ const AdminOrdersPage = () => {
           gap: 12px;
         }
 
+        .proof-preview-head {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 12px;
+        }
+
+        .proof-status-pill {
+          padding: 6px 14px;
+          border-radius: 999px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+        }
+
+        .proof-status-pill--success {
+          background: rgba(34, 197, 94, 0.15);
+          color: #15803d;
+        }
+
+        .proof-status-pill--pending {
+          background: rgba(37, 99, 235, 0.15);
+          color: #1d4ed8;
+        }
+
+        .proof-status-pill--danger {
+          background: rgba(239, 68, 68, 0.15);
+          color: #b91c1c;
+        }
+
+        .proof-status-pill--muted {
+          background: rgba(148, 163, 184, 0.2);
+          color: #475569;
+        }
+
+        .proof-preview {
+          display: grid;
+          grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+          gap: 20px;
+          align-items: stretch;
+        }
+
+        .proof-preview__frame {
+          border: 1px solid rgba(148, 163, 184, 0.4);
+          border-radius: 14px;
+          overflow: hidden;
+          min-height: 340px;
+          background: #0f172a08;
+        }
+
+        .proof-preview__frame iframe,
+        .proof-preview__frame img {
+          width: 100%;
+          height: 100%;
+          border: none;
+          display: block;
+        }
+
+        .proof-preview__frame img {
+          object-fit: contain;
+          background: white;
+          padding: 12px;
+        }
+
+        .proof-preview__side {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .proof-preview__meta {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 12px;
+          padding: 14px;
+          border: 1px dashed rgba(148, 163, 184, 0.6);
+          border-radius: 12px;
+          background: #f8fafc;
+        }
+
+        .proof-preview__meta .meta-label {
+          margin: 0;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: #94a3b8;
+        }
+
+        .proof-preview__meta .meta-value {
+          margin: 2px 0 0;
+          font-weight: 600;
+          color: #0f172a;
+        }
+
+        .proof-preview__actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .proof-preview-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 10px 16px;
+          border-radius: 8px;
+          border: 1px solid #2563eb;
+          background: #2563eb;
+          color: white;
+          font-weight: 600;
+          font-size: 0.9rem;
+          cursor: pointer;
+          text-decoration: none;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .proof-preview-btn:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .proof-preview-btn--ghost {
+          background: transparent;
+          color: #2563eb;
+        }
+
+        .proof-note-input {
+          width: 100%;
+          border: 1px solid #e2e8f0;
+          border-radius: 10px;
+          padding: 12px;
+          font-family: inherit;
+          resize: vertical;
+          min-height: 96px;
+        }
+
+        .proof-note-input:focus {
+          outline: none;
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .proof-decision-buttons {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .proof-decision-btn {
+          flex: 1;
+          min-width: 140px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          border: none;
+          border-radius: 10px;
+          padding: 12px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .proof-decision-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        .proof-decision-btn--approve {
+          background: #16a34a;
+          color: white;
+        }
+
+        .proof-decision-btn--reject {
+          background: #ef4444;
+          color: white;
+        }
+
+        .proof-decision-btn:not(:disabled):hover {
+          transform: translateY(-1px);
+          box-shadow: 0 12px 18px rgba(0, 0, 0, 0.12);
+        }
+
+        .proof-preview__helper {
+          margin: 0;
+          font-size: 0.9rem;
+          color: #475569;
+        }
+
         /* PASO 4: Notes System */
         .notes-editor textarea {
           width: 100%;
@@ -2277,6 +2717,18 @@ const AdminOrdersPage = () => {
           }
 
           .release-btn {
+            width: 100%;
+          }
+
+          .proof-preview {
+            grid-template-columns: 1fr;
+          }
+
+          .proof-preview__actions {
+            flex-direction: column;
+          }
+
+          .proof-decision-btn {
             width: 100%;
           }
         }

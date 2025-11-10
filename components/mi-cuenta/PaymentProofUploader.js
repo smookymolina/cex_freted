@@ -3,13 +3,60 @@ import { Upload, FileText, CheckCircle2, AlertCircle, Loader2, Eye, X } from 'lu
 
 const ACCEPTED_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
 const MAX_SIZE_BYTES = 10 * 1024 * 1024;
+const UPLOAD_STEPS = [
+  {
+    id: 1,
+    title: 'Prepara tu comprobante',
+    description: 'Confirma que se lea claramente el banco, la fecha y el monto exacto.',
+  },
+  {
+    id: 2,
+    title: 'Arrastra o selecciona',
+    description: 'Aceptamos PDF, JPG y PNG. Si prefieres, haz clic para elegir desde tu dispositivo.',
+  },
+  {
+    id: 3,
+    title: 'Validamos el archivo',
+    description: 'El sistema revisa automáticamente el tamaño y formato para evitar rechazos.',
+  },
+  {
+    id: 4,
+    title: 'Seguimiento inmediato',
+    description: 'Al subirlo, tu pedido cambia a \"Verificando pago\" y soporte recibe una alerta.',
+  },
+  {
+    id: 5,
+    title: 'Actualiza cuando necesites',
+    description: 'Puedes reemplazar el archivo si el banco emite una versión corregida.',
+  },
+];
+
+const formatDateTime = (dateString) => {
+  if (!dateString) return '';
+  try {
+    return new Date(dateString).toLocaleString('es-MX', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  } catch {
+    return '';
+  }
+};
 
 export default function PaymentProofUploader({ payment, onUploadSuccess }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(payment?.paymentProof || null);
+  const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+  const lastUploadLabel = formatDateTime(payment?.paymentProofUploadedAt);
+
+  const resetInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleOpenDialog = () => {
     if (uploading) return;
@@ -28,20 +75,22 @@ export default function PaymentProofUploader({ payment, onUploadSuccess }) {
 
   const handleFileSelect = async (event) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    await processFile(file);
+  };
 
+  const processFile = async (file) => {
+    if (!file) return;
     try {
       setError(null);
       setSuccess(false);
       validateFile(file);
     } catch (validationError) {
       setError(validationError.message);
-      event.target.value = '';
+      resetInput();
       return;
     }
 
     setUploading(true);
-
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -69,10 +118,34 @@ export default function PaymentProofUploader({ payment, onUploadSuccess }) {
       setError(err.message || 'No pudimos subir el comprobante. Int\u00e9ntalo nuevamente.');
     } finally {
       setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      resetInput();
     }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!uploading) {
+      setDragActive(true);
+    }
+  };
+
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.currentTarget.contains(event.relatedTarget)) {
+      return;
+    }
+    setDragActive(false);
+  };
+
+  const handleDrop = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (uploading) return;
+    setDragActive(false);
+    const file = event.dataTransfer?.files?.[0];
+    await processFile(file);
   };
 
   const renderCard = () => {
@@ -155,9 +228,13 @@ export default function PaymentProofUploader({ payment, onUploadSuccess }) {
 
         <div className="proof-upload-container">
           <div
-            className="proof-dropzone"
+            className={`proof-dropzone${dragActive ? ' proof-dropzone--active' : ''}${
+              uploading ? ' proof-dropzone--disabled' : ''
+            }`}
             role="button"
             tabIndex={0}
+            aria-busy={uploading}
+            aria-label="Zona interactiva para subir el comprobante"
             onClick={handleOpenDialog}
             onKeyDown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
@@ -165,15 +242,16 @@ export default function PaymentProofUploader({ payment, onUploadSuccess }) {
                 handleOpenDialog();
               }
             }}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
           >
             <div className="proof-dropzone__content">
               <div className="proof-dropzone__icon">
                 <Upload size={32} strokeWidth={2.5} />
               </div>
               <div className="proof-dropzone__text">
-                <p className="proof-dropzone__title">
-                  Arrastra y suelta tu archivo aquí
-                </p>
+                <p className="proof-dropzone__title">Arrastra y suelta tu archivo aqu\u00ed</p>
                 <p className="proof-dropzone__subtitle">
                   o haz clic para seleccionar desde tu dispositivo
                 </p>
@@ -218,6 +296,21 @@ export default function PaymentProofUploader({ payment, onUploadSuccess }) {
               <span className="proof-formats__divider">•</span>
               <span className="proof-formats__max">Máximo 10 MB</span>
             </div>
+            {lastUploadLabel && (
+              <div className="proof-meta proof-meta--upload">
+                <div>
+                  <p className="proof-meta__label">Última actualización</p>
+                  <p className="proof-meta__value">{lastUploadLabel}</p>
+                </div>
+                <span
+                  className={`proof-meta__pill ${
+                    payment?.paymentProofVerified ? 'proof-meta__pill--success' : 'proof-meta__pill--pending'
+                  }`}
+                >
+                  {payment?.paymentProofVerified ? 'Aprobado' : 'En revisión'}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="proof-guidelines">
@@ -247,6 +340,23 @@ export default function PaymentProofUploader({ payment, onUploadSuccess }) {
                   Puedes subir nuevas versiones si el comprobante cambia o necesitas actualizarlo.
                 </p>
               </div>
+            </div>
+            <div className="proof-steps">
+              <div className="proof-steps__header">
+                <span className="proof-steps__eyebrow">Solución en 5 pasos</span>
+                <p>Así liberamos tu pedido desde que recibimos el comprobante.</p>
+              </div>
+              <ol className="proof-steps__list">
+                {UPLOAD_STEPS.map((step) => (
+                  <li key={step.id} className="proof-step">
+                    <div className="proof-step__number">{step.id}</div>
+                    <div className="proof-step__body">
+                      <p className="proof-step__title">{step.title}</p>
+                      <p className="proof-step__description">{step.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
             </div>
           </div>
         </div>
@@ -426,6 +536,20 @@ export default function PaymentProofUploader({ payment, onUploadSuccess }) {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           overflow: hidden;
+        }
+
+        .proof-dropzone--active {
+          border-color: #2563eb;
+          box-shadow: 0 12px 32px rgba(37, 99, 235, 0.15);
+        }
+
+        .proof-dropzone--active::before {
+          opacity: 1;
+        }
+
+        .proof-dropzone--disabled {
+          cursor: not-allowed;
+          opacity: 0.8;
         }
 
         .proof-dropzone::before {
@@ -653,6 +777,85 @@ export default function PaymentProofUploader({ payment, onUploadSuccess }) {
           line-height: 1.5;
         }
 
+        .proof-steps {
+          border-top: 1px dashed rgba(148, 163, 184, 0.4);
+          padding-top: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .proof-steps__header {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .proof-steps__eyebrow {
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: #0ea5e9;
+          font-weight: 700;
+        }
+
+        .proof-steps__header p {
+          margin: 0;
+          font-size: 14px;
+          color: rgba(15, 23, 42, 0.6);
+        }
+
+        .proof-steps__list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 12px;
+        }
+
+        .proof-step {
+          display: flex;
+          gap: 12px;
+          padding: 14px;
+          border-radius: 14px;
+          border: 1px solid rgba(148, 163, 184, 0.25);
+          background: rgba(248, 250, 252, 0.8);
+        }
+
+        .proof-step__number {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #2563eb, #1d4ed8);
+          color: #fff;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 13px;
+          flex-shrink: 0;
+        }
+
+        .proof-step__body {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .proof-step__title {
+          margin: 0;
+          font-size: 14px;
+          font-weight: 600;
+          color: #0f172a;
+        }
+
+        .proof-step__description {
+          margin: 0;
+          font-size: 13px;
+          color: rgba(15, 23, 42, 0.65);
+        }
+
         .proof-link {
           display: inline-flex;
           gap: 6px;
@@ -728,6 +931,14 @@ export default function PaymentProofUploader({ payment, onUploadSuccess }) {
           background: rgba(59, 130, 246, 0.05);
         }
 
+        .proof-meta--upload {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          margin-top: 12px;
+        }
+
         .proof-meta__label {
           margin: 0;
           font-size: 12px;
@@ -747,6 +958,25 @@ export default function PaymentProofUploader({ payment, onUploadSuccess }) {
           margin: 6px 0 0;
           font-size: 13px;
           color: rgba(15, 23, 42, 0.65);
+        }
+
+        .proof-meta__pill {
+          border-radius: 999px;
+          padding: 6px 14px;
+          font-size: 12px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+        }
+
+        .proof-meta__pill--pending {
+          background: rgba(249, 115, 22, 0.15);
+          color: #c2410c;
+        }
+
+        .proof-meta__pill--success {
+          background: rgba(16, 185, 129, 0.15);
+          color: #047857;
         }
         .proof-alert {
           border-radius: 14px;

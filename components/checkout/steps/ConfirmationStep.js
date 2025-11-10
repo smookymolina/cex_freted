@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { CheckCircle, Clock, ShieldCheck, Sparkles } from 'lucide-react';
-import PaymentInstructions from '../PaymentInstructions';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
   style: 'currency',
@@ -34,25 +33,6 @@ const ConfirmationStep = ({
   const references = shippingData?.references?.trim();
   const referenceReady = paymentReference && paymentReference !== 'Por asignar';
   const phoneTargetText = customerPhone ? `al telefono ${customerPhone}` : 'al telefono registrado';
-
-  const nextSteps = [
-    {
-      title: 'Recibe la llamada de verificacion',
-      description: `Un especialista de soporte te contactara ${phoneTargetText} para compartirte los datos oficiales del vendedor. Esto garantiza que pagues directo al vendedor certificado, sin intermediarios.`,
-    },
-    {
-      title: 'Deposita solo con datos oficiales',
-      description: referenceReady
-        ? `Si ya cuentas con la referencia ${paymentReference}, valida que coincida con la que recibes en la llamada antes de transferir.`
-        : 'Espera a que el asesor te comparta la cuenta o referencia antes de depositar. Asi evitamos cuentas falsas.',
-    },
-    {
-      title: 'Comparte tu comprobante',
-      description:
-        'Envialo al correo o WhatsApp oficial para liberar tu equipo. En cuanto validamos el saldo programamos envio o recoleccion.',
-    },
-  ];
-
   const emailMessage = customerEmail || 'tu correo registrado';
 
   return (
@@ -94,22 +74,47 @@ const ConfirmationStep = ({
       <div className={`confirmation-grid ${selectedPaymentMethod === 'PHONE_PAYMENT' ? 'confirmation-grid--phone' : ''}`}>
         {selectedPaymentMethod !== 'PHONE_PAYMENT' && (
           <div className="grid-main">
-            <div className="section-card section-card--instructions">
+            <div className="section-card section-card--customer-info">
               <div className="section-heading">
-                <p className="section-eyebrow">Instrucciones de pago</p>
-                <h2>Completa tu pago ahora</h2>
+                <p className="section-eyebrow">Información de contacto y entrega</p>
+                <h2>Verifica tus datos</h2>
                 <p className="section-description">
-                  Espera la llamada de soporte para recibir los datos oficiales del vendedor y realiza el pago solo con
-                  la informacion que te compartamos por nuestros canales verificados.
+                  Un asesor de soporte te llamará al número registrado para proporcionarte los datos de pago.
+                  Por favor, verifica que tu información de contacto y entrega sea correcta.
                 </p>
               </div>
-              <div className="instructions-shell">
-                <PaymentInstructions
-                  paymentMethod={selectedPaymentMethod}
-                  orderNumber={orderInfo?.orderNumber}
-                  paymentReference={orderInfo?.paymentReference}
-                  total={orderInfo?.total || 0}
-                />
+
+              <div className="customer-details-grid">
+                <div className="info-block info-block--main">
+                  <span className="info-label">Contacto</span>
+                  <p className="info-name">{customerName}</p>
+                  {customerEmail && <p className="info-text">{customerEmail}</p>}
+                  {customerPhone && <p className="info-text info-text--highlight">Tel. {customerPhone}</p>}
+                </div>
+
+                {(addressLine || locationLine || postalCode) && (
+                  <div className="info-block info-block--main">
+                    <span className="info-label">Dirección de entrega</span>
+                    {addressLine && <p className="info-text">{addressLine}</p>}
+                    {locationLine && <p className="info-text">{locationLine}</p>}
+                    {postalCode && <p className="info-text">{postalCode}</p>}
+                  </div>
+                )}
+
+                {references && (
+                  <div className="info-block info-block--main">
+                    <span className="info-label">Referencias adicionales</span>
+                    <p className="info-text">{references}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="verification-alert">
+                <ShieldCheck size={20} />
+                <div>
+                  <strong>Importante: Verifica tu número de teléfono</strong>
+                  <p>Nuestro asesor te llamará {phoneTargetText} para proporcionarte los datos oficiales de pago. Asegúrate de que el número sea correcto para que podamos contactarte sin problemas.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -199,26 +204,6 @@ const ConfirmationStep = ({
           </div>
         </aside>
       </div>
-
-      {selectedPaymentMethod !== 'PHONE_PAYMENT' && (
-        <div className="section-card steps-card">
-          <div className="section-heading">
-            <p className="section-eyebrow">3 pasos para completar tu pago</p>
-            <h2>Pago directo con vendedores verificados</h2>
-          </div>
-          <div className="steps-grid">
-            {nextSteps.map((step, index) => (
-              <div className="step-card" key={step.title}>
-                <span className="step-index">{index + 1}</span>
-                <div>
-                  <strong>{step.title}</strong>
-                  <p>{step.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="section-card support-card">
         <div>
@@ -466,6 +451,63 @@ const ConfirmationStep = ({
         }
         .section-card--instructions {
           padding: 32px;
+        }
+        .section-card--customer-info {
+          padding: 32px;
+        }
+        .customer-details-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        .info-block--main {
+          background: linear-gradient(135deg, #f8fafc, #ffffff);
+          border: 2px solid rgba(15, 23, 42, 0.08);
+          padding: 20px;
+          border-radius: 16px;
+        }
+        .info-name {
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 6px 0 4px;
+        }
+        .info-text {
+          font-size: 0.95rem;
+          color: rgba(15, 23, 42, 0.7);
+          margin: 4px 0;
+        }
+        .info-text--highlight {
+          font-weight: 600;
+          color: #2563eb;
+          font-size: 1rem;
+        }
+        .verification-alert {
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+          padding: 20px;
+          background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.08));
+          border: 2px solid rgba(245, 158, 11, 0.3);
+          border-radius: 16px;
+          margin-top: 8px;
+        }
+        .verification-alert :global(svg) {
+          color: #f59e0b;
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+        .verification-alert strong {
+          display: block;
+          font-size: 1rem;
+          color: #0f172a;
+          margin-bottom: 6px;
+        }
+        .verification-alert p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: rgba(15, 23, 42, 0.75);
+          line-height: 1.6;
         }
         .section-heading {
           display: flex;

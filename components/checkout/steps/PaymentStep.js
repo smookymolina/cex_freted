@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreditCard, Loader, Info, Copy, CheckCircle2, Shield } from 'lucide-react';
+import { CreditCard, Loader, Info } from 'lucide-react';
 import PaymentMethodSelector from '../PaymentMethodSelector';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
@@ -40,106 +40,6 @@ const PaymentStep = ({
         selectedMethod={selectedPaymentMethod}
         onSelectMethod={onPaymentMethodChange}
       />
-
-      {selectedPaymentMethod && (selectedPaymentMethod === 'BANK_TRANSFER' || selectedPaymentMethod === 'CASH_DEPOSIT' || selectedPaymentMethod === 'CONVENIENCE_STORE') && (
-        <>
-          <div className="security-notice">
-            <Shield size={20} className="security-notice__icon" />
-            <div className="security-notice__content">
-              <strong>Compra Segura:</strong> Realiza el depósito directo con el vendedor.
-              Todos los pagos son verificados para garantizar la seguridad de tu compra.
-            </div>
-          </div>
-
-          <div className="payment-details">
-            <h3 className="payment-details__title">Datos para realizar tu pago</h3>
-            <p className="payment-details__subtitle">
-              A nombre de: <strong>SOCIEDAD CORPORATIVA MULTIEMPRESARIAL, S.A. DE C.V.</strong>
-            </p>
-
-            {(selectedPaymentMethod === 'BANK_TRANSFER' || selectedPaymentMethod === 'CASH_DEPOSIT') && (
-              <div className="bank-info-card">
-                <div className="bank-info-card__header">
-                  <div className="bank-logo">SANTANDER</div>
-                  <span className="account-type">Cuenta Maestra PYME</span>
-                </div>
-                <div className="bank-info-card__body">
-                  <div className="info-row">
-                    <span className="info-label">Cuenta:</span>
-                    <div className="info-value-group">
-                      <span className="info-value">65 50978658 2</span>
-                      <button
-                        type="button"
-                        className="copy-btn"
-                        onClick={() => navigator.clipboard.writeText('6550978658')}
-                        title="Copiar número de cuenta"
-                      >
-                        <Copy size={16} />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="info-row">
-                    <span className="info-label">CLABE Interbancaria:</span>
-                    <div className="info-value-group">
-                      <span className="info-value">014180655097865823</span>
-                      <button
-                        type="button"
-                        className="copy-btn"
-                        onClick={() => navigator.clipboard.writeText('014180655097865823')}
-                        title="Copiar CLABE"
-                      >
-                        <Copy size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {selectedPaymentMethod === 'CONVENIENCE_STORE' && (
-              <div className="bank-info-card bank-info-card--oxxo">
-                <div className="bank-info-card__header">
-                  <div className="bank-logo bank-logo--oxxo">OXXO</div>
-                  <span className="account-type">Pago en Autoservicio</span>
-                </div>
-                <div className="bank-info-card__body">
-                  <div className="info-row">
-                    <span className="info-label">Cuenta:</span>
-                    <div className="info-value-group">
-                      <span className="info-value">55-79-08-90-06-65-61-39</span>
-                      <button
-                        type="button"
-                        className="copy-btn"
-                        onClick={() => navigator.clipboard.writeText('55790890066561039')}
-                        title="Copiar número de cuenta"
-                      >
-                        <Copy size={16} />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="oxxo-instructions">
-                    <CheckCircle2 size={16} />
-                    <span>Presenta este número en la caja de cualquier OXXO</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="payment-instructions">
-              <Info size={18} />
-              <div>
-                <p><strong>Instrucciones:</strong></p>
-                <ol>
-                  <li>Realiza el pago utilizando los datos mostrados arriba</li>
-                  <li>Guarda tu comprobante de pago</li>
-                  <li>El vendedor verificará tu pago en un plazo de 24-48 horas</li>
-                  <li>Recibirás una confirmación por correo electrónico</li>
-                </ol>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
 
       {!selectedPaymentMethod && (
         <div className="info-box info-box--warning">
