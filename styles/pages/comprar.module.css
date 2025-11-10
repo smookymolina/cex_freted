@@ -3,27 +3,68 @@
     margin: 0 auto;
     padding: 2rem;
   }
-  
+
   .header {
     text-align: center;
     margin-bottom: 2rem;
+    padding-top: 1rem;
   }
-  
+
   .header h1 {
     font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
+    color: var(--color-contrast);
   }
-  
+
   .header p {
     font-size: 1.125rem;
-    color: #666;
+    color: var(--color-muted);
   }
-  
+
   .mainContent {
     display: grid;
     grid-template-columns: 240px 1fr;
     gap: 2rem;
+  }
+
+  /* Responsive para tablets y móviles */
+  @media (max-width: 768px) {
+    .comprarPage {
+      padding: 1rem;
+    }
+
+    .header h1 {
+      font-size: 1.75rem;
+    }
+
+    .header p {
+      font-size: 1rem;
+    }
+
+    .mainContent {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .comprarPage {
+      padding: 0.5rem;
+    }
+
+    .header {
+      margin-bottom: 1rem;
+      padding-top: 0.5rem;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+    }
   }
   
   .filters h3 {

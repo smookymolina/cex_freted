@@ -5,7 +5,7 @@ import { ShoppingCart, Menu, X } from 'lucide-react';
 import { LanguageLink } from '../language/LanguageSwitcher';
 import styles from '../../styles/components/primary-nav.module.css';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const primaryLinks = [
   { label: 'Comprar', href: '/comprar' },
@@ -21,20 +21,62 @@ export default function PrimaryNav() {
   const { cartCount } = useCart();
   const { data: session, status } = useSession();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [hideTopBar, setHideTopBar] = useState(false);
+
+  // Detectar scroll para ocultar topBar y cambiar estilos
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Cambiar estilo del header después de 50px
+      setIsScrolled(currentScrollY > 50);
+
+      // Ocultar topBar después de 100px y cuando se hace scroll hacia abajo
+      if (currentScrollY > 100 && currentScrollY > lastScrollY) {
+        setHideTopBar(true);
+      } else if (currentScrollY < 100 || currentScrollY < lastScrollY) {
+        setHideTopBar(false);
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Prevenir scroll del body cuando el menú está abierto
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const accountLink = status === 'authenticated' 
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
+  const accountLink = status === 'authenticated'
     ? { label: 'Mi Perfil', href: '/mi-cuenta/perfil' }
     : { label: 'Iniciar Sesión', href: '/mi-cuenta/login' };
 
   const allLinks = [...primaryLinks, accountLink];
 
   return (
-    <header className={styles.wrapper}>
-      <div className={styles.topBar}>
+    <header className={`${styles.wrapper} ${isScrolled ? styles.scrolled : ''}`}>
+      <div className={`${styles.topBar} ${hideTopBar ? styles.hidden : ''}`}>
         <span>
           <strong>Soporte:</strong> +34 900 000 111 | Lun-Vie 09:00-20:00
         </span>
@@ -100,15 +142,40 @@ export default function PrimaryNav() {
         </div>
       </div>
       {isMobileMenuOpen && (
-        <div className={styles.mobileMenu}>
-          <nav className={styles.mobileNavLinks}>
-            {allLinks.map((link) => (
-              <Link key={link.href} href={link.href} className={styles.mobileNavLink}>
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
+        <>
+          {/* Overlay para cerrar el menú al hacer click fuera */}
+          <div className={styles.overlay} onClick={closeMobileMenu} />
+          <div className={styles.mobileMenu}>
+            <nav className={styles.mobileNavLinks}>
+              {allLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={styles.mobileNavLink}
+                  onClick={closeMobileMenu}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            {/* Botones CTA en mobile */}
+            <div className={styles.mobileCtaGroup}>
+              <Button variant="outline" href="/vender" onClick={closeMobileMenu}>
+                Tasar dispositivo
+              </Button>
+              <Button href="/comprar" onClick={closeMobileMenu}>
+                Ver catálogo
+              </Button>
+              <Button href="/checkout/carrito" onClick={closeMobileMenu}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                  <ShoppingCart style={{ width: '18px', height: '18px' }} />
+                  <span>Carrito</span>
+                  {cartCount > 0 && <span>({cartCount})</span>}
+                </div>
+              </Button>
+            </div>
+          </div>
+        </>
       )}
     </header>
   );
