@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, Role } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
@@ -23,7 +23,7 @@ async function main() {
       email: email,
       name: 'Admin General',
       password: hashedPassword,
-      role: 'ADMIN',
+      role: Role.ADMIN,
       emailVerified: new Date(), // Marcar el email como verificado
     },
   });

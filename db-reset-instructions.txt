@@ -1,31 +1,20 @@
-Instrucciones para el Reseteo de Fábrica de la Base de Datos
+Instrucciones para Reiniciar la Base de Datos
 
-Este documento describe cómo utilizar el script de reseteo de fábrica de la base de datos, que borrará la base de datos actual y la inicializará con un usuario administrador por defecto.
-
----
-
-### Resumen de los Cambios Realizados:
-
-1.  **`package.json` modificado**:
-    *   Se añadió un nuevo script `db:reset` que ejecuta el comando `prisma migrate reset --force`.
-    *   Se configuró la propiedad `prisma.seed` para que apunte a `node prisma/seed.js`.
-2.  **`prisma/schema.prisma` modificado**:
-    *   Se añadió el rol `ADMIN` al `enum Role` para permitir la creación de usuarios administradores.
-3.  **`prisma/seed.js` creado**:
-    *   Este script se encarga de crear un usuario administrador por defecto después de un reseteo de la base de datos.
-    *   **Usuario Administrador**:
-        *   **Email**: `admin_general@sti.com`
-        *   **Contraseña**: `Admin01` (esta contraseña se hashea de forma segura antes de ser almacenada).
+Este documento explica cómo reiniciar la base de datos a su estado inicial. Este proceso borrará todos los datos y creará un usuario administrador por defecto.
 
 ---
 
-### Cómo Usar el Script de Reseteo:
+### Usuario Administrador por Defecto:
 
-Para restablecer la base de datos a su estado de fábrica (borrar todo y crear el usuario administrador), sigue estos pasos:
+*   **Email**: `admin_general@sti.com`
+*   **Contraseña**: `Admin01`
 
-1.  Abre tu terminal o línea de comandos.
-2.  Navega hasta la raíz de tu proyecto (`cex_freted`).
-3.  Ejecuta el siguiente comando:
+---
+
+### Pasos para Reiniciar la Base de Datos:
+
+1.  Abre una terminal en la raíz del proyecto.
+2.  Ejecuta el siguiente comando:
 
     ```bash
     npm run db:reset
@@ -33,23 +22,10 @@ Para restablecer la base de datos a su estado de fábrica (borrar todo y crear e
 
 ### ¿Qué hace este comando?
 
-El comando `npm run db:reset` realizará las siguientes acciones en orden:
+El comando `npm run db:reset` realiza las siguientes acciones:
 
-1.  **Borrará completamente** la base de datos actual (por ejemplo, `dev.db` si estás usando SQLite).
-2.  **Recreará** la estructura de la base de datos aplicando todas las migraciones definidas en tu proyecto.
-3.  **Ejecutará el script `prisma/seed.js`**, que creará automáticamente el usuario `admin_general@sti.com` con la contraseña `Admin01`.
+1.  **Borra la base de datos** actual.
+2.  **Aplica las migraciones** para crear la estructura de la base de datos.
+3.  **Ejecuta el script de seeding** (`prisma/seed.js`) para crear el usuario administrador.
 
-### Uso en Servidores VPS:
-
-Cuando despliegues tu aplicación en un servidor VPS y necesites inicializar la base de datos desde cero, sigue estos pasos:
-
-1.  Asegúrate de que todas las dependencias del proyecto estén instaladas:
-    ```bash
-    npm install
-    ```
-2.  Una vez instaladas las dependencias, ejecuta el comando de reseteo:
-    ```bash
-    npm run db:reset
-    ```
-
-Esto garantizará que tu aplicación en el VPS comience con una base de datos limpia y el usuario administrador configurado.
+Este comando es útil durante el desarrollo para empezar con una base de datos limpia y consistente.

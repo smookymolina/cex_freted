@@ -15,7 +15,7 @@ export default async function handler(req, res) {
           'Conoce los 7 factores clave para ahorrar hasta un 60 por ciento sin sacrificar calidad ni garantia.',
         primaryCta: {
           text: 'Leer guia',
-          href: '/blog/como-elegir-smartphone-reacondicionado',
+          href: '/blog/guia-comprar-iphone-reacondicionado',
         },
         secondaryCta: {
           text: 'Ver blog',
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
           'Cada dispositivo reacondicionado reduce huella de carbono y extiende el ciclo de vida de la tecnologia.',
         primaryCta: {
           text: 'Conocer mas',
-          href: '/blog/impacto-ambiental-tecnologia',
+          href: '/blog/sostenibilidad-tecnologica',
         },
         secondaryCta: {
           text: 'Nuestra mision',
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
           'Transparencia total del proceso profesional que garantiza equipos listos para usar como nuevos.',
         primaryCta: {
           text: 'Ver proceso',
-          href: '/blog/certificacion-30-puntos',
+          href: '/blog/garantia-dispositivos-reacondicionados',
         },
         secondaryCta: {
           text: 'Certificacion',
@@ -72,7 +72,7 @@ export default async function handler(req, res) {
           'Activa la economia circular, obten liquidez y libera espacio con un proceso simple y seguro.',
         primaryCta: {
           text: 'Leer articulo',
-          href: '/blog/vender-smartphone-usado',
+          href: '/blog/como-vender-iphone-usado',
         },
         secondaryCta: {
           text: 'Vender ahora',

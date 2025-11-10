@@ -1,0 +1,31 @@
+Instrucciones para Reiniciar la Base de Datos con Migración Completa
+
+Este documento explica cómo reiniciar la base de datos, aplicando todas las migraciones y ejecutando el script de seeding. Este proceso borrará todos los datos y creará un usuario administrador por defecto.
+
+---
+
+### Usuario Administrador por Defecto:
+
+*   **Email**: `admin_general@sti.com`
+*   **Contraseña**: `Admin01`
+
+---
+
+### Pasos para Reiniciar la Base de Datos:
+
+1.  Abre una terminal en la raíz del proyecto.
+2.  Ejecuta el siguiente comando:
+
+    ```bash
+    npm run db:reset:full
+    ```
+
+### ¿Qué hace este comando?
+
+El comando `npm run db:reset:full` realiza las siguientes acciones:
+
+1.  **Borra la base de datos** actual.
+2.  **Aplica todas las migraciones** para crear la estructura de la base de datos desde cero.
+3.  **Ejecuta el script de seeding** (`prisma/seed.js`) para crear el usuario administrador.
+
+Este comando es ideal para asegurar que la base de datos esté en un estado limpio, consistente y actualizado con el esquema de Prisma más reciente.
