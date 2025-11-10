@@ -157,7 +157,9 @@ enum PaymentReleaseStatus {
 
 enum Role {
   COMPRADOR
+  VENDEDOR
   SOPORTE
+  ADMIN
 }
 
 enum TrackingStatus {

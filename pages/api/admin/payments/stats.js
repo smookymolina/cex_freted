@@ -25,8 +25,10 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Acceso denegado' });
     }
 
+    const { startDate, endDate } = req.query;
+
     // Obtener estadísticas
-    const result = await PaymentService.getPaymentStats();
+    const result = await PaymentService.getPaymentStats({ startDate, endDate });
 
     if (!result.success) {
       return res.status(500).json({

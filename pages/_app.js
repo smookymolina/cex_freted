@@ -1,4 +1,5 @@
 import '../styles/globals.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import Layout from '../components/layout/Layout';
 import { CartProvider } from '../context/cart/CartContext';
 import { ToastProvider } from '../context/ToastContext';

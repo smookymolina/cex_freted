@@ -1,11 +1,18 @@
 .hero {
-  background: linear-gradient(135deg, rgba(28, 78, 216, 0.95), rgba(16, 92, 60, 0.9));
+  --hero-overlay: linear-gradient(120deg, rgba(10, 22, 52, 0.85), rgba(6, 41, 28, 0.65));
+  --hero-accent: #38bdf8;
+  --hero-surface: rgba(0, 0, 0, 0.35);
   color: #ffffff;
   border-radius: var(--radius-lg);
   padding: 80px 72px;
   box-shadow: var(--shadow-soft);
   position: relative;
   overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  background: #040c1a;
 }
 
 .hero::after {
@@ -14,6 +21,45 @@
   inset: 0;
   background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.25), transparent 50%);
   pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+}
+
+.heroBackground {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.heroBackgroundImage {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05) contrast(1.05);
+  transform: scale(1.08);
+  transition: transform 8s ease, opacity 0.6s ease;
+  opacity: 0.85;
+}
+
+.heroBackgroundOverlay {
+  position: absolute;
+  inset: 0;
+  background: var(--hero-overlay);
+  backdrop-filter: blur(2px);
+}
+
+.heroOffer {
+  --hero-overlay: linear-gradient(125deg, rgba(3, 7, 18, 0.85), rgba(8, 47, 73, 0.72));
+  --hero-accent: #38bdf8;
+  --hero-surface: rgba(15, 23, 42, 0.55);
+}
+
+.heroBlog {
+  --hero-overlay: linear-gradient(125deg, rgba(3, 18, 10, 0.9), rgba(6, 78, 59, 0.65));
+  --hero-accent: #facc15;
+  --hero-surface: rgba(6, 95, 70, 0.45);
 }
 
 .heroContent {
@@ -52,11 +98,13 @@
 }
 
 .metricCard {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--hero-surface);
   border-radius: var(--radius-md);
   padding: 16px 20px;
   display: grid;
   gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
 }
 
 .metricCard strong {
@@ -103,14 +151,29 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  background: rgba(28, 78, 216, 0.12);
-  color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
   font-weight: 600;
+  width: fit-content;
+  backdrop-filter: blur(4px);
+}
+
+.heroOffer .badge {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.45);
+  color: #e0f2ff;
+}
+
+.heroBlog .badge {
+  background: rgba(250, 204, 21, 0.2);
+  border-color: rgba(250, 204, 21, 0.35);
+  color: #fff7d6;
 }
 
 .stepNumber {
@@ -202,9 +265,177 @@
   gap: 16px;
 }
 
+/* Animaciones para el carrusel */
+.heroFadeIn {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.heroFadeOut {
+  animation: fadeOut 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Info adicional de ofertas */
+.offerInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.discount {
+  background: var(--hero-accent, rgba(239, 68, 68, 0.9));
+  color: #0f172a;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.originalPrice {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: line-through;
+  font-size: 1.1rem;
+}
+
+.offerPrice {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+/* Info adicional de blog */
+.blogInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin: 8px 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.category {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.readTime {
+  font-weight: 400;
+}
+
+/* Controles del carrusel */
+.carouselControls {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.carouselArrow {
+  background: var(--hero-surface);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.8rem;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.carouselArrow:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.carouselArrow:active {
+  transform: scale(0.95);
+}
+
+.carouselDots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.55);
+  transform: scale(1.2);
+}
+
+.dotActive {
+  background: var(--hero-accent, #ffffff);
+  width: 28px;
+  border-radius: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroBackgroundImage {
+    transform: none;
+    transition-duration: 0.3s;
+  }
+}
+
 @media (max-width: 768px) {
   .hero {
     padding: 56px 28px;
+    gap: 24px;
   }
 
   .heroTitle {
@@ -213,5 +444,22 @@
 
   .section {
     margin-top: 48px;
+  }
+
+  .offerInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .carouselControls {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .carouselArrow {
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
   }
 }

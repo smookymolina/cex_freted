@@ -1,0 +1,88 @@
+═══════════════════════════════════════════════════════════════
+  📸 RESUMEN: IMÁGENES PARA BANNER DINÁMICO
+═══════════════════════════════════════════════════════════════
+
+✅ POSTS DEL BLOG - Ya configurados (no requieren acción)
+   Usan automáticamente las imágenes de productos existentes
+
+❗ OFERTAS - Necesitas agregar estas 3 imágenes:
+
+───────────────────────────────────────────────────────────────
+
+1️⃣  IPHONE 13 PRO MAX
+    Nombre:     iphone-13-pro.jpg
+    Ubicación:  public/images/hero/offers/iphone-13-pro.jpg
+    Producto:   iPhone 13 Pro Max Reacondicionado
+    Oferta:     Hasta 40% de descuento
+
+    Ruta completa Windows:
+    C:\Users\GIRTEC\Documents\GitHub\cex_freted\public\images\hero\offers\iphone-13-pro.jpg
+
+───────────────────────────────────────────────────────────────
+
+2️⃣  SAMSUNG GALAXY S22 ULTRA
+    Nombre:     samsung-s22.jpg
+    Ubicación:  public/images/hero/offers/samsung-s22.jpg
+    Producto:   Samsung Galaxy S22 Ultra
+    Oferta:     Ahorra 350€
+
+    Ruta completa Windows:
+    C:\Users\GIRTEC\Documents\GitHub\cex_freted\public\images\hero\offers\samsung-s22.jpg
+
+───────────────────────────────────────────────────────────────
+
+3️⃣  MACBOOK AIR M2
+    Nombre:     macbook-air-m2.jpg
+    Ubicación:  public/images/hero/offers/macbook-air-m2.jpg
+    Producto:   MacBook Air M2 Reacondicionado
+    Oferta:     Disponible ahora
+
+    Ruta completa Windows:
+    C:\Users\GIRTEC\Documents\GitHub\cex_freted\public\images\hero\offers\macbook-air-m2.jpg
+
+───────────────────────────────────────────────────────────────
+
+📐 ESPECIFICACIONES TÉCNICAS:
+
+    • Formato:      JPG, PNG o WebP
+    • Dimensiones:  1200x800px (recomendado) o 1600x1000px
+    • Peso máximo:  200-300 KB por imagen
+    • Ratio:        16:9 o 16:10
+    • Calidad:      Alta resolución, bien iluminadas
+
+───────────────────────────────────────────────────────────────
+
+✅ PASOS RÁPIDOS:
+
+    1. La carpeta ya está creada: public/images/hero/offers/
+
+    2. Coloca tus 3 imágenes con los nombres exactos:
+       • iphone-13-pro.jpg
+       • samsung-s22.jpg
+       • macbook-air-m2.jpg
+
+    3. Verifica en el navegador:
+       http://localhost:3000/images/hero/offers/iphone-13-pro.jpg
+       http://localhost:3000/images/hero/offers/samsung-s22.jpg
+       http://localhost:3000/images/hero/offers/macbook-air-m2.jpg
+
+───────────────────────────────────────────────────────────────
+
+💡 RECURSOS:
+
+    Imágenes gratuitas:
+    • Unsplash:  https://unsplash.com/
+    • Pexels:    https://www.pexels.com/
+
+    Optimización:
+    • TinyPNG:   https://tinypng.com/
+    • Squoosh:   https://squoosh.app/
+
+───────────────────────────────────────────────────────────────
+
+📚 DOCUMENTACIÓN COMPLETA:
+
+    • RUTAS_IMAGENES_BANNER.md (raíz del proyecto)
+    • public/images/hero/offers/README.md
+
+═══════════════════════════════════════════════════════════════

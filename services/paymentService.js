@@ -432,19 +432,27 @@ class PaymentService {
    * Obtiene estadísticas de pagos (para dashboard administrativo)
    * @returns {Promise<Object>} - Estadísticas
    */
-  static async getPaymentStats() {
+  static async getPaymentStats({ startDate, endDate }) {
     try {
+      const dateFilter = {};
+      if (startDate && endDate) {
+        dateFilter.createdAt = {
+          gte: new Date(startDate),
+          lte: new Date(endDate),
+        };
+      }
+
       const [
         totalOrders,
         pendingPayments,
         completedPayments,
         totalRevenue,
       ] = await Promise.all([
-        prisma.order.count(),
-        prisma.payment.count({ where: { status: 'PENDING' } }),
-        prisma.payment.count({ where: { status: 'COMPLETED' } }),
+        prisma.order.count({ where: dateFilter }),
+        prisma.payment.count({ where: { status: 'PENDING', ...dateFilter } }),
+        prisma.payment.count({ where: { status: 'COMPLETED', ...dateFilter } }),
         prisma.payment.aggregate({
-          where: { status: 'COMPLETED' },
+          where: { status: 'COMPLETED', ...dateFilter },
           _sum: { amount: true },
         }),
       ]);

@@ -1,0 +1,86 @@
+# Roadmap de la Aplicación CEX Freted
+
+Este documento describe la visión y las fases de desarrollo planificadas para la aplicación CEX Freted. Su propósito es servir como guía para el equipo de desarrollo, facilitando la comprensión de la dirección del proyecto y la identificación de áreas clave al realizar cambios o añadir nuevas funcionalidades.
+
+---
+
+## 1. Visión General
+
+CEX Freted busca ser una plataforma integral y confiable para la compraventa de productos tecnológicos de segunda mano, con un fuerte enfoque en la sostenibilidad, la seguridad de las transacciones y la experiencia del usuario.
+
+---
+
+## 2. Estado Actual (Noviembre 2025)
+
+*   **Funcionalidades Core**: Registro/Login de usuarios, listado básico de productos, carrito de compras, proceso de checkout inicial, gestión de órdenes.
+*   **Tecnologías Principales**: Next.js (Frontend), Prisma (ORM), PostgreSQL/SQLite (Base de Datos), NextAuth.js (Autenticación).
+*   **Infraestructura**: Despliegue en VPS (en proceso/planificado).
+
+---
+
+## 3. Hitos y Fases de Desarrollo
+
+### Fase 1: Estabilización y Experiencia de Usuario Básica (Próximos 3-6 meses)
+
+*   **Mejora de UI/UX**:
+    *   Refinamiento de la interfaz de usuario en todas las secciones (Home, Productos, Carrito, Checkout).
+    *   Optimización de la experiencia móvil (Mobile-First).
+    *   Implementación de un sistema de notificaciones robusto (Toast, emails transaccionales).
+*   **Funcionalidades de Vendedor**:
+    *   Formulario completo para la publicación de productos (AppraisalForm, CertificationIntro).
+    *   Panel de control para vendedores (gestión de listados, seguimiento de ventas).
+*   **Seguridad y Rendimiento**:
+    *   Auditoría de seguridad de la autenticación y transacciones.
+    *   Optimización de consultas a base de datos y rendimiento general de la aplicación.
+    *   Implementación de caché para datos estáticos o poco cambiantes.
+*   **Internacionalización (i18n)**:
+    *   Soporte para múltiples idiomas (ej. Español, Inglés).
+
+### Fase 2: Expansión y Comunidad (Próximos 6-12 meses)
+
+*   **Módulo de Comunidad**:
+    *   Foros o secciones de discusión (CommunityHero, Initiatives, JoinUs, Roadmap).
+    *   Sistema de referidos.
+    *   Contenido relacionado con sostenibilidad y certificaciones.
+*   **Funcionalidades Avanzadas de Compra/Venta**:
+    *   Sistema de ofertas/contraofertas.
+    *   Integración con múltiples métodos de pago (PaymentMethodSelector).
+    *   Mejora del seguimiento de pedidos (TrackingStatus).
+*   **Analíticas y Reportes**:
+    *   Panel de administración con métricas clave (ventas, usuarios, productos).
+    *   Reportes para vendedores sobre el rendimiento de sus productos.
+*   **Integraciones Externas**:
+    *   Posible integración con servicios de envío.
+    *   Integración con herramientas de marketing.
+
+### Fase 3: Innovación y Escalabilidad (12+ meses)
+
+*   **Inteligencia Artificial/Machine Learning**:
+    *   Recomendaciones de productos personalizadas.
+    *   Detección de fraude.
+    *   Optimización de precios.
+*   **Expansión de Categorías de Productos**:
+    *   Soporte para una gama más amplia de productos tecnológicos.
+*   **Aplicaciones Nativas (Mobile)**:
+    *   Desarrollo de aplicaciones iOS/Android para una experiencia nativa.
+*   **Blockchain/Transparencia**:
+    *   Exploración de tecnologías blockchain para la trazabilidad de productos o certificaciones.
+
+---
+
+## 4. Áreas Clave de Enfoque para Futuros Cambios
+
+Al realizar modificaciones, considera el impacto en las siguientes áreas:
+
+*   **`components/`**: Reutilización y modularidad de componentes UI.
+*   **`context/`**: Gestión del estado global de la aplicación.
+*   **`lib/`**: Utilidades, lógica de negocio, integración con servicios externos (Prisma, email, JWT).
+*   **`pages/api/`**: Lógica de backend y endpoints de API.
+*   **`prisma/`**: Esquema de la base de datos y migraciones.
+*   **`services/`**: Lógica de negocio específica para dominios (pagos, órdenes, notificaciones).
+*   **`styles/`**: Consistencia en el diseño y la marca.
+*   **`utils/`**: Funciones auxiliares y validaciones.
+
+---
+
+Este roadmap es un documento vivo y será actualizado a medida que el proyecto evolucione.

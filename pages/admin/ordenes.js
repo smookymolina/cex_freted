@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../components/layout/AdminLayout';
+import DatePicker from 'react-datepicker';
 import {
   Search,
   ChevronDown,
@@ -11,7 +12,7 @@ import {
   Phone,
   Mail,
   MapPin,
-  Calendar,
+  Calendar as CalendarIcon, // Renombrado para evitar conflicto
   DollarSign,
   CreditCard,
   RefreshCw,
@@ -53,10 +54,14 @@ const AdminOrdersPage = () => {
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState(null);
 
+  // Estados de fechas para estadísticas
+  const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+  const [endDate, setEndDate] = useState(new Date());
+
   // Estados de búsqueda y filtros
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('ALL');
+  const [filterStatus, setFilterStatus] = useState('PENDING');
   const [filterPaymentMethod, setFilterPaymentMethod] = useState('ALL');
   const [filterDateFrom, setFilterDateFrom] = useState('');
   const [filterDateTo, setFilterDateTo] = useState('');
@@ -107,13 +112,6 @@ const AdminOrdersPage = () => {
     
     fetchOrders();
     
-    // Fetch stats only on initial load or when filters change significantly
-    const statsDebounce = setTimeout(() => {
-      fetchStats();
-    }, 1000);
-
-    return () => clearTimeout(statsDebounce);
-
   }, [
     session, 
     currentPage, 
@@ -125,6 +123,13 @@ const AdminOrdersPage = () => {
     filterMinAmount, 
     filterMaxAmount
   ]);
+
+  // useEffect para cargar estadísticas
+  useEffect(() => {
+    if (session) {
+      fetchStats(startDate, endDate);
+    }
+  }, [session, startDate, endDate]);
 
   const fetchOrders = async () => {
     if (!session) return;
@@ -177,9 +182,13 @@ const AdminOrdersPage = () => {
     }
   };
 
-  const fetchStats = async () => {
+  const fetchStats = async (start, end) => {
     try {
-      const res = await fetch('/api/admin/payments/stats');
+      const params = new URLSearchParams();
+      if (start) params.append('startDate', start.toISOString());
+      if (end) params.append('endDate', end.toISOString());
+
+      const res = await fetch(`/api/admin/payments/stats?${params.toString()}`);
       if (res.ok) {
         const data = await res.json();
         setStats(data.stats);
@@ -223,7 +232,7 @@ const AdminOrdersPage = () => {
       );
 
       toast?.success(`Estado actualizado a ${statusInfo.label}`);
-      fetchStats();
+      fetchStats(startDate, endDate);
     } catch (err) {
       toast?.error('Error: ' + err.message);
     } finally {
@@ -292,27 +301,12 @@ const AdminOrdersPage = () => {
         throw new Error(data.error || 'Error al confirmar el pago');
       }
 
-      // Actualizar la orden localmente con los datos de la API
-      setOrders((prevOrders) =>
-        prevOrders.map((order) => {
-          if (order.id === data.payment.orderId) {
-            return {
-              ...order,
-              status: data.payment.order.status,
-              payments: order.payments.map((p) =>
-                p.id === data.payment.id ? data.payment : p
-              ),
-            };
-          }
-          return order;
-        })
-      );
-
       toast?.success('Pago confirmado exitosamente');
       setConfirmPaymentModal(null);
       setTransactionId('');
       setPaymentNotes('');
-      fetchStats();
+      fetchStats(startDate, endDate);
+      fetchOrders();
     } catch (err) {
       toast?.error('Error: ' + err.message);
     } finally {
@@ -346,26 +340,11 @@ const AdminOrdersPage = () => {
         throw new Error(data.error || 'Error al cancelar el pago');
       }
 
-      // Actualizar la orden localmente con los datos de la API
-      setOrders((prevOrders) =>
-        prevOrders.map((order) => {
-          if (order.id === data.payment.orderId) {
-            return {
-              ...order,
-              status: data.payment.order.status,
-              payments: order.payments.map((p) =>
-                p.id === data.payment.id ? data.payment : p
-              ),
-            };
-          }
-          return order;
-        })
-      );
-
       toast?.success('Pago cancelado exitosamente');
       setCancelPaymentModal(null);
       setCancelReason('');
-      fetchStats();
+      fetchStats(startDate, endDate);
+      fetchOrders();
     } catch (err) {
       toast?.error('Error: ' + err.message);
     } finally {
@@ -403,36 +382,12 @@ const AdminOrdersPage = () => {
         throw new Error(data.message || 'No se pudo completar la acción');
       }
 
-      const updatedPayment = data.data?.payment;
-
-      setOrders((prevOrders) =>
-        prevOrders.map((order) => {
-          const hasPayment = order.payments?.some((payment) => payment.id === paymentId);
-          if (!hasPayment) {
-            return order;
-          }
-
-          const nextPayments = order.payments.map((payment) =>
-            payment.id === paymentId ? { ...payment, ...(updatedPayment || payment) } : payment
-          );
-
-          return {
-            ...order,
-            ...(approved
-              ? { status: 'PAYMENT_CONFIRMED', trackingStatus: 'PREPARING_ORDER' }
-              : {}),
-            ...(proofNotes[paymentId] && !approved
-              ? { supportNotes: proofNotes[paymentId] }
-              : {}),
-            payments: nextPayments,
-          };
-        })
-      );
-
       setProofNotes((prev) => ({ ...prev, [paymentId]: '' }));
       toast?.success(
         data.message || (approved ? 'Comprobante verificado y pago confirmado' : 'Comprobante rechazado')
       );
+      fetchStats(startDate, endDate);
+      fetchOrders();
     } catch (err) {
       toast?.error(err.message || 'Error al verificar comprobante');
     } finally {
@@ -653,7 +608,7 @@ const AdminOrdersPage = () => {
               <Download size={18} />
               Exportar CSV
             </button>
-            <button onClick={fetchOrders} className="refresh-btn" disabled={loading}>
+            <button onClick={() => { fetchOrders(); fetchStats(startDate, endDate); }} className="refresh-btn" disabled={loading}>
               <RefreshCw size={18} className={loading ? 'spinning' : ''} />
               Actualizar
             </button>
@@ -661,49 +616,83 @@ const AdminOrdersPage = () => {
         </div>
 
         {/* PASO 1: Dashboard con Estadísticas */}
-        {stats && (
-          <div className="stats-grid">
-            <div className="stat-card stat-primary">
-              <div className="stat-icon">
-                <Package size={24} />
+        <div className="stats-container">
+          <div className="stats-header">
+            <h2>Estadísticas de Ingresos</h2>
+            <div className="date-picker-container">
+              <div className="date-picker-group">
+                <label>Desde:</label>
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date)}
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  dateFormat="dd/MM/yyyy"
+                  className="date-picker-input"
+                />
               </div>
-              <div className="stat-content">
-                <p className="stat-label">Total de Órdenes</p>
-                <h3 className="stat-value">{stats.totalOrders || 0}</h3>
-              </div>
-            </div>
-
-            <div className="stat-card stat-warning">
-              <div className="stat-icon">
-                <Clock size={24} />
-              </div>
-              <div className="stat-content">
-                <p className="stat-label">Pagos Pendientes</p>
-                <h3 className="stat-value">{stats.pendingPayments || 0}</h3>
-              </div>
-            </div>
-
-            <div className="stat-card stat-success">
-              <div className="stat-icon">
-                <CheckCircle size={24} />
-              </div>
-              <div className="stat-content">
-                <p className="stat-label">Pagos Completados</p>
-                <h3 className="stat-value">{stats.completedPayments || 0}</h3>
-              </div>
-            </div>
-
-            <div className="stat-card stat-revenue">
-              <div className="stat-icon">
-                <TrendingUp size={24} />
-              </div>
-              <div className="stat-content">
-                <p className="stat-label">Ingresos Totales</p>
-                <h3 className="stat-value">{formatCurrency(stats.totalRevenue || 0)}</h3>
+              <div className="date-picker-group">
+                <label>Hasta:</label>
+                <DatePicker
+                  selected={endDate}
+                  onChange={(date) => setEndDate(date)}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate}
+                  dateFormat="dd/MM/yyyy"
+                  className="date-picker-input"
+                />
               </div>
             </div>
           </div>
-        )}
+          {stats ? (
+            <div className="stats-grid">
+              <div className="stat-card stat-primary">
+                <div className="stat-icon">
+                  <Package size={24} />
+                </div>
+                <div className="stat-content">
+                  <p className="stat-label">Total de Órdenes</p>
+                  <h3 className="stat-value">{stats.totalOrders || 0}</h3>
+                </div>
+              </div>
+
+              <div className="stat-card stat-warning">
+                <div className="stat-icon">
+                  <Clock size={24} />
+                </div>
+                <div className="stat-content">
+                  <p className="stat-label">Pagos Pendientes</p>
+                  <h3 className="stat-value">{stats.pendingPayments || 0}</h3>
+                </div>
+              </div>
+
+              <div className="stat-card stat-success">
+                <div className="stat-icon">
+                  <CheckCircle size={24} />
+                </div>
+                <div className="stat-content">
+                  <p className="stat-label">Pagos Completados</p>
+                  <h3 className="stat-value">{stats.completedPayments || 0}</h3>
+                </div>
+              </div>
+
+              <div className="stat-card stat-revenue">
+                <div className="stat-icon">
+                  <TrendingUp size={24} />
+                </div>
+                <div className="stat-content">
+                  <p className="stat-label">Ingresos Totales (Rango)</p>
+                  <h3 className="stat-value">{formatCurrency(stats.totalRevenue || 0)}</h3>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="loading-container"><Loader className="spinner" /></div>
+          )}
+        </div>
 
         {/* Search Bar y Filtros */}
         <div className="search-section">
@@ -1452,6 +1441,43 @@ const AdminOrdersPage = () => {
           flex-direction: column;
           gap: 24px;
         }
+        .date-picker-container {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+        }
+        .date-picker-group {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .date-picker-group label {
+          font-weight: 500;
+          color: #475569;
+        }
+        .date-picker-input {
+          padding: 8px 12px;
+          border-radius: 8px;
+          border: 1px solid #cbd5e1;
+          width: 120px;
+        }
+        .stats-container {
+          background: white;
+          padding: 24px;
+          border-radius: 16px;
+          box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+        }
+        .stats-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+        .stats-header h2 {
+          margin: 0;
+          font-size: 1.5rem;
+          color: #0f172a;
+        }
 
         /* Header */
         .page-header {
@@ -1519,18 +1545,19 @@ const AdminOrdersPage = () => {
         }
 
         .stat-card {
-          background: white;
+          background: #f8fafc;
           padding: 24px;
           border-radius: 12px;
-          box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
           display: flex;
           align-items: center;
           gap: 16px;
           transition: transform 0.2s;
+          border: 1px solid #e2e8f0;
         }
 
         .stat-card:hover {
           transform: translateY(-4px);
+          border-color: #2563eb;
         }
 
         .stat-icon {

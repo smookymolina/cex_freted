@@ -3,7 +3,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
-import { Package, DollarSign, LogOut, User, Menu, X, Shield } from 'lucide-react';
+import { Package, DollarSign, LogOut, User, Menu, X, Shield, FileText } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
   const { data: session, status } = useSession();
@@ -58,6 +58,11 @@ const AdminLayout = ({ children }) => {
       name: 'Órdenes',
       path: '/admin/ordenes',
       icon: Package,
+    },
+    {
+      name: 'Historial',
+      path: '/admin/historial-ordenes',
+      icon: FileText,
     },
     {
       name: 'Pagos',
