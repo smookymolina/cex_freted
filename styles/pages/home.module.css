@@ -70,6 +70,56 @@
   gap: 20px;
 }
 
+.eventTicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #fee2e2;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+.tickerLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: #f87171;
+}
+
+.promoTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(220, 38, 38, 0.18);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fecaca;
+}
+
+.promoHighlights {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.promoHighlights li {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+
 .heroTitle {
   font-size: 3rem;
   font-weight: 700;

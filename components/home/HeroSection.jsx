@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Button from '../ui/Button';
 import styles from '../../styles/pages/home.module.css';
+import { BUEN_FIN_PROMO, isBuenFinActive } from '../../config/promotions';
 
 const HERO_METRICS = [
   { label: 'Dispositivos reacondicionados', value: '+12.500' },
@@ -9,11 +10,17 @@ const HERO_METRICS = [
   { label: 'Garantia extendida', value: '12+ meses' },
 ];
 
+const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
+  style: 'currency',
+  currency: 'MXN',
+});
+
 export default function HeroSection() {
   const [heroItems, setHeroItems] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [fade, setFade] = useState(true);
+  const buenFinActive = isBuenFinActive();
 
   // Obtener ofertas y posts destacados
   useEffect(() => {
@@ -98,13 +105,22 @@ export default function HeroSection() {
     goToSlide((currentIndex + 1) % heroItems.length);
   };
 
+  const heroBadgeText = buenFinActive ? `${BUEN_FIN_PROMO.badge} oficial` : 'Recommerce de confianza';
+
   if (isLoading || heroItems.length === 0) {
     return (
       <section className="section-container">
         <div className="section-inner">
+          {buenFinActive && (
+            <div className={styles.eventTicker} role="status" aria-live="polite">
+              <span className={styles.tickerLabel}>{BUEN_FIN_PROMO.badge}</span>
+              <strong>{BUEN_FIN_PROMO.messaging.heroDeadlineLabel}</strong>
+              <span>{BUEN_FIN_PROMO.messaging.savingsLabel}</span>
+            </div>
+          )}
           <div className={styles.hero}>
             <div className={styles.heroContent}>
-              <span className={styles.badge}>Recommerce de confianza</span>
+              <span className={styles.badge}>{heroBadgeText}</span>
               <h1 className={styles.heroTitle}>
                 Tecnologia reacondicionada certificada con 12 meses de garantia
               </h1>
@@ -142,6 +158,13 @@ export default function HeroSection() {
   return (
     <section className="section-container">
       <div className="section-inner">
+        {buenFinActive && (
+          <div className={styles.eventTicker} role="status" aria-live="polite">
+            <span className={styles.tickerLabel}>{BUEN_FIN_PROMO.badge}</span>
+            <strong>{BUEN_FIN_PROMO.messaging.heroDeadlineLabel}</strong>
+            <span>{BUEN_FIN_PROMO.messaging.savingsLabel}</span>
+          </div>
+        )}
         <div className={`${styles.hero} ${heroToneClass}`}>
           {currentItem?.image && (
             <div className={styles.heroBackground} aria-hidden="true">
@@ -161,6 +184,15 @@ export default function HeroSection() {
             aria-live="polite"
           >
             <span className={styles.badge}>{currentItem.badge}</span>
+            {currentItem.buenFinApplied && (
+              <div className={styles.promoTag}>
+                {BUEN_FIN_PROMO.badge} -{' '}
+                {CURRENCY_FORMATTER.format(
+                  currentItem.buenFinSavings ?? BUEN_FIN_PROMO.extraDiscountAmount
+                )}{' '}
+                extra por tiempo limitado
+              </div>
+            )}
             <h1 className={styles.heroTitle}>{currentItem.title}</h1>
             <p className={styles.heroSubtitle}>{currentItem.subtitle}</p>
 
@@ -172,6 +204,14 @@ export default function HeroSection() {
                   <span className={styles.offerPrice}>${currentItem.offerPrice}</span>
                 </span>
               </div>
+            )}
+
+            {currentItem.type === 'offer' && buenFinActive && (
+              <ul className={styles.promoHighlights}>
+                {BUEN_FIN_PROMO.hero.highlights.map((highlight) => (
+                  <li key={highlight}>{highlight}</li>
+                ))}
+              </ul>
             )}
 
             {currentItem.type === 'blog' && (

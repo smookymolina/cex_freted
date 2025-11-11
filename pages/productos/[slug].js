@@ -5,6 +5,7 @@ import { useCart } from '../../context/cart/CartContext';
 import { products } from '../../data/mock/products';
 import { productDetailsBySlug } from '../../data/product-details';
 import styles from '../../styles/pages/product-detail.module.css';
+import { BUEN_FIN_PROMO } from '../../config/promotions';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
   style: 'currency',
@@ -72,6 +73,10 @@ export default function ProductDetailPage({ product }) {
   const selectedVariant = variants[selectedVariantIndex] ?? variants[0] ?? null;
   const fallbackImage = product?.image || '/assets/images/placeholder-base.png';
   const details = product?.details ?? {};
+  const buenFinActive = Boolean(product?.buenFinApplied);
+  const buenFinSavings = buenFinActive
+    ? selectedVariant?.buenFinSavings ?? product?.buenFinSavings ?? null
+    : null;
 
   const galleryImages =
     Array.isArray(details.gallery) && details.gallery.length > 0
@@ -229,6 +234,12 @@ export default function ProductDetailPage({ product }) {
                 )}
               </div>
             )}
+            {buenFinActive && buenFinSavings && (
+              <div className={styles.promoBanner}>
+                {BUEN_FIN_PROMO.badge}: {CURRENCY_FORMATTER.format(buenFinSavings)} extra aplicado
+                automaticamente
+              </div>
+            )}
           </div>
 
           {variants.length > 0 && (
@@ -258,6 +269,11 @@ export default function ProductDetailPage({ product }) {
                       <div className={styles.variantPrice}>
                         {CURRENCY_FORMATTER.format(variant.price)}
                       </div>
+                      {buenFinActive && variant.buenFinSavings && (
+                        <div className={styles.variantPromo}>
+                          -{CURRENCY_FORMATTER.format(variant.buenFinSavings)} Buen Fin extra
+                        </div>
+                      )}
                       <div className={styles.variantStock}>
                         {variantOutOfStock
                           ? 'Agotado'

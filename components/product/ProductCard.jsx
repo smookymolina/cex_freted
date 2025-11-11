@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Button from '../ui/Button';
 import styles from '../../styles/components/product-card.module.css';
 import { useCart } from '../../context/cart/CartContext';
+import { BUEN_FIN_PROMO } from '../../config/promotions';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
   style: 'currency',
@@ -38,6 +39,10 @@ export default function ProductCard({ product }) {
     product?.image && product.image.trim().length > 0
       ? product.image
       : '/assets/images/placeholder-base.png';
+  const buenFinActive = Boolean(product?.buenFinApplied);
+  const buenFinSavings = buenFinActive
+    ? selectedVariant?.buenFinSavings ?? product?.buenFinSavings ?? null
+    : null;
 
   const cartItemId = useMemo(() => {
     if (!product?.slug || !selectedVariant?.grade) return null;
@@ -115,6 +120,11 @@ export default function ProductCard({ product }) {
             </span>
           )}
         </div>
+        {buenFinActive && buenFinSavings && (
+          <div className={styles.promoFlag}>
+            {BUEN_FIN_PROMO.badge}: {CURRENCY_FORMATTER.format(buenFinSavings)} extra aplicado
+          </div>
+        )}
         {variants.length > 1 && (
           <div className={styles.variantSelector} role="radiogroup" aria-label="Seleccionar grado">
             {variants.map((variant, index) => {
@@ -142,6 +152,11 @@ export default function ProductCard({ product }) {
                   <span className={styles.variantPrice}>
                     {CURRENCY_FORMATTER.format(variant.price)}
                   </span>
+                  {buenFinActive && variant.buenFinSavings && (
+                    <span className={styles.variantPromo}>
+                      -{CURRENCY_FORMATTER.format(variant.buenFinSavings)} Buen Fin extra
+                    </span>
+                  )}
                   {variantOutOfStock ? (
                     <span className={styles.variantStock}>Sin stock</span>
                   ) : (
