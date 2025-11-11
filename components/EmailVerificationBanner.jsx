@@ -8,7 +8,8 @@ export default function EmailVerificationBanner() {
   const [dismissed, setDismissed] = useState(false);
 
   // No mostrar si no hay sesión, si el email ya está verificado, o si fue descartado
-  if (!session || session.user?.emailVerified || dismissed) {
+  // También ocultar para usuarios con rol COMPRADOR
+  if (!session || session.user?.emailVerified || dismissed || session.user?.role === 'COMPRADOR') {
     return null;
   }
 

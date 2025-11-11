@@ -445,23 +445,18 @@ class PaymentService {
       const [
         totalOrders,
         pendingPayments,
-        completedPaymentsFiltered, // Date-filtered completed payments
-        globalCompletedPayments, // Cumulative completed payments
+        completedPayments,
         totalRevenue,
-        globalTotalRevenue,
+        cancelledPayments,
       ] = await Promise.all([
         prisma.order.count({ where: dateFilter }),
         prisma.payment.count({ where: { status: 'PENDING', ...dateFilter } }),
-        prisma.payment.count({ where: { status: 'COMPLETED', ...dateFilter } }), // Date-filtered
-        prisma.payment.count({ where: { status: 'COMPLETED' } }), // Cumulative
+        prisma.payment.count({ where: { status: 'COMPLETED' } }), // Cumulative completed payments
         prisma.payment.aggregate({
-          where: { status: 'COMPLETED', ...dateFilter },
+          where: { status: 'COMPLETED' }, // Only include COMPLETED payments in revenue
           _sum: { amount: true },
         }),
-        prisma.payment.aggregate({
-          where: { status: 'COMPLETED' },
-          _sum: { amount: true },
-        }),
+        prisma.payment.count({ where: { status: 'CANCELLED' } }), // Track cancelled payments
       ]);
 
       return {
@@ -469,9 +464,9 @@ class PaymentService {
         stats: {
           totalOrders,
           pendingPayments,
-          completedPayments: globalCompletedPayments || 0, // Use cumulative for display
-          totalRevenue: totalRevenue._sum.amount || 0,
-          globalTotalRevenue: globalTotalRevenue._sum.amount || 0,
+          completedPayments: completedPayments || 0, // Cumulative completed payments
+          totalRevenue: totalRevenue._sum.amount || 0, // Only revenue from completed payments
+          cancelledPayments: cancelledPayments || 0, // Track cancelled payments separately
         },
       };
     } catch (error) {
