@@ -10,9 +10,23 @@ dist/
 .env.*
 !.env.example
 *.log
+logs/
 .DS_Store
 Thumbs.db
 .claude/
 nul
 
 /lib/generated/prisma
+
+# PM2
+.pm2/
+pm2.config.js.backup
+
+# Build files
+build/
+*.tsbuildinfo
+
+# SSL certificates
+*.pem
+*.key
+*.crt
