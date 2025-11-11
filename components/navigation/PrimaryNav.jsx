@@ -5,7 +5,7 @@ import { ShoppingCart, Menu, X } from 'lucide-react';
 import { LanguageLink } from '../language/LanguageSwitcher';
 import styles from '../../styles/components/primary-nav.module.css';
 import { useSession } from 'next-auth/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AuthModal from '../auth/AuthModal';
 
 const primaryLinks = [
@@ -25,32 +25,36 @@ export default function PrimaryNav() {
   const { data: session, status } = useSession();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [hideTopBar, setHideTopBar] = useState(false);
   const [isAuthModalOpen, setAuthModalOpen] = useState(false);
 
-  // Detectar scroll para ocultar topBar y cambiar estilos
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
+
+  // Detectar scroll para cambiar estilos del header
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      if (!ticking.current) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
 
-      // Cambiar estilo del header después de 50px
-      setIsScrolled(currentScrollY > 50);
+          // Cambiar estilo del header después de 50px
+          if (currentScrollY > 50 && !isScrolled) {
+            setIsScrolled(true);
+          } else if (currentScrollY <= 50 && isScrolled) {
+            setIsScrolled(false);
+          }
 
-      // Ocultar topBar después de 100px y cuando se hace scroll hacia abajo
-      if (currentScrollY > 100 && currentScrollY > lastScrollY) {
-        setHideTopBar(true);
-      } else if (currentScrollY < 100 || currentScrollY < lastScrollY) {
-        setHideTopBar(false);
+          lastScrollY.current = currentScrollY;
+          ticking.current = false;
+        });
+
+        ticking.current = true;
       }
-
-      lastScrollY = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isScrolled]);
 
   // Prevenir scroll del body cuando el menú está abierto
   useEffect(() => {
@@ -96,16 +100,6 @@ export default function PrimaryNav() {
 
   return (
     <header className={`${styles.wrapper} ${isScrolled ? styles.scrolled : ''}`}>
-      <div className={`${styles.topBar} ${hideTopBar ? styles.hidden : ''}`}>
-        <span>
-          <strong>Soporte:</strong> +34 900 000 111 | Lun-Vie 09:00-20:00
-        </span>
-        <div className={styles.utilityLinks}>
-          <Link href="/soporte/faq">FAQ</Link>
-          <Link href="/soporte/chat">Chat 24/7</Link>
-          <LanguageLink />
-        </div>
-      </div>
       <div className={styles.bar}>
         <Link href="/" className={styles.brand}>
           Sociedad Tecnológica Integral

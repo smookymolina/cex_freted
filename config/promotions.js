@@ -13,9 +13,9 @@ export const BUEN_FIN_PROMO = {
       'Diagnostico de bateria y camara certificado en 30 puntos',
     ],
     backgroundImages: {
-      flagshipPhones: '/images/hero/offers/buen-fin-flagship-phones.jpg',
-      appleEcosystem: '/images/hero/offers/buen-fin-apple-ecosystem.jpg',
-      gamerSetups: '/images/hero/offers/buen-fin-gamer-setups.jpg',
+      flagshipPhones: '/images/hero/offers/buen-fin-flagship-phones.png',
+      appleEcosystem: '/images/hero/offers/buen-fin-apple-ecosystem.png',
+      gamerSetups: '/images/hero/offers/buen-fin-gamer-setups.png',
     },
   },
   messaging: {

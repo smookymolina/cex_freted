@@ -1,5 +1,8 @@
 import Head from 'next/head';
 import PrimaryNav from '../navigation/PrimaryNav';
+import CampaignBanner from '../CampaignBanner';
+import EmailVerificationBanner from '../EmailVerificationBanner';
+import CampaignModal from '../modals/CampaignModal';
 import styles from '../../styles/layout/main-layout.module.css';
 
 const footerColumns = [
@@ -43,7 +46,10 @@ export default function MainLayout({ children }) {
       <Head>
         <link rel="icon" href="/favicon.png" />
       </Head>
+      <CampaignModal />
+      <CampaignBanner />
       <PrimaryNav />
+      <EmailVerificationBanner />
       <main className={styles.main}>{children}</main>
       <footer className={styles.footer}>
         <div className={styles.footerInner}>

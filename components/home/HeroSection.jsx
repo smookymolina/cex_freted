@@ -111,13 +111,6 @@ export default function HeroSection() {
     return (
       <section className="section-container">
         <div className="section-inner">
-          {buenFinActive && (
-            <div className={styles.eventTicker} role="status" aria-live="polite">
-              <span className={styles.tickerLabel}>{BUEN_FIN_PROMO.badge}</span>
-              <strong>{BUEN_FIN_PROMO.messaging.heroDeadlineLabel}</strong>
-              <span>{BUEN_FIN_PROMO.messaging.savingsLabel}</span>
-            </div>
-          )}
           <div className={styles.hero}>
             <div className={styles.heroContent}>
               <span className={styles.badge}>{heroBadgeText}</span>
@@ -158,13 +151,6 @@ export default function HeroSection() {
   return (
     <section className="section-container">
       <div className="section-inner">
-        {buenFinActive && (
-          <div className={styles.eventTicker} role="status" aria-live="polite">
-            <span className={styles.tickerLabel}>{BUEN_FIN_PROMO.badge}</span>
-            <strong>{BUEN_FIN_PROMO.messaging.heroDeadlineLabel}</strong>
-            <span>{BUEN_FIN_PROMO.messaging.savingsLabel}</span>
-          </div>
-        )}
         <div className={`${styles.hero} ${heroToneClass}`}>
           {currentItem?.image && (
             <div className={styles.heroBackground} aria-hidden="true">
