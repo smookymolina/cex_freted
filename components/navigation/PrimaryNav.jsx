@@ -17,6 +17,8 @@ const primaryLinks = [
   { label: 'Soporte', href: '/soporte' },
 ];
 
+const essentialDesktopLabels = ['Comprar', 'Vender', 'Certificacion', 'Comunidad', 'Blog'];
+
 export default function PrimaryNav() {
   const { cartCount } = useCart();
   const { data: session, status } = useSession();
@@ -73,6 +75,10 @@ export default function PrimaryNav() {
     : { label: 'Iniciar Sesión', href: '/mi-cuenta/login' };
 
   const allLinks = [...primaryLinks, accountLink];
+  const desktopNavLinks = [
+    ...primaryLinks.filter((link) => essentialDesktopLabels.includes(link.label)),
+    accountLink,
+  ];
 
   return (
     <header className={`${styles.wrapper} ${isScrolled ? styles.scrolled : ''}`}>
@@ -92,7 +98,7 @@ export default function PrimaryNav() {
           <span>Recommerce premium certificado</span>
         </Link>
         <nav className={`${styles.navLinks} ${styles.desktopNav}`}>
-          {allLinks.map((link) => (
+          {desktopNavLinks.map((link) => (
             <Link key={link.href} href={link.href} className={styles.navLink}>
               {link.label}
             </Link>
