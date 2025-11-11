@@ -27,6 +27,7 @@ export const authOptions = {
             name: true,
             role: true,
             password: true,
+            emailVerified: true,
           }
         });
 
@@ -43,11 +44,18 @@ export const authOptions = {
           throw new Error('La contraseña es incorrecta');
         }
 
+        // Verificación de email desactivada - los usuarios pueden iniciar sesión sin verificar
+        // Descomentar las siguientes líneas para ACTIVAR verificación obligatoria:
+        // if (!user.emailVerified) {
+        //   throw new Error('Por favor verifica tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada o carpeta de spam.');
+        // }
+
         return {
           id: user.id,
           email: user.email,
           name: user.name,
           role: user.role,
+          emailVerified: user.emailVerified,
         };
       }
     })
@@ -64,6 +72,7 @@ export const authOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.emailVerified = user.emailVerified;
       }
       return token;
     },
@@ -71,6 +80,7 @@ export const authOptions = {
       if (token) {
         session.user.id = token.id;
         session.user.role = token.role;
+        session.user.emailVerified = token.emailVerified;
       }
       return session;
     },

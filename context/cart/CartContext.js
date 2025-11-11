@@ -276,15 +276,24 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeFromCart = (productId) => {
-    // Bloquear para usuarios SOPORTE
     if (session?.user?.role === 'SOPORTE') return;
+
+    // Optimistic update for authenticated users
+    if (status === 'authenticated' && session?.user?.id) {
+      const nextItems = state.items.filter((item) => item.id !== productId);
+      persistCartToServer(nextItems); // Persist immediately
+    }
 
     dispatch({ type: 'REMOVE_FROM_CART', payload: { productId } });
   };
 
   const clearCart = () => {
-    // Bloquear para usuarios SOPORTE
     if (session?.user?.role === 'SOPORTE') return;
+
+    // Optimistic update for authenticated users
+    if (status === 'authenticated' && session?.user?.id) {
+      persistCartToServer([]); // Persist immediately
+    }
 
     dispatch({ type: 'CLEAR_CART' });
   };

@@ -1,4 +1,5 @@
 import prisma from '../../../../lib/prisma';
+import { sendWelcomeEmail } from '../../../../lib/email';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -48,8 +49,13 @@ export default async function handler(req, res) {
         where: { token },
       });
 
+      // Enviar email de bienvenida (no bloquear la respuesta)
+      sendWelcomeEmail(user.email, user.name).catch((error) => {
+        console.error('Error enviando email de bienvenida:', error);
+      });
+
       // Redirigir a una página de éxito
-      return res.redirect('/mi-cuenta/perfil?verified=true');
+      return res.redirect('/mi-cuenta/login?verified=true');
     } catch (error) {
       console.error('Error al verificar email:', error);
       return res.status(500).json({ error: 'Error al verificar email' });

@@ -137,24 +137,12 @@ const ProfilePage = ({ user, stats = defaultStats }) => {
 
             <div className="status-column">
               <article className="status-card">
-                <div className={`status-icon ${user.emailVerified ? 'status-icon--verified' : 'status-icon--pending'}`}>
-                  {user.emailVerified ? <CheckCircle size={22} aria-hidden="true" /> : <XCircle size={22} aria-hidden="true" />}
+                <div className="status-icon status-icon--verified">
+                  <CheckCircle size={22} aria-hidden="true" />
                 </div>
                 <div className="status-content">
-                  <h4 className="status-title">Email</h4>
-                  <p className="status-description">
-                    {user.emailVerified ? 'Verificado' : 'No verificado'}
-                  </p>
-                  {!user.emailVerified && (
-                    <button
-                      type="button"
-                      onClick={handleVerifyEmail}
-                      disabled={verifying}
-                      className="verify-button"
-                    >
-                      {verifying ? 'Enviando…' : 'Verificar ahora'}
-                    </button>
-                  )}
+                  <h4 className="status-title">Cuenta activa</h4>
+                  <p className="status-description">Tu cuenta está activa y funcionando correctamente.</p>
                 </div>
               </article>
 
@@ -163,8 +151,8 @@ const ProfilePage = ({ user, stats = defaultStats }) => {
                   <CheckCircle size={22} aria-hidden="true" />
                 </div>
                 <div className="status-content">
-                  <h4 className="status-title">Cuenta activa</h4>
-                  <p className="status-description">Todo está funcionando correctamente.</p>
+                  <h4 className="status-title">Rol: Comprador</h4>
+                  <p className="status-description">Tienes acceso completo para realizar compras.</p>
                 </div>
               </article>
             </div>
@@ -544,7 +532,7 @@ export async function getServerSideProps(context) {
   if (!session || !session.user || !session.user.id) {
     return {
       redirect: {
-        destination: '/mi-cuenta/login',
+        destination: '/',
         permanent: false,
       },
     };
@@ -562,6 +550,7 @@ export async function getServerSideProps(context) {
           name: true,
           email: true,
           phone: true,
+          role: true,
           createdAt: true,
           emailVerified: true,
         },
@@ -582,7 +571,7 @@ export async function getServerSideProps(context) {
     console.error('Error fetching user data:', error);
     return {
       redirect: {
-        destination: '/mi-cuenta/login',
+        destination: '/',
         permanent: false,
       },
     };
@@ -591,7 +580,27 @@ export async function getServerSideProps(context) {
   if (!userRecord) {
     return {
       redirect: {
-        destination: '/mi-cuenta/login',
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  // Verificar que el usuario tenga rol de COMPRADOR
+  if (userRecord.role !== 'COMPRADOR') {
+    // Si es ADMIN o SOPORTE, redirigir al panel de admin
+    if (userRecord.role === 'ADMIN' || userRecord.role === 'SOPORTE') {
+      return {
+        redirect: {
+          destination: '/admin',
+          permanent: false,
+        },
+      };
+    }
+    // Otros roles no reconocidos
+    return {
+      redirect: {
+        destination: '/',
         permanent: false,
       },
     };

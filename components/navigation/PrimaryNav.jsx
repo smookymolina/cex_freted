@@ -72,9 +72,22 @@ export default function PrimaryNav() {
     setMobileMenuOpen(false);
   };
 
-  const accountLink = status === 'authenticated'
-    ? { label: 'Mi Perfil', href: '/mi-cuenta/perfil' }
-    : { label: 'Iniciar Sesión', href: '/mi-cuenta/login' };
+  // Determinar el link de cuenta según rol y autenticación
+  const getUserAccountLink = () => {
+    if (status !== 'authenticated') {
+      return { label: 'Iniciar Sesión', href: '/mi-cuenta/login' };
+    }
+
+    // Si es ADMIN o SOPORTE, redirigir al panel de administración
+    if (session?.user?.role === 'ADMIN' || session?.user?.role === 'SOPORTE') {
+      return { label: 'Panel Admin', href: '/admin' };
+    }
+
+    // Si es COMPRADOR, ir a su perfil
+    return { label: 'Mi Perfil', href: '/mi-cuenta/perfil' };
+  };
+
+  const accountLink = getUserAccountLink();
 
   const allLinks = [...primaryLinks, accountLink];
   const desktopNavLinks = [
@@ -106,9 +119,15 @@ export default function PrimaryNav() {
           ))}
         </nav>
         <div className={styles.ctaGroup}>
-          <Button variant="outline" onClick={() => setAuthModalOpen(true)}>
-            Iniciar o crear cuenta
-          </Button>
+          {status === 'authenticated' ? (
+            <Button variant="outline" href={accountLink.href}>
+              {accountLink.label}
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={() => setAuthModalOpen(true)}>
+              Iniciar Sesión
+            </Button>
+          )}
           <Button href="/comprar">Ver catalogo</Button>
           <div style={{ position: 'relative', display: 'inline-block' }}>
             <Button href="/checkout/carrito">
@@ -175,15 +194,25 @@ export default function PrimaryNav() {
             </nav>
             {/* Botones CTA en mobile */}
             <div className={styles.mobileCtaGroup}>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  closeMobileMenu();
-                  setAuthModalOpen(true);
-                }}
-              >
-                Iniciar o crear cuenta
-              </Button>
+              {status === 'authenticated' ? (
+                <Button
+                  variant="outline"
+                  href={accountLink.href}
+                  onClick={closeMobileMenu}
+                >
+                  {accountLink.label}
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    closeMobileMenu();
+                    setAuthModalOpen(true);
+                  }}
+                >
+                  Iniciar Sesión
+                </Button>
+              )}
               <Button href="/comprar" onClick={closeMobileMenu}>
                 Ver catálogo
               </Button>

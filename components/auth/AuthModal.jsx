@@ -104,21 +104,27 @@ export default function AuthModal({ isOpen, onClose }) {
     if (!validateStep()) return;
 
     if (currentStep === STEPS.CREDENTIALS && authType === 'login') {
-      // Para login, saltamos directo a verificación
-      await handleLogin();
-      setCurrentStep(STEPS.VERIFICATION);
+      // Para login, saltamos directo a WELCOME (sin verificación)
+      const success = await handleLogin();
+      if (success) {
+        setCurrentStep(STEPS.WELCOME);
+      }
     } else if (currentStep === STEPS.PERSONAL_INFO) {
-      // Enviamos registro
-      await handleRegister();
-      setCurrentStep(STEPS.VERIFICATION);
+      // Enviamos registro y saltamos a WELCOME (sin verificación)
+      const success = await handleRegister();
+      if (success) {
+        setCurrentStep(STEPS.WELCOME);
+      }
     } else if (currentStep === STEPS.VERIFICATION) {
-      // Verificamos código
+      // Este paso ya no se usa, pero lo dejamos por compatibilidad
       await verifyCode();
       setCurrentStep(STEPS.WELCOME);
     } else if (currentStep === STEPS.WELCOME) {
-      // Finalizamos
-      handleClose();
-      window.location.href = '/mi-cuenta/perfil';
+      // Finalizamos y redirigimos al perfil
+      setTimeout(() => {
+        handleClose();
+        window.location.href = '/mi-cuenta/perfil';
+      }, 1500); // Esperar 1.5 segundos para que vean el mensaje de bienvenida
     } else {
       setCurrentStep(currentStep + 1);
     }
@@ -138,27 +144,80 @@ export default function AuthModal({ isOpen, onClose }) {
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      // Aquí iría la llamada a tu API de login
-      console.log('Logging in with:', formData.email);
-      // Simular envío de código de verificación
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (error) {
-      setErrors({ general: 'Error al iniciar sesión' });
-    } finally {
+      // Llamada a NextAuth para login
+      const { signIn } = await import('next-auth/react');
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (result?.error) {
+        setErrors({ general: result.error });
+        setIsLoading(false);
+        return false;
+      }
+
+      // Login exitoso
+      console.log('Login exitoso');
       setIsLoading(false);
+      return true;
+    } catch (error) {
+      console.error('Error en login:', error);
+      setErrors({ general: 'Error al iniciar sesión' });
+      setIsLoading(false);
+      return false;
     }
   };
 
   const handleRegister = async () => {
     setIsLoading(true);
     try {
-      // Aquí iría la llamada a tu API de registro
-      console.log('Registering with:', formData);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (error) {
-      setErrors({ general: 'Error al crear cuenta' });
-    } finally {
+      // Llamada a la API de registro
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrors({ general: data.message || 'Error al crear cuenta' });
+        setIsLoading(false);
+        return false;
+      }
+
+      // Registro exitoso, ahora hacer login automático
+      console.log('Registro exitoso:', data);
+
+      // Login automático después del registro
+      const { signIn } = await import('next-auth/react');
+      const loginResult = await signIn('credentials', {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (loginResult?.error) {
+        setErrors({ general: 'Cuenta creada, pero hubo un error al iniciar sesión. Por favor inicia sesión manualmente.' });
+        setIsLoading(false);
+        return false;
+      }
+
       setIsLoading(false);
+      return true;
+    } catch (error) {
+      console.error('Error en registro:', error);
+      setErrors({ general: 'Error al crear cuenta' });
+      setIsLoading(false);
+      return false;
     }
   };
 
@@ -472,14 +531,29 @@ export default function AuthModal({ isOpen, onClose }) {
 
         {/* Progress indicator */}
         <div className={styles.progressBar}>
-          {[1, 2, 3, 4, 5].map((step) => (
-            <div
-              key={step}
-              className={`${styles.progressStep} ${
-                step <= currentStep ? styles.active : ''
-              } ${step < currentStep ? styles.completed : ''}`}
-            />
-          ))}
+          {[1, 2, 3, 4].map((step) => {
+            // Mapear los pasos: 1=SELECTION, 2=CREDENTIALS, 3=PERSONAL_INFO, 4=WELCOME
+            // Saltamos VERIFICATION (que era el paso 4)
+            let mappedStep = step;
+            if (currentStep === STEPS.WELCOME) {
+              mappedStep = 4;
+            } else if (currentStep === STEPS.PERSONAL_INFO) {
+              mappedStep = 3;
+            } else if (currentStep === STEPS.CREDENTIALS) {
+              mappedStep = 2;
+            } else {
+              mappedStep = 1;
+            }
+
+            return (
+              <div
+                key={step}
+                className={`${styles.progressStep} ${
+                  step <= mappedStep ? styles.active : ''
+                } ${step < mappedStep ? styles.completed : ''}`}
+              />
+            );
+          })}
         </div>
 
         {/* Contenido del paso actual */}

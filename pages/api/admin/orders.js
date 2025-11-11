@@ -31,28 +31,40 @@ export default async function handler(req, res) {
     const skip = (pageNum - 1) * limitNum;
 
     let where = {};
+    let orderIdsFromPaymentMethod = null;
+
+    // --- Start: Safer query for paymentMethod ---
+    if (paymentMethod && paymentMethod !== 'ALL') {
+      const payments = await prisma.payment.findMany({
+        where: { paymentMethod: paymentMethod },
+        select: { orderId: true },
+      });
+      orderIdsFromPaymentMethod = [...new Set(payments.map(p => p.orderId))];
+      if (orderIdsFromPaymentMethod.length === 0) {
+        // If no orders match the payment method, return empty result immediately
+        return res.status(200).json(apiResponse({ data: [], pagination: { total: 0, totalPages: 0, currentPage: 1, limit: limitNum }}, 'Orders fetched successfully'));
+      }
+    }
+    // --- End: Safer query for paymentMethod ---
 
     if (searchTerm) {
+      // Temporarily removed search on user relation to avoid complex queries
       where.OR = [
         { orderNumber: { contains: searchTerm, mode: 'insensitive' } },
         { customerName: { contains: searchTerm, mode: 'insensitive' } },
         { customerEmail: { contains: searchTerm, mode: 'insensitive' } },
-        { user: { name: { contains: searchTerm, mode: 'insensitive' } } },
-        { user: { email: { contains: searchTerm, mode: 'insensitive' } } },
       ];
     }
 
     if (status && status !== 'ALL') {
       where.status = status;
     }
-    
-    if (paymentMethod && paymentMethod !== 'ALL') {
-      where.payments = {
-        some: {
-          paymentMethod: paymentMethod,
-        },
-      };
+
+    // --- Start: Combine paymentMethod filter with main where clause ---
+    if (orderIdsFromPaymentMethod) {
+      where.id = { in: orderIdsFromPaymentMethod };
     }
+    // --- End: Combine paymentMethod filter with main where clause ---
 
     if (dateFrom) {
       where.createdAt = { ...where.createdAt, gte: new Date(dateFrom) };

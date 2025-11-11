@@ -1,7 +1,7 @@
 import prisma from '../../../lib/prisma';
-import crypto from 'crypto';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from './[...nextauth]';
+import { sendVerificationEmail, generateVerificationToken } from '../../../lib/email';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       }
 
       // Generar token de verificación
-      const verificationToken = crypto.randomBytes(32).toString('hex');
+      const verificationToken = generateVerificationToken();
       const expires = new Date();
       expires.setHours(expires.getHours() + 24); // Expira en 24 horas
 
@@ -39,15 +39,25 @@ export default async function handler(req, res) {
         },
       });
 
-      // En producción, aquí enviarías un email
-      // Por ahora, devolvemos el token para testing
+      // Enviar email de verificación
+      const emailResult = await sendVerificationEmail(user.email, verificationToken);
+
+      if (!emailResult.success) {
+        return res.status(500).json({
+          error: 'Error al enviar el email de verificación',
+          details: emailResult.error
+        });
+      }
+
+      // Solo mostrar el link en desarrollo
       const verificationLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/auth/verify-email/confirm?token=${verificationToken}`;
 
-      console.log('Link de verificación:', verificationLink);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Link de verificación:', verificationLink);
+      }
 
       return res.status(200).json({
-        message: 'Email de verificación enviado',
-        // En producción, NO devolver el link
+        message: 'Email de verificación enviado correctamente',
         verificationLink: process.env.NODE_ENV === 'development' ? verificationLink : undefined,
       });
     } catch (error) {
