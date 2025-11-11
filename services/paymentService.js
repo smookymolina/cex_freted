@@ -445,14 +445,21 @@ class PaymentService {
       const [
         totalOrders,
         pendingPayments,
-        completedPayments,
+        completedPaymentsFiltered, // Date-filtered completed payments
+        globalCompletedPayments, // Cumulative completed payments
         totalRevenue,
+        globalTotalRevenue,
       ] = await Promise.all([
         prisma.order.count({ where: dateFilter }),
         prisma.payment.count({ where: { status: 'PENDING', ...dateFilter } }),
-        prisma.payment.count({ where: { status: 'COMPLETED', ...dateFilter } }),
+        prisma.payment.count({ where: { status: 'COMPLETED', ...dateFilter } }), // Date-filtered
+        prisma.payment.count({ where: { status: 'COMPLETED' } }), // Cumulative
         prisma.payment.aggregate({
           where: { status: 'COMPLETED', ...dateFilter },
+          _sum: { amount: true },
+        }),
+        prisma.payment.aggregate({
+          where: { status: 'COMPLETED' },
           _sum: { amount: true },
         }),
       ]);
@@ -462,8 +469,9 @@ class PaymentService {
         stats: {
           totalOrders,
           pendingPayments,
-          completedPayments,
+          completedPayments: globalCompletedPayments || 0, // Use cumulative for display
           totalRevenue: totalRevenue._sum.amount || 0,
+          globalTotalRevenue: globalTotalRevenue._sum.amount || 0,
         },
       };
     } catch (error) {

@@ -608,9 +608,9 @@ const AdminOrdersPage = () => {
       note: 'por validar',
     },
     {
-      label: 'Ingresos del rango',
-      value: stats ? formatCurrency(stats.totalRevenue || 0) : '--',
-      note: 'según fechas seleccionadas',
+      label: 'Ingresos Totales',
+      value: stats ? formatCurrency(stats.globalTotalRevenue || 0) : '--',
+      note: 'acumulado de todos los pagos',
     },
   ];
 
@@ -728,7 +728,7 @@ const AdminOrdersPage = () => {
                   <CheckCircle size={24} />
                 </div>
                 <div className="stat-content">
-                  <p className="stat-label">Pagos Completados</p>
+                  <p className="stat-label">Pagos Completados (Acumulado)</p>
                   <h3 className="stat-value">{stats.completedPayments || 0}</h3>
                 </div>
               </div>
@@ -738,8 +738,8 @@ const AdminOrdersPage = () => {
                   <TrendingUp size={24} />
                 </div>
                 <div className="stat-content">
-                  <p className="stat-label">Ingresos Totales (Rango)</p>
-                  <h3 className="stat-value">{formatCurrency(stats.totalRevenue || 0)}</h3>
+                  <p className="stat-label">Ingresos Totales (Acumulado)</p>
+                  <h3 className="stat-value">{formatCurrency(stats.globalTotalRevenue || 0)}</h3>
                 </div>
               </div>
             </div>
