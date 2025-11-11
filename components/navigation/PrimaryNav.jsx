@@ -6,6 +6,7 @@ import { LanguageLink } from '../language/LanguageSwitcher';
 import styles from '../../styles/components/primary-nav.module.css';
 import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
+import AuthModal from '../auth/AuthModal';
 
 const primaryLinks = [
   { label: 'Comprar', href: '/comprar' },
@@ -17,7 +18,7 @@ const primaryLinks = [
   { label: 'Soporte', href: '/soporte' },
 ];
 
-const essentialDesktopLabels = ['Comprar', 'Vender', 'Certificacion', 'Comunidad', 'Blog'];
+const essentialDesktopLabels = ['Vender', 'Certificacion', 'Blog', 'Comunidad'];
 
 export default function PrimaryNav() {
   const { cartCount } = useCart();
@@ -25,6 +26,7 @@ export default function PrimaryNav() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [hideTopBar, setHideTopBar] = useState(false);
+  const [isAuthModalOpen, setAuthModalOpen] = useState(false);
 
   // Detectar scroll para ocultar topBar y cambiar estilos
   useEffect(() => {
@@ -77,7 +79,6 @@ export default function PrimaryNav() {
   const allLinks = [...primaryLinks, accountLink];
   const desktopNavLinks = [
     ...primaryLinks.filter((link) => essentialDesktopLabels.includes(link.label)),
-    accountLink,
   ];
 
   return (
@@ -105,8 +106,8 @@ export default function PrimaryNav() {
           ))}
         </nav>
         <div className={styles.ctaGroup}>
-          <Button variant="outline" href="/vender">
-            Tasar dispositivo
+          <Button variant="outline" onClick={() => setAuthModalOpen(true)}>
+            Iniciar o crear cuenta
           </Button>
           <Button href="/comprar">Ver catalogo</Button>
           <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -174,8 +175,14 @@ export default function PrimaryNav() {
             </nav>
             {/* Botones CTA en mobile */}
             <div className={styles.mobileCtaGroup}>
-              <Button variant="outline" href="/vender" onClick={closeMobileMenu}>
-                Tasar dispositivo
+              <Button
+                variant="outline"
+                onClick={() => {
+                  closeMobileMenu();
+                  setAuthModalOpen(true);
+                }}
+              >
+                Iniciar o crear cuenta
               </Button>
               <Button href="/comprar" onClick={closeMobileMenu}>
                 Ver catálogo
@@ -191,6 +198,12 @@ export default function PrimaryNav() {
           </div>
         </>
       )}
+
+      {/* Modal de autenticación */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
     </header>
   );
 }

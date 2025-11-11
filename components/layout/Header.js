@@ -13,7 +13,7 @@ const Header = () => {
         </div>
         <div className="hidden md:flex space-x-6 items-center">
           <Link href="/comprar" className="text-gray-600 hover:text-blue-600">Comprar</Link>
-          <Link href="/vender" className="text-gray-600 hover:text-blue-600">Vender</Link>
+          <Link href="/mi-cuenta/login" className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium">Iniciar Sesión o Crear Cuenta</Link>
           <Link href="/certificacion" className="text-gray-600 hover:text-blue-600">Certificación</Link>
           <Link href="/garantias" className="text-gray-600 hover:text-blue-600">Garantías</Link>
         </div>
