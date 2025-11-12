@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ArrowRight, ArrowLeft, Check, Mail, Lock, User, Phone } from 'lucide-react';
 import Button from '../ui/Button';
 import styles from '../../styles/components/auth-modal.module.css';
@@ -27,6 +28,12 @@ export default function AuthModal({ isOpen, onClose }) {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Esperar a que el componente esté montado en el cliente
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Cerrar modal con ESC
   const handleKeyDown = (e) => {
@@ -251,7 +258,19 @@ export default function AuthModal({ isOpen, onClose }) {
     setCurrentStep(STEPS.CREDENTIALS);
   };
 
-  if (!isOpen) return null;
+  // Prevenir scroll del body cuando el modal está abierto
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  if (!isOpen || !mounted) return null;
 
   // Renderizar contenido según el paso actual
   const renderStepContent = () => {
@@ -515,7 +534,7 @@ export default function AuthModal({ isOpen, onClose }) {
     }
   };
 
-  return (
+  const modalContent = (
     <div
       className={styles.modalOverlay}
       onClick={handleClose}
@@ -595,4 +614,7 @@ export default function AuthModal({ isOpen, onClose }) {
       </div>
     </div>
   );
+
+  // Usar portal para renderizar el modal al nivel del body
+  return createPortal(modalContent, document.body);
 }
