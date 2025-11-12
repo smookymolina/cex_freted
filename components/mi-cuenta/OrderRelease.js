@@ -11,7 +11,10 @@ import {
   MapPin,
   Clock,
   CreditCard,
+  Download,
+  Printer,
 } from 'lucide-react';
+import { generateOrderPDF, printOrderPDF, downloadOrderPDF } from '../../utils/pdfGenerator';
 
 const METHOD_LABELS = {
   PHONE_PAYMENT: 'Pago telef\u00f3nico',
@@ -47,6 +50,33 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
   const [copiedField, setCopiedField] = useState(null);
 
   if (!orderReleaseData) return null;
+
+  // Manejar descarga e impresión de PDF
+  const handleDownloadPDF = () => {
+    const orderData = {
+      orderNumber,
+      referenceNumber: orderReleaseData.referenceNumber,
+      totalAmount: orderReleaseData.totalAmount,
+      releasedAt: orderReleaseData.releasedAt || new Date().toISOString(),
+      paymentData: orderReleaseData,
+    };
+
+    const pdfHTML = generateOrderPDF(orderData, paymentMethod);
+    downloadOrderPDF(pdfHTML, orderNumber);
+  };
+
+  const handlePrintPDF = () => {
+    const orderData = {
+      orderNumber,
+      referenceNumber: orderReleaseData.referenceNumber,
+      totalAmount: orderReleaseData.totalAmount,
+      releasedAt: orderReleaseData.releasedAt || new Date().toISOString(),
+      paymentData: orderReleaseData,
+    };
+
+    const pdfHTML = generateOrderPDF(orderData, paymentMethod);
+    printOrderPDF(pdfHTML, orderNumber);
+  };
 
   const methodLabel = METHOD_LABELS[paymentMethod] || 'Pago autorizado';
   const instructions =
@@ -139,6 +169,28 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
         <span className="release-chip">{methodLabel}</span>
       </header>
 
+      {/* Botones de descarga e impresión */}
+      <div className="release-actions">
+        <button
+          type="button"
+          onClick={handleDownloadPDF}
+          className="release-action-btn release-action-btn--primary"
+          aria-label="Descargar orden de compra en PDF"
+        >
+          <Download size={18} />
+          <span>Descargar PDF</span>
+        </button>
+        <button
+          type="button"
+          onClick={handlePrintPDF}
+          className="release-action-btn release-action-btn--secondary"
+          aria-label="Imprimir orden de compra"
+        >
+          <Printer size={18} />
+          <span>Imprimir</span>
+        </button>
+      </div>
+
       <div className="release-stats">
         {renderCopyField('N\u00famero de referencia', orderReleaseData.referenceNumber, 'reference')}
         <div className="release-stat">
@@ -220,13 +272,28 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
             {orderReleaseData.accounts.map((account, index) => (
               <article key={index} className="bank-card">
                 <header>
-                  <h5>{account.bank}</h5>
-                  <span>{account.accountHolder}</span>
+                  <div>
+                    <h5>{account.bank}</h5>
+                    {account.accountTitle && <span className="account-title-text">{account.accountTitle}</span>}
+                    <span>{account.accountHolder}</span>
+                  </div>
+                  {account.bankLogo && (
+                    <img
+                      src={account.bankLogo}
+                      alt={`Logo ${account.bank}`}
+                      className="bank-logo"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                  )}
                 </header>
                 <div className="bank-card__fields">
                   {account.accountNumber &&
                     renderCopyField('Cuenta', account.accountNumber, `account-${index}`)}
                   {account.clabe && renderCopyField('CLABE', account.clabe, `clabe-${index}`)}
+                  {account.clabeInterbancaria &&
+                    renderCopyField('CLABE Interbancaria', account.clabeInterbancaria, `clabe-inter-${index}`)}
                   {account.cardNumber &&
                     renderCopyField('Tarjeta', account.cardNumber, `card-${index}`)}
                 </div>
@@ -280,9 +347,23 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
           </div>
           <div className="release-chips">
             {orderReleaseData.convenientStores.map((store, index) => (
-              <span key={index} className="release-chip release-chip--light">
-                {store}
-              </span>
+              typeof store === 'object' && store.logo ? (
+                <div key={index} className="store-logo-badge">
+                  <img
+                    src={store.logo}
+                    alt={store.name}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'inline';
+                    }}
+                  />
+                  <span style={{ display: 'none' }}>{store.name}</span>
+                </div>
+              ) : (
+                <span key={index} className="release-chip release-chip--light">
+                  {typeof store === 'object' ? store.name : store}
+                </span>
+              )
             ))}
           </div>
         </div>
@@ -581,6 +662,25 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
           display: flex;
           flex-wrap: wrap;
           gap: 8px;
+          align-items: center;
+        }
+
+        .store-logo-badge {
+          background: #ffffff;
+          border: 2px solid rgba(37, 99, 235, 0.15);
+          border-radius: 12px;
+          padding: 10px 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 100px;
+          min-height: 60px;
+        }
+
+        .store-logo-badge img {
+          max-height: 40px;
+          max-width: 100px;
+          object-fit: contain;
         }
 
         .release-cards {
@@ -624,6 +724,16 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
 
         .bank-card header {
           padding-top: 8px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 15px;
+        }
+
+        .bank-logo {
+          max-height: 50px;
+          max-width: 120px;
+          object-fit: contain;
         }
 
         .bank-card header h5,
@@ -642,6 +752,15 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
           font-size: 14px;
           color: rgba(15, 23, 42, 0.6);
           font-weight: 500;
+          display: block;
+          margin-top: 4px;
+        }
+
+        .account-title-text {
+          font-size: 13px;
+          color: #3b82f6 !important;
+          font-weight: 600 !important;
+          margin-top: 2px !important;
         }
 
         .bank-card__fields {
@@ -747,6 +866,59 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
           font-weight: 700;
         }
 
+        /* Botones de acción */
+        .release-actions {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 12px;
+          position: relative;
+          z-index: 1;
+        }
+
+        .release-action-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 14px 24px;
+          border-radius: 12px;
+          font-size: 15px;
+          font-weight: 600;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+        }
+
+        .release-action-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
+        }
+
+        .release-action-btn:active {
+          transform: translateY(0);
+        }
+
+        .release-action-btn--primary {
+          background: linear-gradient(135deg, #2563eb, #1d4ed8);
+          color: white;
+        }
+
+        .release-action-btn--primary:hover {
+          background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        }
+
+        .release-action-btn--secondary {
+          background: linear-gradient(135deg, #ffffff, rgba(248, 250, 252, 0.9));
+          color: #2563eb;
+          border: 2px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .release-action-btn--secondary:hover {
+          border-color: rgba(37, 99, 235, 0.4);
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(248, 250, 252, 0.95));
+        }
+
         @media (max-width: 720px) {
           .release-card {
             padding: 22px;
@@ -759,6 +931,14 @@ export default function OrderRelease({ orderReleaseData, paymentMethod, orderNum
           .release-chip {
             justify-self: stretch;
             text-align: center;
+          }
+
+          .release-actions {
+            grid-template-columns: 1fr;
+          }
+
+          .release-action-btn {
+            width: 100%;
           }
         }
       `}</style>

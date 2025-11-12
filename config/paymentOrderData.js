@@ -16,18 +16,13 @@ export const PAYMENT_ORDER_DATA = {
     ],
     accounts: [
       {
-        bank: 'BBVA Bancomer',
-        accountHolder: 'Sociedad Tecnológica Integral SA de CV',
-        accountNumber: '0123456789',
-        clabe: '012180001234567890',
-        cardNumber: '4152 3141 2345 6789',
-      },
-      {
         bank: 'Santander',
-        accountHolder: 'Sociedad Tecnológica Integral SA de CV',
-        accountNumber: '9876543210',
-        clabe: '014180009876543210',
-        cardNumber: '5256 7890 1234 5678',
+        bankLogo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Banco_Santander_Logotipo.svg/320px-Banco_Santander_Logotipo.svg.png',
+        accountHolder: 'SOCIEDAD CORPORATIVA MULTIEMPRESARIAL, S.A. DE C.V.',
+        accountTitle: 'Titular de la Cuenta Maestra PYME',
+        accountNumber: '65 50978658 2',
+        clabe: '55-79-08-90-06-65-61-39',
+        clabeInterbancaria: '01 41806550978658 23',
       },
     ],
     importantNotes: [
@@ -50,22 +45,13 @@ export const PAYMENT_ORDER_DATA = {
     ],
     accounts: [
       {
-        bank: 'BBVA Bancomer',
-        accountHolder: 'Sociedad Tecnológica Integral SA de CV',
-        accountNumber: '0123456789',
-        clabe: '012180001234567890',
-      },
-      {
         bank: 'Santander',
-        accountHolder: 'Sociedad Tecnológica Integral SA de CV',
-        accountNumber: '9876543210',
-        clabe: '014180009876543210',
-      },
-      {
-        bank: 'Banorte',
-        accountHolder: 'Sociedad Tecnológica Integral SA de CV',
-        accountNumber: '1122334455',
-        clabe: '072180001122334455',
+        bankLogo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Banco_Santander_Logotipo.svg/320px-Banco_Santander_Logotipo.svg.png',
+        accountHolder: 'SOCIEDAD CORPORATIVA MULTIEMPRESARIAL, S.A. DE C.V.',
+        accountTitle: 'Titular de la Cuenta Maestra PYME',
+        accountNumber: '65 50978658 2',
+        clabe: '55-79-08-90-06-65-61-39',
+        clabeInterbancaria: '01 41806550978658 23',
       },
     ],
     importantNotes: [
@@ -157,7 +143,7 @@ export const PAYMENT_ORDER_DATA = {
   },
 
   CONVENIENCE_STORE: {
-    title: 'Orden de Compra - Pago en Autoservicio',
+    title: 'Orden de Compra - Pago en Tienda de Conveniencia',
     description: 'Paga en cualquier Oxxo, 7-Eleven, Soriana o más',
     instructions: [
       'Acude a tu tienda de conveniencia más cercana',
@@ -168,13 +154,16 @@ export const PAYMENT_ORDER_DATA = {
       'Tu pago se confirmará en 1-3 horas',
     ],
     convenientStores: [
-      'Oxxo',
-      '7-Eleven',
-      'Extra',
-      'Circle K',
-      'Soriana',
-      'Walmart',
-      'Bodega Aurrera',
+      {
+        name: 'Oxxo',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Oxxo_Logo.svg/320px-Oxxo_Logo.svg.png',
+        barcode: true,
+      },
+      {
+        name: '7-Eleven',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/7-eleven_logo.svg/320px-7-eleven_logo.svg.png',
+        barcode: true,
+      },
     ],
     paymentLimits: {
       min: 50,
