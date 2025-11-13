@@ -151,7 +151,7 @@ export default function CampaignBanner() {
           background: linear-gradient(135deg, #dc2626 0%, #991b1b 50%, #7f1d1d 100%);
           position: relative;
           overflow: hidden;
-          padding: 1rem 1.5rem;
+          padding: 0.875rem 1rem; /* Mobile default padding */
           width: 100%;
           z-index: 50;
           box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
@@ -180,7 +180,7 @@ export default function CampaignBanner() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 1rem;
+          gap: 0.5rem; /* Mobile default gap */
           flex-wrap: wrap;
           z-index: 1;
         }
@@ -188,7 +188,7 @@ export default function CampaignBanner() {
         .buen-fin-banner-left {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.5rem; /* Mobile default gap */
           flex: 1;
         }
 
@@ -204,12 +204,12 @@ export default function CampaignBanner() {
         .buen-fin-badge {
           display: inline-flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.375rem; /* Mobile default gap */
           background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
           color: #7f1d1d;
-          font-size: 1.125rem;
+          font-size: 0.875rem; /* Mobile default font size */
           font-weight: 900;
-          padding: 0.5rem 1rem;
+          padding: 0.375rem 0.75rem; /* Mobile default padding */
           border-radius: 999px;
           box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
           text-transform: uppercase;
@@ -218,8 +218,8 @@ export default function CampaignBanner() {
         }
 
         .buen-fin-icon {
-          width: 1.5rem;
-          height: 1.5rem;
+          width: 1.125rem; /* Mobile default size */
+          height: 1.125rem; /* Mobile default size */
           animation: rotate 3s linear infinite;
         }
 
@@ -229,14 +229,14 @@ export default function CampaignBanner() {
         }
 
         .buen-fin-message {
-          display: flex;
+          display: none; /* Hidden by default on mobile */
           flex-direction: column;
           gap: 0.25rem;
         }
 
         .buen-fin-savings {
           color: #ffffff;
-          font-size: 1rem;
+          font-size: 1rem; /* Mobile default font size */
           font-weight: 700;
           text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
@@ -264,7 +264,7 @@ export default function CampaignBanner() {
         .buen-fin-banner-right {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.5rem; /* Mobile default gap */
         }
 
         .buen-fin-banner-image {
@@ -272,11 +272,13 @@ export default function CampaignBanner() {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 0 0.5rem;
+          padding: 0.5rem 0; /* Mobile default padding */
+          width: 100%; /* Full width on mobile */
+          order: 3; /* Order for mobile layout */
         }
 
         .buen-fin-logo {
-          width: 220px;
+          width: 150px; /* Mobile default width */
           height: auto;
           object-fit: contain;
           filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
@@ -292,17 +294,19 @@ export default function CampaignBanner() {
           flex-direction: column;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.75rem 1rem;
+          padding: 0.5rem 0.75rem; /* Mobile default padding */
           background: rgba(255, 255, 255, 0.1);
           border-radius: 12px;
           backdrop-filter: blur(10px);
           border: 2px solid rgba(255, 255, 255, 0.2);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+          order: 4; /* Order for mobile layout */
+          width: 100%; /* Full width on mobile */
         }
 
         .countdown-label {
           color: #fef3c7;
-          font-size: 0.75rem;
+          font-size: 0.625rem; /* Mobile default font size */
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 1px;
@@ -312,7 +316,7 @@ export default function CampaignBanner() {
         .countdown-timer {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.25rem; /* Mobile default gap */
         }
 
         .countdown-unit {
@@ -325,11 +329,11 @@ export default function CampaignBanner() {
         .countdown-value {
           background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
           color: #7f1d1d;
-          font-size: 1.5rem;
+          font-size: 1rem; /* Mobile default font size */
           font-weight: 900;
-          padding: 0.5rem 0.75rem;
+          padding: 0.25rem 0.375rem; /* Mobile default padding */
           border-radius: 8px;
-          min-width: 3rem;
+          min-width: 2rem; /* Mobile default min-width */
           text-align: center;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
           animation: countdownPulse 1s ease-in-out infinite;
@@ -342,7 +346,7 @@ export default function CampaignBanner() {
 
         .countdown-text {
           color: #ffffff;
-          font-size: 0.625rem;
+          font-size: 0.5rem; /* Mobile default font size */
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
@@ -351,7 +355,7 @@ export default function CampaignBanner() {
 
         .countdown-separator {
           color: #fbbf24;
-          font-size: 1.5rem;
+          font-size: 1rem; /* Mobile default font size */
           font-weight: 900;
           animation: blink 1s ease-in-out infinite;
         }
@@ -367,14 +371,18 @@ export default function CampaignBanner() {
           gap: 0.5rem;
           background: #ffffff;
           color: #dc2626;
-          font-size: 1rem;
+          font-size: 0.875rem; /* Mobile default font size */
           font-weight: 700;
-          padding: 0.75rem 1.5rem;
+          padding: 0.625rem; /* Mobile default padding */
           border-radius: 999px;
           text-decoration: none;
           transition: all 0.3s ease;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
           white-space: nowrap;
+        }
+
+        .buen-fin-cta-button span { /* Hide text on smallest mobile */
+          display: none;
         }
 
         .buen-fin-cta-button:hover {
@@ -418,44 +426,60 @@ export default function CampaignBanner() {
           height: 1.25rem;
         }
 
-        @media (max-width: 768px) {
-          .buen-fin-banner {
-            padding: 0.875rem 1rem;
+        /* Tablet and larger screens */
+        @media (min-width: 481px) {
+          .buen-fin-banner-content {
+            gap: 1rem;
           }
 
-          .buen-fin-message {
-            display: none;
+          .buen-fin-banner-left {
+            gap: 1rem;
           }
 
           .buen-fin-badge {
-            font-size: 0.875rem;
-            padding: 0.375rem 0.75rem;
+            font-size: 1.125rem;
+            padding: 0.5rem 1rem;
           }
 
           .buen-fin-icon {
-            width: 1.125rem;
-            height: 1.125rem;
+            width: 1.5rem;
+            height: 1.5rem;
           }
 
-          .buen-fin-cta-button {
-            font-size: 0.875rem;
-            padding: 0.625rem 1rem;
+          .buen-fin-message {
+            display: flex; /* Show message on tablet and larger */
+          }
+
+          .buen-fin-savings {
+            font-size: 1rem;
+          }
+
+          .buen-fin-banner-right {
+            gap: 1rem;
           }
 
           .buen-fin-banner-image {
-            width: 100%;
-            order: 3;
-            padding: 0.5rem 0;
+            width: auto; /* Auto width on tablet and larger */
+            order: initial; /* Reset order */
+            padding: 0 0.5rem;
           }
 
           .buen-fin-logo {
-            width: 180px;
+            width: 180px; /* Tablet width */
           }
 
           .buen-fin-countdown {
-            order: 4;
-            width: 100%;
-            padding: 0.5rem 0.75rem;
+            padding: 0.75rem 1rem;
+            order: initial; /* Reset order */
+            width: auto; /* Auto width on tablet and larger */
+          }
+
+          .countdown-label {
+            font-size: 0.75rem;
+          }
+
+          .countdown-timer {
+            gap: 0.5rem;
           }
 
           .countdown-value {
@@ -469,38 +493,44 @@ export default function CampaignBanner() {
           }
 
           .countdown-text {
-            font-size: 0.5rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .buen-fin-cta-button span {
-            display: none;
+            font-size: 0.625rem;
           }
 
           .buen-fin-cta-button {
-            padding: 0.625rem;
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+          }
+
+          .buen-fin-cta-button span {
+            display: inline; /* Show text on tablet and larger */
+          }
+        }
+
+        /* Desktop and larger screens */
+        @media (min-width: 769px) {
+          .buen-fin-banner {
+            padding: 1rem 1.5rem;
+          }
+
+          .buen-fin-banner-content {
+            flex-wrap: nowrap; /* Prevent wrapping on desktop */
           }
 
           .buen-fin-logo {
-            width: 150px;
-          }
-
-          .countdown-timer {
-            gap: 0.25rem;
+            width: 220px; /* Desktop width */
           }
 
           .countdown-value {
-            font-size: 1rem;
-            padding: 0.25rem 0.375rem;
-            min-width: 2rem;
+            font-size: 1.5rem;
+            padding: 0.5rem 0.75rem;
+            min-width: 3rem;
           }
 
           .countdown-separator {
-            font-size: 1rem;
+            font-size: 1.5rem;
           }
 
-          .countdown-label {
+          .countdown-text {
             font-size: 0.625rem;
           }
         }
