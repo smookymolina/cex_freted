@@ -391,6 +391,171 @@ const BASE_PRODUCTS = [
       },
     ],
   },
+  {
+    name: 'PlayStation 5 Edición Limitada 30 Aniversario',
+    slug: 'playstation-5-edicion-limitada-30-aniversario',
+    image: '/assets/images/products/playstation-5-30th-anniversary/primary.jpg',
+    thumbnail: '/assets/images/products/playstation-5-30th-anniversary/thumbnail.jpg',
+    category: 'Consoles',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 18239,
+        originalPrice: 24599,
+        stock: 2,
+      },
+    ],
+  },
+  {
+    name: 'PlayStation 5 Edición Limitada Gold Ghost Of Yotei 1 TB',
+    slug: 'playstation-5-gold-ghost-of-yotei',
+    image: '/assets/images/products/playstation-5-gold-ghost-of-yotei/primary.jpg',
+    thumbnail: '/assets/images/products/playstation-5-gold-ghost-of-yotei/thumbnail.jpg',
+    category: 'Consoles',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 15999,
+        originalPrice: 18999,
+        stock: 3,
+      },
+    ],
+  },
+  {
+    name: 'Control Inalámbrico DualSense PlayStation 5 Midnight Black',
+    slug: 'dualsense-midnight-black',
+    image: '/assets/images/products/dualsense-midnight-black/primary.jpg',
+    thumbnail: '/assets/images/products/dualsense-midnight-black/thumbnail.jpg',
+    category: 'Accessories',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 1399,
+        originalPrice: 1599,
+        stock: 15,
+      },
+    ],
+  },
+  {
+    name: 'Consola PlayStation 5 Digital 1 TB más Astro Bot y Gran Turismo 7',
+    slug: 'playstation-5-digital-astro-bot-gt7',
+    image: '/assets/images/products/playstation-5-digital-bundle/primary.jpg',
+    thumbnail: '/assets/images/products/playstation-5-digital-bundle/thumbnail.jpg',
+    category: 'Consoles',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 11499,
+        originalPrice: 12999,
+        stock: 8,
+      },
+    ],
+  },
+  {
+    name: 'TV Hisense 43 Pulgadas Full HD 43A4NV',
+    slug: 'tv-hisense-43-43a4nv',
+    image: '/assets/images/products/tv-hisense-43-43a4nv/primary.jpg',
+    thumbnail: '/assets/images/products/tv-hisense-43-43a4nv/thumbnail.jpg',
+    category: 'TVs',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 5999,
+        originalPrice: 7499,
+        stock: 12,
+      },
+    ],
+  },
+  {
+    name: 'Pantalla 42\'\' Samsung AI OLED 4K S90D NQ4 AI Gen2 Tizen OS',
+    slug: 'samsung-42-oled-s90d',
+    image: '/assets/images/products/samsung-42-oled-s90d/primary.jpg',
+    thumbnail: '/assets/images/products/samsung-42-oled-s90d/thumbnail.jpg',
+    category: 'TVs',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 19999,
+        originalPrice: 24999,
+        stock: 4,
+      },
+    ],
+  },
+  {
+    name: 'Combo Pantalla 75\'\' Samsung Crystal U8200F 4K Smart TV (2025) + Barra de sonido 2.1 Ch Subwoofer B-series HW-B450F (2025) Negro',
+    slug: 'samsung-75-u8200f-barra-sonido',
+    image: '/assets/images/products/samsung-75-u8200f-bundle/primary.jpg',
+    thumbnail: '/assets/images/products/samsung-75-u8200f-bundle/thumbnail.jpg',
+    category: 'TVs',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 16999,
+        originalPrice: 21999,
+        stock: 5,
+      },
+    ],
+  },
+  {
+    name: 'TV Samsung 55 pulgadas 4K Ultra HD Smart TV LED UN-55DU7000',
+    slug: 'samsung-55-du7000',
+    image: '/assets/images/products/samsung-55-du7000/primary.jpg',
+    thumbnail: '/assets/images/products/samsung-55-du7000/thumbnail.jpg',
+    category: 'TVs',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 8999,
+        originalPrice: 11999,
+        stock: 10,
+      },
+    ],
+  },
+  {
+    name: 'TV Hisense 65 pulgadas 4K 65U6QV Miniled vidaa',
+    slug: 'hisense-65-u6qv',
+    image: '/assets/images/products/hisense-65-u6qv/primary.jpg',
+    thumbnail: '/assets/images/products/hisense-65-u6qv/thumbnail.jpg',
+    category: 'TVs',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 9339,
+        originalPrice: 15499,
+        stock: 6,
+      },
+    ],
+  },
+  {
+    name: 'Televisión Samsung 75 Pulgadas 4K Smart Crystal UHD UN75U8000FFXZX',
+    slug: 'samsung-75-u8000f',
+    image: '/assets/images/products/samsung-75-u8000f/primary.jpg',
+    thumbnail: '/assets/images/products/samsung-75-u8000f/thumbnail.jpg',
+    category: 'TVs',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 12995,
+        originalPrice: 19993,
+        stock: 4,
+      },
+    ],
+  },
+  {
+    name: 'MacBook Apple Chip M2 con CPU de 8 núcleos y GPU de 8 núcleos, 16 GB RAM, 256 GB SSD',
+    slug: 'macbook-m2-16gb',
+    image: '/assets/images/products/macbook-m2-16gb/primary.jpg',
+    thumbnail: '/assets/images/products/macbook-m2-16gb/thumbnail.jpg',
+    category: 'Laptops',
+    variants: [
+      {
+        grade: 'Nuevo',
+        price: 25999,
+        originalPrice: 32999,
+        stock: 5,
+      },
+    ],
+  },
 ];
 
 const cloneProduct = (product) => ({
