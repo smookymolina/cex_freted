@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { BUEN_FIN_PROMO, isBuenFinActive } from '../config/promotions';
+import {
+  BUEN_FIN_PROMO,
+  isBuenFinActive,
+} from '../config/promotions';
+import { formatPrice } from '../utils/formatters';
 
 export default function CampaignBanner() {
   const [visible, setVisible] = useState(false);
@@ -38,7 +42,9 @@ export default function CampaignBanner() {
             </span>
           </div>
           <div className="buen-fin-message">
-            <p className="buen-fin-savings">{BUEN_FIN_PROMO.messaging.savingsLabel}</p>
+            <p className="buen-fin-savings">{`Ahorra $${formatPrice(
+              BUEN_FIN_PROMO.extraDiscountAmount
+            )} MXN extra en todo el catalogo`}</p>
             <p className="buen-fin-deadline">
               <svg className="buen-fin-clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />

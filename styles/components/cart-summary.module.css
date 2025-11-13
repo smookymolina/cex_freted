@@ -245,6 +245,22 @@
   text-decoration: underline;
 }
 
+.financingSection {
+  margin: 8px 0;
+  animation: financing-fade-in 0.5s ease-out;
+}
+
+@keyframes financing-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .benefits {
   background: rgba(28, 78, 216, 0.04);
   border-radius: var(--radius-lg);

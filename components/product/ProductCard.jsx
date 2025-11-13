@@ -4,6 +4,8 @@ import Button from '../ui/Button';
 import styles from '../../styles/components/product-card.module.css';
 import { useCart } from '../../context/cart/CartContext';
 import { BUEN_FIN_PROMO } from '../../config/promotions';
+import FinancingBadge from './FinancingBadge';
+import { getFinancingInfo, formatMonthlyPayment } from '../../utils/financing';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
   style: 'currency',
@@ -56,6 +58,12 @@ export default function ProductCard({ product }) {
 
   const isOutOfStock =
     selectedVariant?.stock !== undefined && selectedVariant.stock < 1;
+
+  // Calcular información de financiamiento
+  const financingInfo = useMemo(() => {
+    if (!product || !selectedVariant?.price) return null;
+    return getFinancingInfo(product, selectedVariant.price);
+  }, [product, selectedVariant?.price]);
 
   useEffect(() => {
     if (!justAdded) return undefined;
@@ -124,6 +132,12 @@ export default function ProductCard({ product }) {
           <div className={styles.promoFlag}>
             {BUEN_FIN_PROMO.badge}: {CURRENCY_FORMATTER.format(buenFinSavings)} extra aplicado
           </div>
+        )}
+        {financingInfo && (
+          <FinancingBadge
+            months={financingInfo.months}
+            monthlyPayment={formatMonthlyPayment(financingInfo.monthlyPayment)}
+          />
         )}
         {variants.length > 1 && (
           <div className={styles.variantSelector} role="radiogroup" aria-label="Seleccionar grado">

@@ -5,6 +5,8 @@ import { useSession } from 'next-auth/react';
 import { Lock, Tag, Truck, ShieldCheck, BadgeCheck, RefreshCcw } from 'lucide-react';
 import { useCart } from '../../context/cart/CartContext';
 import { isBuenFinActive, BUEN_FIN_PROMO } from '../../config/promotions';
+import { FinancingDetails } from '../product/FinancingBadge';
+import { getFinancingInfo } from '../../utils/financing';
 import styles from '../../styles/components/cart-summary.module.css';
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('es-MX', {
@@ -46,6 +48,23 @@ export default function CartSummary() {
       total,
     };
   }, [cart, buenFinActive]);
+
+  // Calcular financiamiento para el artículo más caro
+  const premiumFinancing = useMemo(() => {
+    if (cart.length === 0) return null;
+
+    // Encontrar el producto más caro del carrito
+    const mostExpensiveItem = cart.reduce((max, item) =>
+      (item.price > max.price) ? item : max
+    , cart[0]);
+
+    if (!mostExpensiveItem) return null;
+
+    return getFinancingInfo(
+      { category: mostExpensiveItem.category, name: mostExpensiveItem.name },
+      mostExpensiveItem.price
+    );
+  }, [cart]);
 
   const shippingShortfall = Math.max(calculations.shippingThreshold - calculations.subtotal, 0);
   const isSessionLoading = status === 'loading';
@@ -148,6 +167,15 @@ export default function CartSummary() {
       <Link href="/comprar" className={styles.secondaryLink}>
         Seguir explorando productos
       </Link>
+
+      {premiumFinancing && (
+        <div className={styles.financingSection}>
+          <FinancingDetails
+            financingInfo={premiumFinancing}
+            showCommission={false}
+          />
+        </div>
+      )}
 
       <div className={styles.benefits}>
         <div className={styles.benefitItem}>
