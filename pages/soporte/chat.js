@@ -39,7 +39,7 @@ Todos funcionan al 100% y tienen la misma garantía.`,
     message:
       `¡Genial! Para vender tu dispositivo:
 
-1. Ve a "Tasar dispositivo" en el menú
+1. Ve a "Cotizar dispositivo" en el menú
 2. Selecciona tu dispositivo
 3. Describe su estado
 4. Recibe una oferta instantánea
@@ -129,7 +129,7 @@ export default function ChatPage() {
     if (normalized.includes('grade') || normalized.includes('calidad')) {
       return 'grades';
     }
-    if (normalized.includes('vender') || normalized.includes('tasar')) {
+    if (normalized.includes('vender') || normalized.includes('cotizar') || normalized.includes('cotizacion')) {
       return 'vender';
     }
     if (normalized.includes('soporte') || normalized.includes('tecnico') || normalized.includes('agente') || normalized.includes('humano')) {

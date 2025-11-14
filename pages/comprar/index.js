@@ -5,6 +5,24 @@ import styles from '../../styles/pages/comprar.module.css';
 
 const categories = ['All', ...new Set(products.map((p) => p.category))];
 
+// Función para traducir categorías de inglés a español
+const translateCategory = (category) => {
+  const translations = {
+    'All': 'Todos',
+    'Smartphones': 'Teléfonos',
+    'Laptops': 'Portátiles',
+    'Tablets': 'Tabletas',
+    'Wearables': 'Vestibles',
+    'Audio': 'Audio',
+    'Gaming': 'Videojuegos',
+    'Consoles': 'Consolas',
+    'Accessories': 'Accesorios',
+    'Monitors': 'Monitores',
+    'TVs': 'Televisores',
+  };
+  return translations[category] || category;
+};
+
 export default function ComprarPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -29,7 +47,7 @@ export default function ComprarPage() {
                 className={`${styles.categoryButton} ${selectedCategory === category ? styles.active : ''}`}
                 onClick={() => setSelectedCategory(category)}
               >
-                {category}
+                {translateCategory(category)}
               </button>
             ))}
           </div>

@@ -5,12 +5,14 @@ export const BUEN_FIN_PROMO = {
   badge: 'Buen Fin',
   // Campana interna solicitada: desde hoy (11 de noviembre 2025) hasta el domingo 16.
   startDate: '2025-11-11T00:00:00-06:00',
-  endDate: '2025-11-16T23:59:59-06:00',
+  endDate: '2025-11-30T23:59:59-06:00',
   hero: {
     highlights: [
       'Envio express sin costo durante la campana',
       '12 meses de garantia premium incluidos',
       'Diagnostico de bateria y camara certificado en 30 puntos',
+      'Incluye S Pen',
+      'Onboarding remoto',
     ],
     backgroundImages: {
       flagshipPhones: '/images/hero/offers/buen-fin-flagship-phones.png',
@@ -19,7 +21,7 @@ export const BUEN_FIN_PROMO = {
     },
   },
   messaging: {
-    heroDeadlineLabel: 'Termina domingo 16 de noviembre',
+    heroDeadlineLabel: 'Termina 30 de noviembre',
     savingsLabel: 'Ahorra $1,500 MXN extra en todo el catalogo',
   },
 };
@@ -32,6 +34,14 @@ export const isBuenFinActive = (now = new Date()) => {
 
 export const applyBuenFinDiscount = (price) => {
   if (typeof price !== 'number' || Number.isNaN(price)) {
+    return { discountedPrice: null, savings: null };
+  }
+
+  // Precio mínimo para aplicar el descuento: $3,000 MXN
+  const MIN_PRICE_FOR_DISCOUNT = 3000;
+
+  // No aplicar descuento si el precio es menor al mínimo
+  if (price < MIN_PRICE_FOR_DISCOUNT) {
     return { discountedPrice: null, savings: null };
   }
 

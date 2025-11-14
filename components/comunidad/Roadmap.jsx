@@ -13,7 +13,7 @@ const roadmapItems = [
   },
   {
     title: 'Integración con App Móvil',
-    description: 'Escanea y registra tus dispositivos antiguos directamente desde nuestra app para recibir una tasación instantánea y puntos de recompensa.'
+    description: 'Escanea y registra tus dispositivos antiguos directamente desde nuestra app para recibir una cotización instantánea y puntos de recompensa.'
   }
 ];
 

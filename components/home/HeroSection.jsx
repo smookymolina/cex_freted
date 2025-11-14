@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Button from '../ui/Button';
 import styles from '../../styles/pages/home.module.css';
 import { BUEN_FIN_PROMO, isBuenFinActive } from '../../config/promotions';
+import { formatPrice } from '../../utils/formatters';
 
 const HERO_METRICS = [
   { label: 'Dispositivos reacondicionados', value: '+12.500' },
@@ -113,7 +114,6 @@ export default function HeroSection() {
         <div className="section-inner">
           <div className={styles.hero}>
             <div className={styles.heroContent}>
-              <span className={styles.badge}>{heroBadgeText}</span>
               <h1 className={styles.heroTitle}>
                 Tecnologia reacondicionada certificada con 12 meses de garantia
               </h1>
@@ -169,7 +169,6 @@ export default function HeroSection() {
             role="region"
             aria-live="polite"
           >
-            <span className={styles.badge}>{currentItem.badge}</span>
             {currentItem.buenFinApplied && (
               <div className={styles.promoTag}>
                 {BUEN_FIN_PROMO.badge} -{' '}
@@ -186,8 +185,8 @@ export default function HeroSection() {
               <div className={styles.offerInfo}>
                 <span className={styles.discount}>-{currentItem.discount}</span>
                 <span className={styles.price}>
-                  <span className={styles.originalPrice}>${currentItem.originalPrice}</span>
-                  <span className={styles.offerPrice}>${currentItem.offerPrice}</span>
+                  <span className={styles.originalPrice}>${formatPrice(currentItem.originalPrice)}</span>
+                  <span className={styles.offerPrice}>${formatPrice(currentItem.offerPrice)}</span>
                 </span>
               </div>
             )}

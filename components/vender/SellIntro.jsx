@@ -10,7 +10,7 @@ const SellIntro = () => {
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>Vende tu tecnología usada al mejor precio, sin complicaciones.</h1>
           <p className={styles.heroSubtitle}>
-            Obtén una tasación justa en minutos. Imprime tu etiqueta de envío gratuita y recibe tu pago rápidamente.
+            Obtén una cotización justa en minutos. Imprime tu etiqueta de envío gratuita y recibe tu pago rápidamente.
           </p>
           <div className={styles.searchContainer}>
             <Search className={styles.searchIcon} />
@@ -27,7 +27,7 @@ const SellIntro = () => {
       <section className={styles.benefitsSection}>
         <div className={styles.benefit}>
           <Zap size={32} className={styles.benefitIcon} />
-          <h3 className={styles.benefitTitle}>Tasación Instantánea</h3>
+          <h3 className={styles.benefitTitle}>Cotización Instantánea</h3>
           <p className={styles.benefitText}>Nuestro sistema inteligente te da una oferta competitiva en tiempo real.</p>
         </div>
         <div className={styles.benefit}>

@@ -7,6 +7,7 @@ import styles from '../../styles/components/primary-nav.module.css';
 import { useSession } from 'next-auth/react';
 import { useState, useEffect, useRef } from 'react';
 import AuthModal from '../auth/AuthModal';
+import Image from 'next/image';
 
 const primaryLinks = [
   { label: 'Comprar', href: '/comprar' },
@@ -104,6 +105,16 @@ export default function PrimaryNav() {
         <Link href="/" className={styles.brand}>
           Sociedad Tecnológica Integral
           <span>Recommerce premium certificado</span>
+          <div className={styles.brandLogos}>
+            <Image
+              src="/images/banner_estaticov2.jpeg"
+              alt="Marcas y métodos de pago aceptados"
+              width={400}
+              height={50}
+              className={styles.logoBanner}
+              priority
+            />
+          </div>
         </Link>
         <nav className={`${styles.navLinks} ${styles.desktopNav}`}>
           {desktopNavLinks.map((link) => (

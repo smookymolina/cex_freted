@@ -149,11 +149,12 @@ export default function CampaignBanner() {
       <style jsx>{`
         .buen-fin-banner {
           background: linear-gradient(135deg, #dc2626 0%, #991b1b 50%, #7f1d1d 100%);
-          position: relative;
+          position: sticky;
+          top: 0;
           overflow: hidden;
           padding: 0.875rem 1rem; /* Mobile default padding */
           width: 100%;
-          z-index: 50;
+          z-index: 999;
           box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
         }
 

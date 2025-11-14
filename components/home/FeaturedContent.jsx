@@ -7,7 +7,7 @@ const contentHighlights = [
   {
     title: 'Guia definitiva del sistema de grados',
     description:
-      'Aprende a identificar la condicion real de tu dispositivo y optimiza la tasacion con fotos de ejemplo.',
+      'Aprende a identificar la condicion real de tu dispositivo y optimiza la cotización con fotos de ejemplo.',
     href: '/vender/guia-grados',
     cta: 'Leer la guia',
   },

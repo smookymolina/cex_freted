@@ -34,7 +34,7 @@ export default function GuiaGradosPage() {
       <div className={styles.pageInner}>
         <header className={styles.pageHeading}>
           <span>Guia de grados</span>
-          <h1>Clasificacion estandarizada para tasar con claridad</h1>
+          <h1>Clasificacion estandarizada para cotizar con claridad</h1>
           <p>
             Utilizaremos esta guia como referencia en formularios y certificados. El contenido se
             conectara con CMS para mantenerlo actualizado.

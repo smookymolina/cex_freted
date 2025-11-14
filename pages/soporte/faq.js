@@ -96,7 +96,7 @@ const FAQ_CATEGORIES = [
     questions: [
       {
         question: '¿Cómo puedo vender mi dispositivo?',
-        answer: 'Usa nuestra herramienta "Tasar dispositivo" en el menú principal. Selecciona tu dispositivo, responde algunas preguntas sobre su estado y recibe una oferta instantánea. Si aceptas, te enviamos una guía de envío prepagada.'
+        answer: 'Usa nuestra herramienta "Cotizar dispositivo" en el menú principal. Selecciona tu dispositivo, responde algunas preguntas sobre su estado y recibe una oferta instantánea. Si aceptas, te enviamos una guía de envío prepagada.'
       },
       {
         question: '¿Qué dispositivos aceptan?',

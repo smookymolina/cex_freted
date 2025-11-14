@@ -2,7 +2,7 @@ import styles from '../../styles/pages/home.module.css';
 
 const steps = [
   {
-    title: 'Tasacion instantanea',
+    title: 'Cotización instantánea',
     description:
       'Busca tu modelo, indica estado y accesorios. El precio se ajusta en tiempo real mientras completas el formulario.',
   },
