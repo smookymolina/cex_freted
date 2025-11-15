@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/react';
+import Head from 'next/head';
 import ConfirmationStep from '../../components/checkout/steps/ConfirmationStep';
 
 const ConfirmacionPage = () => {
@@ -30,6 +31,24 @@ const ConfirmacionPage = () => {
       }
     }
   }, [router]);
+
+  // Disparar evento de conversión de Google Ads cuando haya datos de orden
+  useEffect(() => {
+    if (orderData && typeof window !== 'undefined' && window.gtag) {
+      // Disparar evento de conversión
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-17725557502/Z_-OCMLjqsAbEP6VmoRC',
+        'transaction_id': orderData.orderInfo?.orderNumber || '',
+        'value': orderData.orderInfo?.total || 0,
+        'currency': 'MXN'
+      });
+
+      console.log('Evento de conversión de Google Ads disparado:', {
+        transaction_id: orderData.orderInfo?.orderNumber,
+        value: orderData.orderInfo?.total
+      });
+    }
+  }, [orderData]);
 
   if (loading) {
     return (
@@ -78,15 +97,21 @@ const ConfirmacionPage = () => {
   }
 
   return (
-    <div className="confirmation-page">
-      <div className="page-inner">
-        <ConfirmationStep
-          orderInfo={orderData.orderInfo}
-          customerData={orderData.customerData}
-          shippingData={orderData.shippingData}
-          selectedPaymentMethod={orderData.selectedPaymentMethod}
-        />
-      </div>
+    <>
+      <Head>
+        <title>Pedido Confirmado - Sociedad Tecnológica Integral</title>
+        <meta name="description" content="Tu pedido ha sido confirmado exitosamente" />
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      <div className="confirmation-page">
+        <div className="page-inner">
+          <ConfirmationStep
+            orderInfo={orderData.orderInfo}
+            customerData={orderData.customerData}
+            shippingData={orderData.shippingData}
+            selectedPaymentMethod={orderData.selectedPaymentMethod}
+          />
+        </div>
 
       <style jsx>{`
         .confirmation-page {
@@ -100,7 +125,8 @@ const ConfirmacionPage = () => {
           margin: 0 auto;
         }
       `}</style>
-    </div>
+      </div>
+    </>
   );
 };
 

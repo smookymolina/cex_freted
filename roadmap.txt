@@ -18,3 +18,12 @@ Pega tu etiqueta de Google antes de la etiqueta de cierre </head> en todas las p
 
   gtag('config', 'AW-17725557502');
 </script>
+
+Conversion:
+<!-- Event snippet for Compra (1) conversion page -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-17725557502/Z_-OCMLjqsAbEP6VmoRC',
+      'transaction_id': ''
+  });
+</script>
