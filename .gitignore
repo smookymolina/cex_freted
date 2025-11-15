@@ -30,3 +30,7 @@ build/
 *.pem
 *.key
 *.crt
+# Database files
+dev.db
+*.db
+*.db-journal

@@ -1,6 +1,7 @@
 
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useCart } from '../../context/cart/CartContext';
 import { processCheckout } from '../../utils/checkoutHelper';
 import { isBuenFinActive, BUEN_FIN_PROMO } from '../../config/promotions';
@@ -8,7 +9,6 @@ import CartStep from './steps/CartStep';
 import CustomerStep from './steps/CustomerStep';
 import ShippingStep from './steps/ShippingStep';
 import PaymentStep from './steps/PaymentStep';
-import ConfirmationStep from './steps/ConfirmationStep';
 
 import {
   ArrowLeft,
@@ -25,7 +25,6 @@ const STEPS = [
   { id: 'customer', label: 'Datos', icon: User },
   { id: 'shipping', label: 'Envío', icon: Truck },
   { id: 'payment', label: 'Pago', icon: CreditCard },
-  { id: 'confirmation', label: 'Confirmación', icon: CheckCircle },
 ];
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,6 +32,7 @@ const postalCodeRegex = /^[0-9]{4,6}$/;
 const phoneRegex = /^[0-9()+\-\s]{7,}$/;
 
 const CheckoutStepper = () => {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const { cart, cartCount, clearCart } = useCart();
   const [currentStep, setCurrentStep] = useState(0);
@@ -48,9 +48,7 @@ const CheckoutStepper = () => {
   const [shippingErrors, setShippingErrors] = useState({});
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('PHONE_PAYMENT');
   const [paymentStatus, setPaymentStatus] = useState('idle'); // idle, processing, completed, error
-  const [orderInfo, setOrderInfo] = useState(null);
   const [processingError, setProcessingError] = useState(null);
-  const clearedCartRef = useRef(false);
 
   // Debug: Log session status
   useEffect(() => {
@@ -99,12 +97,6 @@ const CheckoutStepper = () => {
     [shippingData],
   );
 
-  useEffect(() => {
-    if (currentStep === 4 && !clearedCartRef.current) {
-      clearCart();
-      clearedCartRef.current = true;
-    }
-  }, [currentStep, clearCart]);
 
   const validateCustomer = () => {
     const errors = {};
@@ -221,14 +213,30 @@ const CheckoutStepper = () => {
       });
 
       if (result.success) {
-        setOrderInfo({
-          orderNumber: result.order.orderNumber,
-          paymentReference: result.payment.referenceNumber,
-          total: result.order.total,
-        });
+        const orderConfirmationData = {
+          orderInfo: {
+            orderNumber: result.order.orderNumber,
+            paymentReference: result.payment.referenceNumber,
+            total: result.order.total,
+          },
+          customerData,
+          shippingData,
+          selectedPaymentMethod,
+        };
+
+        // Guardar datos en sessionStorage
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('orderConfirmation', JSON.stringify(orderConfirmationData));
+        }
+
+        // Limpiar el carrito
+        clearCart();
+
         setPaymentStatus('completed');
+
+        // Redirigir a la página de confirmación
         setTimeout(() => {
-          goToStep(4);
+          router.push('/checkout/confirmacion');
         }, 800);
       } else {
         setPaymentStatus('error');
@@ -294,15 +302,6 @@ const CheckoutStepper = () => {
             total={total}
             paymentStatus={paymentStatus}
             processingError={processingError}
-          />
-        );
-      case 4:
-        return (
-          <ConfirmationStep
-            orderInfo={orderInfo}
-            customerData={customerData}
-            shippingData={shippingData}
-            selectedPaymentMethod={selectedPaymentMethod}
           />
         );
       default:
@@ -383,35 +382,33 @@ const CheckoutStepper = () => {
 
       <main className="step-content">{renderCurrentStep()}</main>
 
-      {currentStep < 4 && (
-        <div className="step-actions">
-          <button
-            type="button"
-            onClick={goToPreviousStep}
-            className="ghost-button"
-            disabled={currentStep === 0}
-          >
-            Regresar
-          </button>
-          <button
-            type="button"
-            onClick={goToNextStep}
-            className="primary-button"
-            disabled={!canProceed || paymentStatus === 'processing'}
-          >
-            {paymentStatus === 'processing' ? (
-              <>
-                <Loader className="button-spinner" size={18} />
-                Procesando...
-              </>
-            ) : currentStep === 3 ? (
-              'Confirmar Pedido'
-            ) : (
-              'Continuar'
-            )}
-          </button>
-        </div>
-      )}
+      <div className="step-actions">
+        <button
+          type="button"
+          onClick={goToPreviousStep}
+          className="ghost-button"
+          disabled={currentStep === 0}
+        >
+          Regresar
+        </button>
+        <button
+          type="button"
+          onClick={goToNextStep}
+          className="primary-button"
+          disabled={!canProceed || paymentStatus === 'processing'}
+        >
+          {paymentStatus === 'processing' ? (
+            <>
+              <Loader className="button-spinner" size={18} />
+              Procesando...
+            </>
+          ) : currentStep === 3 ? (
+            'Confirmar Pedido'
+          ) : (
+            'Continuar'
+          )}
+        </button>
+      </div>
 
       <style jsx>{`
         .checkout-stepper {
