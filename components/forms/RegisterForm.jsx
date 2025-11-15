@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import TermsModal from '../modals/TermsModal';
 import styles from '../../styles/pages/Login.module.css';
 
 const RegisterForm = () => {
@@ -11,10 +12,17 @@ const RegisterForm = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
+
+    if (!acceptedTerms) {
+      setError('Debes aceptar los términos y condiciones para continuar.');
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden.');
@@ -96,13 +104,39 @@ const RegisterForm = () => {
             onChange={(event) => setConfirmPassword(event.target.value)}
           />
         </div>
-        <button type="submit" className={styles.button} disabled={loading}>
+        <div className={styles.checkboxGroup}>
+          <label className={styles.checkboxLabel}>
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              className={styles.checkbox}
+            />
+            <span>
+              Acepto los{' '}
+              <button
+                type="button"
+                onClick={() => setShowTermsModal(true)}
+                className={styles.termsLink}
+              >
+                términos y condiciones
+              </button>
+            </span>
+          </label>
+        </div>
+        <button type="submit" className={styles.button} disabled={loading || !acceptedTerms}>
           {loading ? 'Creando cuenta...' : 'Crear cuenta'}
         </button>
       </form>
       <Link href="/mi-cuenta/login" className={styles.link}>
         ¿Ya tienes una cuenta? Inicia sesión
       </Link>
+
+      <TermsModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        onAccept={() => setAcceptedTerms(true)}
+      />
     </div>
   );
 };
