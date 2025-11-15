@@ -169,15 +169,6 @@ export default function HeroSection() {
             role="region"
             aria-live="polite"
           >
-            {currentItem.buenFinApplied && (
-              <div className={styles.promoTag}>
-                {BUEN_FIN_PROMO.badge} -{' '}
-                {CURRENCY_FORMATTER.format(
-                  currentItem.buenFinSavings ?? BUEN_FIN_PROMO.extraDiscountAmount
-                )}{' '}
-                extra por tiempo limitado
-              </div>
-            )}
             <h1 className={styles.heroTitle}>{currentItem.title}</h1>
             <p className={styles.heroSubtitle}>{currentItem.subtitle}</p>
 
