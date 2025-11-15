@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from '../../styles/components/SaleConfirmation.module.css';
 import { CheckCircle, Package, Mail } from 'lucide-react';
 
@@ -9,6 +9,20 @@ const confirmationData = {
 };
 
 const SaleConfirmation = () => {
+  // Disparar evento de conversión de Google Ads cuando se carga la confirmación de venta
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-17725557502/Z_-OCMLjqsAbEP6VmoRC',
+        'transaction_id': confirmationData.orderId || ''
+      });
+
+      console.log('Evento de conversión de Google Ads (venta) disparado:', {
+        transaction_id: confirmationData.orderId
+      });
+    }
+  }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.confirmationBox}>
