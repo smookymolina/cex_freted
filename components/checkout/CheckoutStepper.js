@@ -4,7 +4,6 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useCart } from '../../context/cart/CartContext';
 import { processCheckout } from '../../utils/checkoutHelper';
-import { isBuenFinActive, BUEN_FIN_PROMO } from '../../config/promotions';
 import CartStep from './steps/CartStep';
 import CustomerStep from './steps/CustomerStep';
 import ShippingStep from './steps/ShippingStep';
@@ -68,17 +67,13 @@ const CheckoutStepper = () => {
     }
   }, [session, status]);
 
-  const buenFinActive = isBuenFinActive();
-
   const subtotal = useMemo(
     () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [cart],
   );
 
-  const buenFinDiscount = buenFinActive && subtotal > 0 ? BUEN_FIN_PROMO.extraDiscountAmount : 0;
-  const subtotalWithDiscount = subtotal - buenFinDiscount;
-  const shippingCost = subtotalWithDiscount >= 2000 ? 0 : cartCount > 0 ? 150 : 0;
-  const total = subtotalWithDiscount + shippingCost;
+  const shippingCost = subtotal >= 2000 ? 0 : cartCount > 0 ? 150 : 0;
+  const total = subtotal + shippingCost;
 
   const isCustomerReady = useMemo(
     () =>
@@ -205,7 +200,6 @@ const CheckoutStepper = () => {
         cart: cart,
         totals: {
           subtotal,
-          buenFinDiscount,
           shippingCost,
           total,
         },

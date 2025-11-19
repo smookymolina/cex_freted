@@ -1,5 +1,3 @@
-import { applyBuenFinDiscount, BUEN_FIN_PROMO, isBuenFinActive } from '../../config/promotions';
-
 const BASE_PRODUCTS = [
   {
     name: 'iPhone 14 Pro',
@@ -558,51 +556,4 @@ const BASE_PRODUCTS = [
   },
 ];
 
-const cloneProduct = (product) => ({
-  ...product,
-  variants: Array.isArray(product.variants)
-    ? product.variants.map((variant) => ({ ...variant }))
-    : [],
-});
-
-const decorateProductWithBuenFin = (product) => {
-  const variants = Array.isArray(product.variants)
-    ? product.variants.map((variant) => {
-        if (typeof variant?.price !== 'number') {
-          return { ...variant };
-        }
-
-        const { discountedPrice, savings } = applyBuenFinDiscount(variant.price);
-
-        if (discountedPrice === null || savings === null) {
-          return { ...variant };
-        }
-
-        return {
-          ...variant,
-          price: discountedPrice,
-          buenFinSavings: savings,
-          buenFinApplied: true,
-        };
-      })
-    : [];
-
-  return {
-    ...product,
-    variants,
-    buenFinApplied: true,
-    buenFinSavings: BUEN_FIN_PROMO.extraDiscountAmount,
-  };
-};
-
-const buildProducts = () => {
-  const clonedProducts = BASE_PRODUCTS.map(cloneProduct);
-
-  if (!isBuenFinActive()) {
-    return clonedProducts;
-  }
-
-  return clonedProducts.map((product) => decorateProductWithBuenFin(product));
-};
-
-export const products = buildProducts();
+export const products = BASE_PRODUCTS;

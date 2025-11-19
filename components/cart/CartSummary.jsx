@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Lock, Tag, Truck, ShieldCheck, BadgeCheck, RefreshCcw } from 'lucide-react';
 import { useCart } from '../../context/cart/CartContext';
-import { isBuenFinActive, BUEN_FIN_PROMO } from '../../config/promotions';
 import { FinancingDetails } from '../product/FinancingBadge';
 import { getFinancingInfo } from '../../utils/financing';
 import styles from '../../styles/components/cart-summary.module.css';
@@ -18,7 +17,6 @@ export default function CartSummary() {
   const { cart, cartCount } = useCart();
   const router = useRouter();
   const { status } = useSession();
-  const buenFinActive = isBuenFinActive();
 
   const calculations = useMemo(() => {
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -30,24 +28,20 @@ export default function CartSummary() {
       return sum;
     }, 0);
 
-    const buenFinDiscount = buenFinActive && subtotal > 0 ? BUEN_FIN_PROMO.extraDiscountAmount : 0;
-    const subtotalWithDiscount = subtotal - buenFinDiscount;
-
     const shippingThreshold = 2000;
-    const shipping = subtotalWithDiscount >= shippingThreshold ? 0 : 150;
-    const freeShipping = subtotalWithDiscount >= shippingThreshold;
-    const total = subtotalWithDiscount + shipping;
+    const shipping = subtotal >= shippingThreshold ? 0 : 150;
+    const freeShipping = subtotal >= shippingThreshold;
+    const total = subtotal + shipping;
 
     return {
       subtotal,
       totalSavings,
-      buenFinDiscount,
       shipping,
       freeShipping,
       shippingThreshold,
       total,
     };
-  }, [cart, buenFinActive]);
+  }, [cart]);
 
   // Calcular financiamiento para el artículo más caro
   const premiumFinancing = useMemo(() => {
@@ -106,16 +100,6 @@ export default function CartSummary() {
               Ahorros aplicados
             </span>
             <span>-{CURRENCY_FORMATTER.format(calculations.totalSavings)}</span>
-          </div>
-        )}
-
-        {calculations.buenFinDiscount > 0 && (
-          <div className={`${styles.row} ${styles.buenFinRow}`}>
-            <span className={styles.buenFinLabel}>
-              <span className={styles.buenFinIcon}>🎁</span>
-              {BUEN_FIN_PROMO.badge}
-            </span>
-            <span className={styles.buenFinAmount}>-{CURRENCY_FORMATTER.format(calculations.buenFinDiscount)}</span>
           </div>
         )}
 

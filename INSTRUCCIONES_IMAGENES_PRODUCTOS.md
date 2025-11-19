@@ -162,7 +162,6 @@ Una vez que hayas reemplazado todas las imágenes:
 ## Notas Adicionales
 
 - Los archivos SVG funcionan temporalmente como placeholder
-- El sistema aplicará automáticamente el descuento del Buen Fin ($1,500 MXN) a estos productos si están en el rango de fechas
 - Puedes ver todos los productos en la página principal del sitio
 - Los precios ya fueron investigados y asignados correctamente
 

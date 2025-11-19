@@ -1,5 +1,4 @@
 import { products } from '../../../data/mock/products';
-import { BUEN_FIN_PROMO, isBuenFinActive } from '../../../config/promotions';
 
 const HERO_OFFER_CONFIG = [
   {
@@ -7,9 +6,9 @@ const HERO_OFFER_CONFIG = [
     type: 'offer',
     slug: 'iphone-16-pro-max',
     variantGrade: 'A+',
-    badge: `${BUEN_FIN_PROMO.badge} flagship`,
-    title: 'Buen Fin: iPhone 16 Pro Max con upgrade express',
-    subtitle: 'Estado A+ | 256GB | -$1,500 MXN adicionales + entrega gratis en 24h CDMX/MTY',
+    badge: 'Flagship reacondicionado',
+    title: 'iPhone 16 Pro Max certificado',
+    subtitle: 'Estado A+ | 256GB | Garantia 12 meses + envio gratis',
     primaryCta: {
       text: 'Ver oferta',
       href: '/productos/iphone-16-pro-max',
@@ -18,7 +17,7 @@ const HERO_OFFER_CONFIG = [
       text: 'Ver catalogo',
       href: '/comprar',
     },
-    image: BUEN_FIN_PROMO.hero.backgroundImages.appleEcosystem,
+    image: '/images/hero/offers/iphone-ecosystem.png',
     fallbackPricing: {
       originalPrice: 34980,
       offerPrice: 26980,
@@ -29,10 +28,9 @@ const HERO_OFFER_CONFIG = [
     type: 'offer',
     slug: 'samsung-galaxy-s24-ultra',
     variantGrade: 'A',
-    badge: `${BUEN_FIN_PROMO.badge} fotografia`,
-    title: 'S24 Ultra + kit creator por el Buen Fin',
-    subtitle:
-      'Incluye S Pen, onboarding remoto y -$1,500 MXN extra vs precio web todo noviembre 2025',
+    badge: 'Oferta especial',
+    title: 'Samsung Galaxy S24 Ultra reacondicionado',
+    subtitle: 'Incluye S Pen, onboarding remoto y garantia extendida',
     primaryCta: {
       text: 'Aprovechar oferta',
       href: '/productos/samsung-galaxy-s24-ultra',
@@ -41,7 +39,7 @@ const HERO_OFFER_CONFIG = [
       text: 'Ver catalogo',
       href: '/comprar?category=Smartphones',
     },
-    image: BUEN_FIN_PROMO.hero.backgroundImages.flagshipPhones,
+    image: '/images/hero/offers/flagship-phones.png',
     fallbackPricing: {
       originalPrice: 31980,
       offerPrice: 21480,
@@ -52,10 +50,9 @@ const HERO_OFFER_CONFIG = [
     type: 'offer',
     slug: 'macbook-air-m2',
     variantGrade: 'A',
-    badge: `${BUEN_FIN_PROMO.badge} laptops`,
-    title: 'MacBook Air M2 para home office sin ruido',
-    subtitle:
-      'Estado A | 8GB RAM | 256GB SSD | -$1,500 MXN por Buen Fin + configuracion lista para entregar',
+    badge: 'Oferta laptops',
+    title: 'MacBook Air M2 para productividad',
+    subtitle: 'Estado A | 8GB RAM | 256GB SSD | Configuracion lista para entregar',
     primaryCta: {
       text: 'Comprar ahora',
       href: '/productos/macbook-air-m2',
@@ -64,7 +61,7 @@ const HERO_OFFER_CONFIG = [
       text: 'Mas laptops',
       href: '/comprar?category=Laptops',
     },
-    image: BUEN_FIN_PROMO.hero.backgroundImages.gamerSetups,
+    image: '/images/hero/offers/macbook-workspace.png',
     fallbackPricing: {
       originalPrice: 30000,
       offerPrice: 22000,
@@ -113,19 +110,11 @@ const buildFeaturedOffers = () =>
     const offerPrice = pricing.offerPrice;
     const discount = formatDiscount(originalPrice, offerPrice);
 
-    const buenFinMetadata = isBuenFinActive()
-      ? {
-          buenFinApplied: true,
-          buenFinSavings: BUEN_FIN_PROMO.extraDiscountAmount,
-        }
-      : {};
-
     return {
       ...presentation,
       originalPrice,
       offerPrice,
       discount,
-      ...buenFinMetadata,
     };
   }).filter(Boolean);
 

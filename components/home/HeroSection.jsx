@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import Button from '../ui/Button';
 import styles from '../../styles/pages/home.module.css';
-import { BUEN_FIN_PROMO, isBuenFinActive } from '../../config/promotions';
 import { formatPrice } from '../../utils/formatters';
 
 const HERO_METRICS = [
@@ -21,7 +20,6 @@ export default function HeroSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [fade, setFade] = useState(true);
-  const buenFinActive = isBuenFinActive();
 
   // Obtener ofertas y posts destacados
   useEffect(() => {
@@ -106,8 +104,6 @@ export default function HeroSection() {
     goToSlide((currentIndex + 1) % heroItems.length);
   };
 
-  const heroBadgeText = buenFinActive ? `${BUEN_FIN_PROMO.badge} oficial` : 'Recommerce de confianza';
-
   if (isLoading || heroItems.length === 0) {
     return (
       <section className="section-container">
@@ -180,14 +176,6 @@ export default function HeroSection() {
                   <span className={styles.offerPrice}>${formatPrice(currentItem.offerPrice)}</span>
                 </span>
               </div>
-            )}
-
-            {currentItem.type === 'offer' && buenFinActive && (
-              <ul className={styles.promoHighlights}>
-                {BUEN_FIN_PROMO.hero.highlights.map((highlight) => (
-                  <li key={highlight}>{highlight}</li>
-                ))}
-              </ul>
             )}
 
             {currentItem.type === 'blog' && (
